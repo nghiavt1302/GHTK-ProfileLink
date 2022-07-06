@@ -37,6 +37,8 @@ public class ProfileEntity {
     private Integer clickCount;
     @JsonProperty("user_id")
     private Integer userId;
+    @JsonProperty("design_id")
+    private Long designId;
 
     public ProfileEntity setValueFromDto(ProfileDto profileDto) {
         this.id = profileDto.getId();
@@ -48,6 +50,7 @@ public class ProfileEntity {
         this.location = profileDto.getLocation();
         this.profileLink = profileDto.getProfileLink();
         this.userId = profileDto.getUserId();
+        this.designId = profileDto.getDesignId();
 
         return this;
     }
