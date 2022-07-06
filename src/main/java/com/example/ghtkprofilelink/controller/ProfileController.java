@@ -1,6 +1,6 @@
 package com.example.ghtkprofilelink.controller;
 
-import com.example.ghtkprofilelink.model.dto.ProfileDTO;
+import com.example.ghtkprofilelink.model.dto.ProfileDto;
 import com.example.ghtkprofilelink.service.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,28 +18,28 @@ public class ProfileController {
     @GetMapping("/{id}")
     public ResponseEntity<?> get(
             @PathVariable Long id
-    ){
-        return new ResponseEntity<>(profileService.getById(id),HttpStatus.valueOf(200));
+    ) {
+        return new ResponseEntity<>(profileService.getById(id), HttpStatus.valueOf(200));
     }
 
     @PostMapping("")
-    public ResponseEntity<?> add(@ModelAttribute ProfileDTO profileDTO, @RequestParam MultipartFile file){
-        return new ResponseEntity<>(profileService.add(profileDTO,file), HttpStatus.valueOf(201));
+    public ResponseEntity<?> add(@ModelAttribute ProfileDto profileDto, @RequestParam MultipartFile file) {
+        return new ResponseEntity<>(profileService.add(profileDto, file), HttpStatus.valueOf(201));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> update(
-            @ModelAttribute ProfileDTO profileDTO,
+            @ModelAttribute ProfileDto profileDto,
             @RequestParam MultipartFile file,
             @PathVariable Long id
-    ){
-        return new ResponseEntity<>(profileService.update(profileDTO,file,id),HttpStatus.valueOf(201));
+    ) {
+        return new ResponseEntity<>(profileService.update(profileDto, file, id), HttpStatus.valueOf(201));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(
             @PathVariable Long id
-    ){
-        return new ResponseEntity<>(profileService.delete(id),HttpStatus.valueOf(200));
+    ) {
+        return new ResponseEntity<>(profileService.delete(id), HttpStatus.valueOf(200));
     }
 }

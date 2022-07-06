@@ -13,20 +13,22 @@ import java.time.LocalDate;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProfileDTO {
+public class ProfileDto {
     private Long id;
-    private String name;
+    private String fullname;
     @JsonProperty("short_bio")
     private String shortBio;
-    @JsonProperty("about_me")
-    private String aboutMe;
+    @JsonProperty("about")
+    private String about;
     private LocalDate birthday;
     private GenderEnum gender;
     private String location;
-    @JsonProperty("link_profile")
-    private String linkProfile;
-    @JsonProperty("avatar_url")
-    private String avatarUrl;
+    @JsonProperty("profile_link")
+    private String profileLink;
+    @JsonProperty("avatar_link")
+    private String avatarLink;
     @JsonProperty("click_count")
     private Integer clickCount;
+    @JsonProperty("user_id")
+    private Integer userId;
 }

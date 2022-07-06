@@ -1,7 +1,7 @@
 package com.example.ghtkprofilelink.model.entity;
 
 import com.example.ghtkprofilelink.constants.GenderEnum;
-import com.example.ghtkprofilelink.model.dto.ProfileDTO;
+import com.example.ghtkprofilelink.model.dto.ProfileDto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,29 +21,33 @@ public class ProfileEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
+    private String fullname;
     @JsonProperty("short_bio")
     private String shortBio;
-    @JsonProperty("about_me")
-    private String aboutMe;
+    @JsonProperty("about")
+    private String about;
     private LocalDate birthday;
     private GenderEnum gender;
     private String location;
-    @JsonProperty("link_profile")
-    private String linkProfile;
-    @JsonProperty("avatar_url")
-    private String avatarUrl;
+    @JsonProperty("profile_link")
+    private String profileLink;
+    @JsonProperty("avatar_link")
+    private String avatarLink;
     @JsonProperty("click_count")
     private Integer clickCount;
+    @JsonProperty("user_id")
+    private Integer userId;
 
-    public ProfileEntity setValueFromDTO(ProfileDTO profileDTO){
-        this.id=profileDTO.getId();
-        this.name=profileDTO.getName();
-        this.shortBio=profileDTO.getShortBio();
-        this.aboutMe=profileDTO.getAboutMe();
-        this.birthday=profileDTO.getBirthday();
-        this.gender=profileDTO.getGender();
-        this.location=profileDTO.getLocation();
+    public ProfileEntity setValueFromDto(ProfileDto profileDto) {
+        this.id = profileDto.getId();
+        this.fullname = profileDto.getFullname();
+        this.shortBio = profileDto.getShortBio();
+        this.about = profileDto.getAbout();
+        this.birthday = profileDto.getBirthday();
+        this.gender = profileDto.getGender();
+        this.location = profileDto.getLocation();
+        this.profileLink = profileDto.getProfileLink();
+        this.userId = profileDto.getUserId();
 
         return this;
     }

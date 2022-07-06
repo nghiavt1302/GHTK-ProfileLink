@@ -2,7 +2,7 @@ package com.example.ghtkprofilelink.service;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
-import com.example.ghtkprofilelink.model.dto.ProfileDTO;
+import com.example.ghtkprofilelink.model.dto.ProfileDto;
 import com.example.ghtkprofilelink.model.entity.ProfileEntity;
 import com.example.ghtkprofilelink.model.response.Data;
 import com.example.ghtkprofilelink.repository.ProfileRepository;
@@ -30,30 +30,32 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public Data add(ProfileDTO profileDTO,MultipartFile file) {
-        ProfileEntity profile=mapper.map(profileDTO,ProfileEntity.class);
-        if(!file.isEmpty()) {
+    public Data add(ProfileDto profileDto, MultipartFile file) {
+        ProfileEntity profile = mapper.map(profileDto, ProfileEntity.class);
+        if (!file.isEmpty()) {
             try {
                 Map x = this.cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
-                profile.setAvatarUrl(x.get("url").toString());
+                profile.setAvatarLink(x.get("url").toString());
             } catch (Exception e) {
                 System.out.println(e);
             }
         }
-        return new Data(true, "success", mapper.map(profileRepository.save(profile),ProfileDTO.class));
+        return new Data(true, "success", mapper.map(profileRepository.save(profile), ProfileDto.class));
     }
 
     @Override
-    public Data update(ProfileDTO profileDTO,MultipartFile file, Long id) {
-        ProfileEntity profile=profileRepository.findById(id).get().setValueFromDTO(profileDTO);
+    public Data update(ProfileDto profileDto, MultipartFile file, Long id) {
+        ProfileEntity profile = profileRepository.findById(profileDto.getId()).get().setValueFromDto(profileDto);
         profile.setId(id);
-        try {
-            Map x = this.cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
-            profile.setAvatarUrl(x.get("url").toString());
-        } catch (Exception e) {
-            System.out.println(e);
+        if (!file.isEmpty()) {
+            try {
+                Map x = this.cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
+                profile.setAvatarLink(x.get("url").toString());
+            } catch (Exception e) {
+                System.out.println(e);
+            }
         }
-        return new Data(true, "success", mapper.map(profileRepository.save(profile),ProfileDTO.class));
+        return new Data(true, "success", mapper.map(profileRepository.save(profile), ProfileDto.class));
     }
 
     @Override
