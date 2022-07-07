@@ -31,4 +31,6 @@ public class ProfileDto {
     private Integer clickCount;
     @JsonProperty("user_id")
     private Integer userId;
+    @JsonProperty("design_id")
+    private Long designId;
 }

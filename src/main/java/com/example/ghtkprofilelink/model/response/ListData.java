@@ -15,5 +15,5 @@ public class ListData {
     private boolean success;
     private String message;
     private List<?> data;
-    private com.example.ghtkprofilelink.model.response.Pagination pagination;
+    private Pagination pagination;
 }

@@ -1,19 +1,28 @@
 package com.example.ghtkprofilelink.model.entity;
 
+import com.example.ghtkprofilelink.constants.StatusEnum;
 import lombok.Data;
 
 import javax.persistence.*;
 
-@Data
 @Entity
 @Table(name = "user")
+@Data
 public class UserEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    @Column(name = "username", unique = true)
     private String username;
+
+    @Column(name = "password")
     private String password;
-    private Integer status;
-    @Column(name = "role_id")
-    private Integer roleId;
+
+    @Column(name = "status")
+    private StatusEnum status;
+
+    @Column(name = "role")
+    private Integer role;
 }
