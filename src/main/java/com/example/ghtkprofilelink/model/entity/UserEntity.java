@@ -1,4 +1,4 @@
-package com.example.ghtkprofilelink.Model.Entity;
+package com.example.ghtkprofilelink.model.entity;
 
 import lombok.Data;
 
