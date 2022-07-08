@@ -39,7 +39,9 @@ public class ProfileServiceImpl implements ProfileService {
             } catch (Exception e) {
                 System.out.println(e);
             }
-        }
+        } else
+            profile.setAvatarLink("https://res.cloudinary.com/anhtuanbui/image/upload/v1657248868/knybg0tx6rj48d62nv4a.png");
+
         return new Data(true, "success", mapper.map(profileRepository.save(profile), ProfileDto.class));
     }
 
