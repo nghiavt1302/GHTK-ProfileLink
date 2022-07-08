@@ -19,10 +19,10 @@ public class UserController {
         return ResponseEntity.ok(userService.getAll(page, pageSize));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Data> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.getById(id));
-    }
+//    @GetMapping("/{id}")
+//    public ResponseEntity<Data> getById(@PathVariable Long id) {
+//        return ResponseEntity.ok(userService.getById(id));
+//    }
 
     @GetMapping("/username")
     public ResponseEntity<Data> getByUsername(@RequestParam String username) {
@@ -39,8 +39,8 @@ public class UserController {
         return ResponseEntity.ok(userService.update(userDto));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Data> delete(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.delete(id));
+    @DeleteMapping("")
+    public ResponseEntity<Data> deleteByUsername(@RequestParam String username) {
+        return ResponseEntity.ok(userService.deleteByUsername(username));
     }
 }

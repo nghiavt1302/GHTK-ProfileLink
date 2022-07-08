@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 
 @Service
 public class UserServiceImpl implements UserService, UserDetailsService {
@@ -43,40 +44,36 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public Data getById(Long id) {
-        UserEntity userEntity = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
+        UserEntity userEntity = userRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         return new Data(true, "success", mapper.map(userEntity, UserDto.class));
     }
 
     @Override
     public Data getByUsername(String username) {
-        UserEntity userEntity = userRepository.findByUsername(username).orElseThrow(() -> new EntityNotFoundException());
+        UserEntity userEntity = userRepository.findByUsername(username).orElseThrow(EntityNotFoundException::new);
         return new Data(true, "success", mapper.map(userEntity, UserDto.class));
     }
 
     @Override
     public Data add(UserDto userDto) {
         if (userRepository.existsByUsername(userDto.getUsername())) throw new EntityExistsException();
-        UserEntity user = new UserEntity();
-        user.mapUserDto(userDto).setPassword(passwordEncoder.encode(userDto.getPassword()));
+        UserEntity user = new UserEntity().mapUserDto(userDto);
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        user.setRole(0);
         return new Data(true, "success", mapper.map(userRepository.save(user), UserDto.class));
     }
 
     @Override
     public Data update(UserDto userDto) {
-        if (!userRepository.existsById(userDto.getId())) throw new EntityNotFoundException();
-        UserEntity userRepo = userRepository.getById(userDto.getId());
-        if (userRepository.existsByUsername(userDto.getUsername()) && !userRepo.getUsername().equals(userDto.getUsername()))
-            throw new EntityExistsException();
+        if (!userRepository.existsByUsername(userDto.getUsername())) throw new EntityNotFoundException();
+        UserEntity userRepo = userRepository.findByUsername(userDto.getUsername()).get();
+        userRepo.setPassword(passwordEncoder.encode(userRepo.getPassword()));
 
-        UserEntity user = mapper.map(userDto, UserEntity.class);
-        user.setId(userRepo.getId());
-        user.setStatus(userRepo.getStatus());
-        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        return new Data(true, "success", mapper.map(userRepository.save(user), UserDto.class));
+        return new Data(true, "success", mapper.map(userRepository.save(userRepo), UserDto.class));
     }
 
     @Override
-    public Data delete(Long id) {
+    public Data deleteById(Long id) {
         if (!userRepository.existsById(id)) throw new EntityNotFoundException();
         UserEntity user = userRepository.getById(id);
         user.setStatus(StatusEnum.INACTIVE);
@@ -84,8 +81,26 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
+    public Data deleteByUsername(String username) {
+        if (!userRepository.existsByUsername(username)) throw new EntityNotFoundException();
+        UserEntity user = userRepository.findByUsername(username).get();
+        user.setStatus(StatusEnum.INACTIVE);
+        return new Data(true, "success", mapper.map(userRepository.save(user), UserDto.class));
+    }
+
+    @Override
     public UserDetails loadUserByUsername(String username) {
         UserEntity user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
+        return new CustomUserDetails(user);
+    }
+
+    // JWTAuthenticationFilter sẽ sử dụng hàm này
+    @Transactional
+    public UserDetails loadUserById(Long id) {
+        UserEntity user = userRepository.findById(id).orElseThrow(
+                () -> new UsernameNotFoundException("User not found with id : " + id)
+        );
+
         return new CustomUserDetails(user);
     }
 }

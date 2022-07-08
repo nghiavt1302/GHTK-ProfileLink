@@ -15,10 +15,10 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "username", unique = true)
+    @Column(name = "username", unique = true, nullable = false)
     private String username;
 
-    @Column(name = "password")
+    @Column(name = "password", nullable = false)
     private String password;
 
     @Column(name = "status")
@@ -31,7 +31,7 @@ public class UserEntity {
         this.setId(null);
         this.setUsername(userDto.getUsername());
         this.setStatus(StatusEnum.ACTIVE);
-        this.setRole(userDto.getRole());
+//        this.setRole(userDto.getRole());
         return this;
     }
 }
