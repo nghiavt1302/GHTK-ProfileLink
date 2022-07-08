@@ -85,12 +85,10 @@ public class ProfileServiceImpl implements ProfileService {
 
         if (now == firstTime) {
             profile.setClickCount(clickCount + 1);
-
         } else {
             if (now >= lastTime + 3000) {
                 // session.setAttribute("count", (Integer) session.getAttribute("count") + 1);
                 profile.setClickCount(clickCount + 1);
-
             }
         }
         profileRepository.save(profile);
