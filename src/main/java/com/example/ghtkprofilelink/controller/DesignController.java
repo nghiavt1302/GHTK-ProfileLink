@@ -34,7 +34,7 @@ public class DesignController {
     @PostMapping("")
     public ResponseEntity<?> add(
             @ModelAttribute DesignDto designDto,
-            @RequestParam MultipartFile file
+            @RequestParam(required = false) MultipartFile file
             ) {
         return new ResponseEntity<>(designService.add(designDto,file),HttpStatus.valueOf(201));
     }
@@ -42,9 +42,10 @@ public class DesignController {
     @PutMapping("/{id}")
     public ResponseEntity<?> update(
             @RequestBody DesignDto designDto,
+            @RequestParam(required = false) MultipartFile file,
             @PathVariable Long id
     ){
-        return new ResponseEntity<>(designService.update(designDto,id),HttpStatus.valueOf(201));
+        return new ResponseEntity<>(designService.update(designDto,file,id),HttpStatus.valueOf(201));
     }
 
     @DeleteMapping("/{id}")

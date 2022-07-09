@@ -2,6 +2,7 @@ package com.example.ghtkprofilelink.service;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.example.ghtkprofilelink.constants.BackgroundTypeEnum;
 import com.example.ghtkprofilelink.constants.DesignTypeEnum;
 import com.example.ghtkprofilelink.model.dto.DesignDto;
 import com.example.ghtkprofilelink.model.entity.DesignEntity;
@@ -38,40 +39,57 @@ public class DesignServiceImpl implements DesignService {
 
     @Override
     public ListData getListDesignByType(Pageable pageable, DesignTypeEnum designType) {
-        Page<DesignEntity> pageDesign = designRepository.findByType(pageable,designType);
+        Page<DesignEntity> pageDesign = designRepository.findByType(pageable, designType);
         Pagination pagination = new Pagination(pageDesign.getNumber(), pageDesign.getSize(), pageDesign.getTotalPages(), (int) pageDesign.getTotalElements());
         List<DesignDto> listDesignDto = pageDesign.stream().map(d -> modelMapper.map(d, DesignDto.class)).collect(Collectors.toList());
         return new ListData(true, "success", listDesignDto, pagination);
     }
 
     @Override
-    public Data add(DesignDto designDto, MultipartFile file){
-        DesignEntity designEntity= modelMapper.map(designDto,DesignEntity.class);
+    public Data add(DesignDto designDto, MultipartFile file) {
+        DesignEntity designEntity = modelMapper.map(designDto, DesignEntity.class);
+        if (designEntity.getBackgroundColor().equals("")) {
+            designEntity.setBackgroundType(BackgroundTypeEnum.COLOR);
+        }
         if (!file.isEmpty()) {
             try {
                 Map x = this.cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
                 designEntity.setBackgroundImage(x.get("url").toString());
+                designEntity.setBackgroundType(BackgroundTypeEnum.IMAGE);
             } catch (Exception e) {
                 System.out.println(e);
             }
         }
-        return new Data(true,"success",modelMapper.map(designRepository.save(designEntity),DesignDto.class));
+
+
+        return new Data(true, "success", modelMapper.map(designRepository.save(designEntity), DesignDto.class));
     }
 
     @Override
-    public Data update(DesignDto designDto,Long id){
-        DesignEntity designEntity=designRepository.findById(id).orElseThrow(()->new EntityNotFoundException());
-        designEntity=designEntity.setValueByDto(designDto);
+    public Data update(DesignDto designDto, MultipartFile file, Long id) {
+        DesignEntity designEntity = designRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
+        designEntity = designEntity.setValueByDto(designDto);
         designEntity.setId(id);
-
-        return new Data(true,"success",modelMapper.map(designRepository.save(designEntity),DesignDto.class));
+        if (designEntity.getBackgroundColor().equals("")) {
+            designEntity.setBackgroundType(BackgroundTypeEnum.COLOR);
+        }
+        if (!file.isEmpty()) {
+            try {
+                Map x = this.cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
+                designEntity.setBackgroundImage(x.get("url").toString());
+                designEntity.setBackgroundType(BackgroundTypeEnum.IMAGE);
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+        }
+        return new Data(true, "success", modelMapper.map(designRepository.save(designEntity), DesignDto.class));
     }
 
     @Override
-    public Data delete(Long id){
-        DesignEntity designEntity=designRepository.findById(id).orElseThrow(()->new EntityNotFoundException());
+    public Data delete(Long id) {
+        DesignEntity designEntity = designRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
         designRepository.deleteById(id);
 
-        return new Data(true,"success",modelMapper.map(designEntity,DesignDto.class));
+        return new Data(true, "success", modelMapper.map(designEntity, DesignDto.class));
     }
 }
