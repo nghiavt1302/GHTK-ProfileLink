@@ -21,14 +21,16 @@ public class ProfileController {
     }
 
     @PostMapping("")
-    public ResponseEntity<?> add(@ModelAttribute ProfileDto profileDto, @RequestParam MultipartFile file) {
+    public ResponseEntity<?> add(@ModelAttribute ProfileDto profileDto, @RequestParam(required = false) MultipartFile file) {
         return new ResponseEntity<>(profileService.add(profileDto, file), HttpStatus.valueOf(201));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@ModelAttribute ProfileDto profileDto,
-                                    @RequestParam MultipartFile file,
-                                    @PathVariable Long id) {
+    public ResponseEntity<?> update(
+            @ModelAttribute ProfileDto profileDto,
+            @RequestParam(required = false) MultipartFile file,
+            @PathVariable Long id
+    ) {
         return new ResponseEntity<>(profileService.update(profileDto, file, id), HttpStatus.valueOf(201));
     }
 
