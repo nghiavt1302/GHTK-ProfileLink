@@ -16,9 +16,7 @@ public class ProfileController {
     ProfileService profileService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> get(
-            @PathVariable Long id
-    ) {
+    public ResponseEntity<?> get(@PathVariable Long id) {
         return new ResponseEntity<>(profileService.getById(id), HttpStatus.valueOf(200));
     }
 
@@ -28,18 +26,14 @@ public class ProfileController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(
-            @ModelAttribute ProfileDto profileDto,
-            @RequestParam MultipartFile file,
-            @PathVariable Long id
-    ) {
+    public ResponseEntity<?> update(@ModelAttribute ProfileDto profileDto,
+                                    @RequestParam MultipartFile file,
+                                    @PathVariable Long id) {
         return new ResponseEntity<>(profileService.update(profileDto, file, id), HttpStatus.valueOf(201));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(
-            @PathVariable Long id
-    ) {
+    public ResponseEntity<?> delete(@PathVariable Long id) {
         return new ResponseEntity<>(profileService.delete(id), HttpStatus.valueOf(200));
     }
 }
