@@ -32,6 +32,7 @@ public class SocialServiceImpl implements SocialService {
     @Autowired
     private ModelMapper mapper;
 
+    @Autowired
     private ProfileRepository profileRepository;
 
     @Override

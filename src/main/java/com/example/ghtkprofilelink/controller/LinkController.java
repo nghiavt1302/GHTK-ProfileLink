@@ -20,7 +20,7 @@ import com.example.ghtkprofilelink.service.LinksService;
 
 @RestController
 @RequestMapping("api/v1.0/link")
-public class LinksController {
+public class LinkController {
     @Autowired
     LinksService linkService;
 
