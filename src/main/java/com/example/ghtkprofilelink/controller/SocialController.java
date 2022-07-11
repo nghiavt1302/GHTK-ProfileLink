@@ -1,6 +1,8 @@
 package com.example.ghtkprofilelink.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,8 +47,12 @@ public class SocialController {
         return ResponseEntity.ok(socialService.delete(id));
     }
 
-    @GetMapping("/getSocialByProfileId/{id}")
-    public ResponseEntity<Data> getSocialByProfileId(@PathVariable Long id) {
-        return ResponseEntity.ok(socialService.getSocialByProfileId(id));
+    @GetMapping("/social/{profileId}")
+    public ResponseEntity<?> getByProfileId(
+            @RequestParam("page") int page,
+            @RequestParam("page_size") int pageSize,
+            @PathVariable Long profileId
+    ){
+        return new ResponseEntity<>(socialService.getByProfileId(PageRequest.of(page,pageSize),profileId),HttpStatus.valueOf(200));
     }
 }

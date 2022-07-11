@@ -20,21 +20,25 @@ public class SocialEntity {
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @JsonProperty("name")
+    @JsonProperty("social_name")
+    @Column(name = "social_name")
     private String name;
-    @JsonProperty("icon")
+    @JsonProperty("social_icon")
+    @Column(name = "social_icon")
     private String icon;
-    private String link;
+    private String links;
     @JsonProperty("profile_id")
+    @Column(name = "profile_id")
     private Long profileId;
     @JsonProperty("click_count")
+    @Column(name = "click_count")
     private Long clickCount;
 
     public SocialEntity setValueFromDto(SocialDto socialDto) {
         this.id = socialDto.getId();
         this.name = socialDto.getName();
         this.icon = socialDto.getIcon();
-        this.link = socialDto.getLink();
+        this.links = socialDto.getLinks();
         this.profileId = socialDto.getProfileId();
         this.clickCount = socialDto.getClickCount();
 

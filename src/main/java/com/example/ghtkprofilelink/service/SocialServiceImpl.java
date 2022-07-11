@@ -1,11 +1,16 @@
 package com.example.ghtkprofilelink.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.persistence.EntityNotFoundException;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.example.ghtkprofilelink.constants.StatusEnum;
@@ -14,6 +19,7 @@ import com.example.ghtkprofilelink.model.entity.SocialEntity;
 import com.example.ghtkprofilelink.model.response.Data;
 import com.example.ghtkprofilelink.model.response.ListData;
 import com.example.ghtkprofilelink.model.response.Pagination;
+import com.example.ghtkprofilelink.repository.ProfileRepository;
 import com.example.ghtkprofilelink.repository.SocialRepository;
 import com.google.common.base.Optional;
 
@@ -25,6 +31,8 @@ public class SocialServiceImpl implements SocialService {
 
     @Autowired
     private ModelMapper mapper;
+
+    private ProfileRepository profileRepository;
 
     @Override
     public ListData getAll(int page, int pageSize) {
@@ -69,14 +77,13 @@ public class SocialServiceImpl implements SocialService {
     }
 
     @Override
-    public Data getSocialByProfileId(Long id) {
-        // TODO Auto-generated method stub
-        Optional<SocialEntity> socialEntity = socialRepository.findByProfileId(id);
-        if (socialEntity.isPresent() == true) {
-            return new Data(true, "success", mapper.map(socialEntity, SocialDto.class));
-        } else {
-            return new Data(false, "Không tìm thấy đối tượng", "");
-        }
+    public ListData getByProfileId(Pageable pageable, Long profileId) {
+        profileRepository.findById(profileId).orElseThrow(() -> new EntityNotFoundException());
+        Page<SocialEntity> pageSocial = socialRepository.findByProfileId(pageable, profileId);
+        Pagination pagination = new Pagination(pageSocial.getNumber(), pageSocial.getSize(), pageSocial.getTotalPages(),
+                (int) pageSocial.getTotalElements());
+        List<SocialDto> linkDtos = pageSocial.stream().map(l -> mapper.map(l, SocialDto.class)).collect(Collectors.toList());
+        return new ListData(true, "success", linkDtos, pagination);
     }
 
 }
