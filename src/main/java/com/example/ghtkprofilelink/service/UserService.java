@@ -15,5 +15,7 @@ public interface UserService {
 
     Data update(UserDto userDto);
 
-    Data delete(Long id);
+    Data deleteById(Long id);
+
+    Data deleteByUsername(String username);
 }
