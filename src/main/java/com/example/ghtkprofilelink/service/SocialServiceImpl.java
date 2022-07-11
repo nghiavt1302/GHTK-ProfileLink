@@ -1,6 +1,5 @@
 package com.example.ghtkprofilelink.service;
 
-
 import javax.persistence.EntityNotFoundException;
 
 import org.modelmapper.ModelMapper;
@@ -30,7 +29,8 @@ public class SocialServiceImpl implements SocialService {
     public ListData getAll(int page, int pageSize) {
         Page<SocialEntity> socialEntities = socialRepository.findAll(PageRequest.of(page, pageSize));
         return new ListData(true, "success", socialEntities.getContent(),
-                new Pagination(socialEntities.getNumber(), socialEntities.getSize(), socialEntities.getTotalPages(), (int) socialEntities.getTotalElements()));
+                new Pagination(socialEntities.getNumber(), socialEntities.getSize(), socialEntities.getTotalPages(),
+                        (int) socialEntities.getTotalElements()));
     }
 
     @Override
@@ -50,7 +50,8 @@ public class SocialServiceImpl implements SocialService {
     @Override
     public Data update(SocialDto socialDto) {
         // TODO Auto-generated method stub
-        if(!socialRepository.existsById(socialDto.getId())) throw new EntityNotFoundException();
+        if (!socialRepository.existsById(socialDto.getId()))
+            throw new EntityNotFoundException();
         SocialEntity socialRepo = socialRepository.getById(socialDto.getId());
         SocialEntity social = mapper.map(socialDto, SocialEntity.class);
         social.setId(socialRepo.getId());
@@ -60,7 +61,8 @@ public class SocialServiceImpl implements SocialService {
     @Override
     public Data delete(Long id) {
         // TODO Auto-generated method stub
-        if(!socialRepository.existsById(id)) throw new EntityNotFoundException();
+        if (!socialRepository.existsById(id))
+            throw new EntityNotFoundException();
         SocialEntity user = mapper.map(socialRepository.getById(id), SocialEntity.class);
         return new Data(true, "success", mapper.map(socialRepository.save(user), SocialDto.class));
     }

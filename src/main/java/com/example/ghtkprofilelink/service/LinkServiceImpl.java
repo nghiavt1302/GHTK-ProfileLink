@@ -40,7 +40,6 @@ public class LinkServiceImpl implements LinkService {
     @Autowired
     ModelMapper mapper;
 
-    @Autowired
     ProfileRepository profileRepository;
 
     @Override
