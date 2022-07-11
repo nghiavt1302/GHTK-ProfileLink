@@ -36,12 +36,17 @@ public class SocialController {
         return ResponseEntity.ok(socialService.add(socialDto));
     }
     @PutMapping()
-    public ResponseEntity<Data> update(@RequestBody SocialDto socialDto) {
-        return ResponseEntity.ok(socialService.update(socialDto));
+    public ResponseEntity<Data> update(@RequestBody SocialDto socialDto, @PathVariable Long id) {
+        return ResponseEntity.ok(socialService.update(socialDto, id));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Data> delete(@PathVariable Long id) {
         return ResponseEntity.ok(socialService.delete(id));
+    }
+
+    @GetMapping("/getSocialByProfileId/{id}")
+    public ResponseEntity<Data> getSocialByProfileId(@PathVariable Long id) {
+        return ResponseEntity.ok(socialService.getSocialByProfileId(id));
     }
 }

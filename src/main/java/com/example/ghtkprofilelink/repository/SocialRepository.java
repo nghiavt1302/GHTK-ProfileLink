@@ -7,9 +7,10 @@ import org.springframework.stereotype.Repository;
 
 import com.example.ghtkprofilelink.constants.StatusEnum;
 import com.example.ghtkprofilelink.model.entity.SocialEntity;
+import com.google.common.base.Optional;
 
 @Repository
 public interface SocialRepository extends JpaRepository<SocialEntity, Long> {
-
+    Optional<SocialEntity> findByProfileId(Long profileId);
 
 }

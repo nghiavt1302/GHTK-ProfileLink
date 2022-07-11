@@ -14,8 +14,10 @@ public interface SocialService {
 
     Data add(SocialDto socialDto);
 
-    Data update(SocialDto socialDto);
+    Data update(SocialDto socialDto, Long id);
 
     Data delete(Long id);
+
+    Data getSocialByProfileId(Long id);
 
 }
