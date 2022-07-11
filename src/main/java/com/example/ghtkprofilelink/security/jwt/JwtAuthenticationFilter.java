@@ -7,7 +7,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -28,45 +27,34 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(
             HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        try {
-            String token = request.getHeader("Authorization");
-            String jwt = null;
+        String header = request.getHeader("Authorization");
+        if (header == null || !header.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
-            if (StringUtils.hasText(token) && token.startsWith("Bearer ")) {
-                jwt = token.substring("Bearer ".length());
+        String token = header.split(" ")[1].trim();
+        if (!tokenProvider.validateToken(token)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
-                // * Lấy id user từ chuỗi jwt
-                Long userId = tokenProvider.getUserIdFromJWT(jwt);
+        // * Lấy id user từ chuỗi jwt
+        Long userId = tokenProvider.getUserIdFromJWT(token);
 
-                // * Lấy thông tin người dùng từ id
-                UserDetails userDetails = userService.loadUserById(userId);
-                if (userDetails != null) {
-                    // * Nếu người dùng hợp lệ, set thông tin cho Seturity Context
-                    UsernamePasswordAuthenticationToken authentication =
-                            new UsernamePasswordAuthenticationToken(
-                                    userDetails, null, userDetails.getAuthorities());
-                    authentication.setDetails(
-                            new WebAuthenticationDetailsSource().buildDetails(request));
+        // * Lấy thông tin người dùng từ id
+        UserDetails userDetails = userService.loadUserById(userId);
+        if (userDetails != null) {
+            // * Nếu người dùng hợp lệ, set thông tin cho Seturity Context
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(
+                            userDetails, null, userDetails.getAuthorities());
+            authentication.setDetails(
+                    new WebAuthenticationDetailsSource().buildDetails(request));
 
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                    filterChain.doFilter(request, response);
-                    return;
-                }
-            }
-
-            //            * login
-            if (jwt == null && token == null) {
-                filterChain.doFilter(request, response);
-                return;
-            }
-
-            //            * khong nhap token
-            if (jwt == null && token.isEmpty()) {
-                return;
-            }
-
-        } catch (Exception ex) {
-            log.error("failed on set user authentication", ex);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            filterChain.doFilter(request, response);
+            return;
         }
     }
 }

@@ -37,12 +37,32 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+//        // Set session management to stateless
+//        http = http
+//                .sessionManagement()
+//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//                .and();
+//
+//        // Set unauthorized requests exception handler
+//        http = http
+//                .exceptionHandling()
+//                .authenticationEntryPoint(
+//                        (request, response, ex) -> {
+//                            response.sendError(
+//                                    HttpServletResponse.SC_UNAUTHORIZED,
+//                                    ex.getMessage()
+//                            );
+//                        }
+//                )
+//                .and();
+
+        // Enable CORS and disable CSRF
         http.cors().and().csrf().disable()
                 .authorizeRequests().antMatchers("/api/login").permitAll() // Cho phép tất cả mọi người truy cập vào login
-                .anyRequest().authenticated(); // Tất cả các request khác đều cần phải xác thực mới được truy cập
-//                .and().formLogin() // Cho phép người dùng xác thực bằng form login
-//                .defaultSuccessUrl("/swagger-ui.html#/").permitAll() // Tất cả đều được truy cập vào địa chỉ này
-//                .and().logout().permitAll(); // Cho phép logout
+                .anyRequest().authenticated() // Tất cả các request khác đều cần phải xác thực mới được truy cập
+                .and().formLogin() // Cho phép người dùng xác thực bằng form login
+                .defaultSuccessUrl("/swagger-ui.html#/").permitAll() // Tất cả đều được truy cập vào địa chỉ này
+                .and().logout().permitAll(); // Cho phép logout
 
 
         // Thêm một lớp Filter kiểm tra jwt
