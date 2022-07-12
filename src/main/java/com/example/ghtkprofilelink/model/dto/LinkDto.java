@@ -1,5 +1,6 @@
 package com.example.ghtkprofilelink.model.dto;
 
+import com.example.ghtkprofilelink.constants.TypeEnum;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
@@ -7,7 +8,7 @@ import lombok.Data;
 @Data
 public class LinkDto {
     private Long id;
-    private Integer type;
+    private TypeEnum type;
     private String title;
     private String url;
     private String picture;
