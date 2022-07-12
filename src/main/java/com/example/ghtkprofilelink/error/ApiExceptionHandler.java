@@ -11,6 +11,7 @@ import org.springframework.web.context.request.WebRequest;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
+import java.sql.SQLIntegrityConstraintViolationException;
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
@@ -35,6 +36,12 @@ public class ApiExceptionHandler {
     @ExceptionHandler(UsernameNotFoundException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ErrorMessage usernameNotFoundException(UsernameNotFoundException e) {
+        return new ErrorMessage(false, e.getMessage());
+    }
+
+    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public ErrorMessage sqlIntegrityConstraintViolationException(SQLIntegrityConstraintViolationException e) {
         return new ErrorMessage(false, e.getMessage());
     }
 }
