@@ -98,34 +98,6 @@ public class ProfileServiceImpl implements ProfileService {
         return new Data(true, "success", mapper.map(profile, ProfileDto.class));
     }
     
-    public Data get(HttpSession session, Long id) {
-        // TODO Auto-generated method stub
-        ProfileEntity profile = profileRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
-        Integer clickCount = profile.getClickCount();
-        // Integer count = (Integer) session.getAttribute("count");
-        Long now = new Date().getTime();
-        Long firstTime = session.getCreationTime();
-        Long lastTime = session.getLastAccessedTime();
-
-        if (now == firstTime) {
-            profile.setClickCount(clickCount + 1);
-        } else {
-            if (now >= lastTime + 3000) {
-                // session.setAttribute("count", (Integer) session.getAttribute("count") + 1);
-                profile.setClickCount(clickCount + 1);
-            }
-        }
-        profileRepository.save(profile);
-        return new Data(true, "success", /* session.getAttribute("count").toString() + " " + */ clickCount);
-    }
-
-    @Override
-    public Data counter(HttpSession session, Long id) {
-        // TODO Auto-generated method stub
-        ProfileEntity profile = profileRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
-        Integer clickCount = profile.getClickCount();
-        // return count.toString();
-        return new Data(true, "success", clickCount);
-    }
+    
 
 }

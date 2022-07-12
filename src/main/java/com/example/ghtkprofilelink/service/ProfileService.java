@@ -16,11 +16,7 @@ public interface ProfileService {
 
     Data delete(Long id);
 
-
     Data getProfileByShortBio(HttpSession session,String shortBio);
 
-    Data get(HttpSession session, Long id);
-
-    Data counter( HttpSession session, Long id); ;
 
 }

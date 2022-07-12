@@ -19,22 +19,12 @@ public class ProfileController {
     @Autowired
     ProfileService profileService;
 
+   
     @GetMapping("/{id}")
-    public Data get(HttpSession session, @PathVariable long id) {
-        return profileService.get(session, id);
+    public ResponseEntity<?> get(
+            @PathVariable Long id) {
+        return new ResponseEntity<>(profileService.getById(id), HttpStatus.valueOf(200));
     }
-
-    @GetMapping("/counter/{id}")
-    public ResponseEntity<?> counter( HttpSession session,@PathVariable Long id) {
-        return new ResponseEntity<>(profileService.counter(session, id), HttpStatus.valueOf(201));
-       
-    }
-
-    // @GetMapping("/{id}")
-    // public ResponseEntity<?> get(
-    //         @PathVariable Long id) {
-    //     return new ResponseEntity<>(profileService.getById(id), HttpStatus.valueOf(200));
-    // }
 
     @PostMapping("")
     public ResponseEntity<?> add(@ModelAttribute ProfileDto profileDto, @RequestParam(required = false) MultipartFile file) {
