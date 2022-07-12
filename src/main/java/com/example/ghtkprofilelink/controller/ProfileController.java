@@ -40,7 +40,7 @@ public class ProfileController {
     // }
 
     @PostMapping("")
-    public ResponseEntity<?> add(@ModelAttribute ProfileDto profileDto, @RequestParam MultipartFile file) {
+    public ResponseEntity<?> add(@ModelAttribute ProfileDto profileDto, @RequestParam(required = false) MultipartFile file) {
         return new ResponseEntity<>(profileService.add(profileDto, file), HttpStatus.valueOf(201));
     }
 
@@ -55,6 +55,7 @@ public class ProfileController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(
             @PathVariable Long id) {
+
         return new ResponseEntity<>(profileService.delete(id), HttpStatus.valueOf(200));
     }
 }

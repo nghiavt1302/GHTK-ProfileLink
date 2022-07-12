@@ -34,12 +34,13 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public Data getById(Long id) {
         ProfileEntity profile = profileRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
-        return new Data(true, "success", profile);
+        return new Data(true, "success",mapper.map(profile,ProfileDto.class));
     }
 
     @Override
     public Data add(ProfileDto profileDto, MultipartFile file) {
         ProfileEntity profile = mapper.map(profileDto, ProfileEntity.class);
+        profile.setProfileLink("localhost:8080/"+profile.getShortBio());
         if (!file.isEmpty()) {
             try {
                 Map x = this.cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
@@ -47,7 +48,9 @@ public class ProfileServiceImpl implements ProfileService {
             } catch (Exception e) {
                 System.out.println(e);
             }
-        }
+        } else
+            profile.setAvatarLink("https://res.cloudinary.com/anhtuanbui/image/upload/v1657248868/knybg0tx6rj48d62nv4a.png");
+
         return new Data(true, "success", mapper.map(profileRepository.save(profile), ProfileDto.class));
     }
 
