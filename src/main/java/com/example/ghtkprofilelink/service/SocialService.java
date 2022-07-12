@@ -1,5 +1,7 @@
 package com.example.ghtkprofilelink.service;
 
+
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.example.ghtkprofilelink.model.dto.SocialDto;
@@ -14,8 +16,10 @@ public interface SocialService {
 
     Data add(SocialDto socialDto);
 
-    Data update(SocialDto socialDto);
+    Data update(SocialDto socialDto, Long id);
 
     Data delete(Long id);
+
+    ListData getByProfileId(Pageable pageable, Long profileId);
 
 }

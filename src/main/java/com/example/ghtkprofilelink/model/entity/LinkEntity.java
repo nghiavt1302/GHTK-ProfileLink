@@ -6,6 +6,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.example.ghtkprofilelink.constants.TypeEnum;
 import com.example.ghtkprofilelink.model.dto.LinkDto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -19,12 +20,12 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "link")
+@Table(name = "links")
 public class LinkEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Integer type;
+    private TypeEnum type;
     private String title;
     private String url;
     private String picture;
