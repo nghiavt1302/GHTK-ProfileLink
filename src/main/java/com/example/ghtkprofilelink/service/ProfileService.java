@@ -2,7 +2,7 @@ package com.example.ghtkprofilelink.service;
 
 import com.example.ghtkprofilelink.model.dto.ProfileDto;
 import com.example.ghtkprofilelink.model.response.Data;
-
+import io.swagger.models.Model;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -16,5 +16,11 @@ public interface ProfileService {
 
     Data delete(Long id);
 
+
     Data getProfileByShortBio(HttpSession session,String shortBio);
+
+    Data get(HttpSession session, Long id);
+
+    Data counter( HttpSession session, Long id); ;
+
 }
