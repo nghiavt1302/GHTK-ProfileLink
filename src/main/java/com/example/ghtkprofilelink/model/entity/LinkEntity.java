@@ -20,7 +20,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "link")
+@Table(name = "links")
 public class LinkEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

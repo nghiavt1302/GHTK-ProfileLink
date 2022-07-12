@@ -1,11 +1,16 @@
 package com.example.ghtkprofilelink.service;
 
+
+import java.util.List;
+import java.util.stream.Collectors;
 import javax.persistence.EntityNotFoundException;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.example.ghtkprofilelink.constants.StatusEnum;
@@ -14,7 +19,9 @@ import com.example.ghtkprofilelink.model.entity.SocialEntity;
 import com.example.ghtkprofilelink.model.response.Data;
 import com.example.ghtkprofilelink.model.response.ListData;
 import com.example.ghtkprofilelink.model.response.Pagination;
+import com.example.ghtkprofilelink.repository.ProfileRepository;
 import com.example.ghtkprofilelink.repository.SocialRepository;
+import com.google.common.base.Optional;
 
 @Service
 public class SocialServiceImpl implements SocialService {
@@ -24,6 +31,9 @@ public class SocialServiceImpl implements SocialService {
 
     @Autowired
     private ModelMapper mapper;
+
+    @Autowired
+    private ProfileRepository profileRepository;
 
     @Override
     public ListData getAll(int page, int pageSize) {
@@ -48,7 +58,7 @@ public class SocialServiceImpl implements SocialService {
     }
 
     @Override
-    public Data update(SocialDto socialDto) {
+    public Data update(SocialDto socialDto, Long id) {
         // TODO Auto-generated method stub
         if (!socialRepository.existsById(socialDto.getId()))
             throw new EntityNotFoundException();
@@ -65,6 +75,16 @@ public class SocialServiceImpl implements SocialService {
             throw new EntityNotFoundException();
         SocialEntity user = mapper.map(socialRepository.getById(id), SocialEntity.class);
         return new Data(true, "success", mapper.map(socialRepository.save(user), SocialDto.class));
+    }
+
+    @Override
+    public ListData getByProfileId(Pageable pageable, Long profileId) {
+        profileRepository.findById(profileId).orElseThrow(() -> new EntityNotFoundException());
+        Page<SocialEntity> pageSocial = socialRepository.findByProfileId(pageable, profileId);
+        Pagination pagination = new Pagination(pageSocial.getNumber(), pageSocial.getSize(), pageSocial.getTotalPages(),
+                (int) pageSocial.getTotalElements());
+        List<SocialDto> linkDtos = pageSocial.stream().map(l -> mapper.map(l, SocialDto.class)).collect(Collectors.toList());
+        return new ListData(true, "success", linkDtos, pagination);
     }
 
 }
