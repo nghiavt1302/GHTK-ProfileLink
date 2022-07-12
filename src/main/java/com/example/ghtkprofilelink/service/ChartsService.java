@@ -1,5 +1,7 @@
 package com.example.ghtkprofilelink.service;
 
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
+
 import com.example.ghtkprofilelink.model.dto.ChartsDto;
 import com.example.ghtkprofilelink.model.response.Data;
 import com.example.ghtkprofilelink.model.response.ListData;
@@ -15,4 +17,6 @@ public interface ChartsService {
     Data update(ChartsDto chartsDto,Long id);
 
     Data delete(Long id);
+
+    // ListData getByProfileId(Pageable pageable,Integer profileId);
 }
