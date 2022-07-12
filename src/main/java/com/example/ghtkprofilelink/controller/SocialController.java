@@ -19,6 +19,7 @@ import com.example.ghtkprofilelink.model.response.Data;
 import com.example.ghtkprofilelink.model.response.ListData;
 import com.example.ghtkprofilelink.service.SocialServiceImpl;
 
+@CrossOrigin
 @RestController
 @RequestMapping("api/v1.0/social")
 public class SocialController {
