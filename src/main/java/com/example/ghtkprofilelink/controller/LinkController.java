@@ -14,15 +14,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.example.ghtkprofilelink.model.dto.LinksDto;
-import com.example.ghtkprofilelink.service.LinksService;
+import com.example.ghtkprofilelink.model.dto.LinkDto;
+import com.example.ghtkprofilelink.service.LinkService;
 
 
 @RestController
 @RequestMapping("api/v1.0/link")
 public class LinkController {
     @Autowired
-    LinksService linkService;
+    LinkService linkService;
 
     @GetMapping("")
     public ResponseEntity<?> get() {
@@ -37,12 +37,12 @@ public class LinkController {
     }
 
     @PostMapping("")
-    public ResponseEntity<?> add(@ModelAttribute LinksDto linkDto, @RequestParam MultipartFile file) {
+    public ResponseEntity<?> add(@ModelAttribute LinkDto linkDto, @RequestParam MultipartFile file) {
         return new ResponseEntity<>(linkService.add(linkDto, file), HttpStatus.valueOf(201));
     }
     @PutMapping("/{id}")
     public ResponseEntity<?> update(
-            @ModelAttribute LinksDto linkDto,
+            @ModelAttribute LinkDto linkDto,
             @RequestParam MultipartFile file,
             @PathVariable Long id
     ) {

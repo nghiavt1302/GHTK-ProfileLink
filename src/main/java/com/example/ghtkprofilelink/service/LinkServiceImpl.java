@@ -16,18 +16,18 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
-import com.example.ghtkprofilelink.model.dto.LinksDto;
-import com.example.ghtkprofilelink.model.entity.LinksEntity;
+import com.example.ghtkprofilelink.model.dto.LinkDto;
+import com.example.ghtkprofilelink.model.entity.LinkEntity;
 import com.example.ghtkprofilelink.model.entity.ProfileEntity;
 import com.example.ghtkprofilelink.model.response.Data;
 import com.example.ghtkprofilelink.model.response.Pagination;
-import com.example.ghtkprofilelink.repository.LinksRepository;
+import com.example.ghtkprofilelink.repository.LinkRepository;
 
 
 @Service
-public class LinksServiceImpl implements LinksService{
+public class LinkServiceImpl implements LinkService{
     @Autowired
-    LinksRepository linkRepository;
+    LinkRepository linkRepository;
 
     @Autowired
     Cloudinary cloudinary;
@@ -35,17 +35,17 @@ public class LinksServiceImpl implements LinksService{
     @Autowired
     ModelMapper mapper;
 
-    LinksDto linkDto;
+    LinkDto linkDto;
     
     @Override
     public Data getById(Long id) {
-        LinksEntity link = linkRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
+        LinkEntity link = linkRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
         return new Data(true, "success", link);
     }
 
     @Override
-    public Data add(LinksDto linkDTO, MultipartFile file) {
-        LinksEntity link = mapper.map(linkDTO, LinksEntity.class);
+    public Data add(LinkDto linkDTO, MultipartFile file) {
+        LinkEntity link = mapper.map(linkDTO, LinkEntity.class);
         if (!file.isEmpty()) {
             try {
                 Map x = this.cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
@@ -54,13 +54,13 @@ public class LinksServiceImpl implements LinksService{
                 System.out.println(e);
             }
         }
-        return new Data(true, "success", mapper.map(linkRepository.save(link), LinksDto.class));
+        return new Data(true, "success", mapper.map(linkRepository.save(link), LinkDto.class));
     }
 
     @Override
-    public Data update(LinksDto linkDTO, MultipartFile file, Long id) {
+    public Data update(LinkDto linkDTO, MultipartFile file, Long id) {
         // TODO Auto-generated method stub
-        LinksEntity link = linkRepository.findById(linkDTO.getId()).get().setValueFromDto(linkDTO);
+        LinkEntity link = linkRepository.findById(linkDTO.getId()).get().setValueFromDto(linkDTO);
         link.setId(id);
         if (!file.isEmpty()) {
             try {
@@ -70,20 +70,20 @@ public class LinksServiceImpl implements LinksService{
                 System.out.println(e);
             }
         }
-        return new Data(true, "success", mapper.map(linkRepository.save(link), LinksDto.class));
+        return new Data(true, "success", mapper.map(linkRepository.save(link), LinkDto.class));
     }
 
     @Override
     public Data delete(Long id) {
         // TODO Auto-generated method stub
-        LinksEntity link = linkRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
+        LinkEntity link = linkRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
         linkRepository.deleteById(id);
         return new Data(true, "success", link);
     }
 
     @Override
     public ResponseEntity<Data> getAll() {
-        List<LinksEntity> linkEntity = linkRepository.findAll();
+        List<LinkEntity> linkEntity = linkRepository.findAll();
         // TODO Auto-generated method stub
         if(linkEntity.isEmpty()==false){
             return ResponseEntity.status(HttpStatus.OK).body(

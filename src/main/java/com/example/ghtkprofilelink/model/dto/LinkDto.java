@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
-public class LinksDto {
+public class LinkDto {
     private Long id;
     private Integer type;
     private String title;

@@ -6,7 +6,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.example.ghtkprofilelink.model.dto.LinksDto;
+import com.example.ghtkprofilelink.model.dto.LinkDto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
@@ -20,7 +20,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Table(name = "links")
-public class LinksEntity {
+public class LinkEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -33,7 +33,7 @@ public class LinksEntity {
     @JsonProperty("click_count")
     private Long clickCount;
 
-    public LinksEntity setValueFromDto(LinksDto linkDto) {
+    public LinkEntity setValueFromDto(LinkDto linkDto) {
         this.id = linkDto.getId();
         this.type = linkDto.getType();
         this.title = linkDto.getTitle();
