@@ -71,10 +71,9 @@ public class SocialServiceImpl implements SocialService {
     @Override
     public Data delete(Long id) {
         // TODO Auto-generated method stub
-        if (!socialRepository.existsById(id))
-            throw new EntityNotFoundException();
-        SocialEntity user = mapper.map(socialRepository.getById(id), SocialEntity.class);
-        return new Data(true, "success", mapper.map(socialRepository.save(user), SocialDto.class));
+        SocialEntity social = socialRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
+        socialRepository.deleteById(id);
+        return new Data(true, "success", social);
     }
 
     @Override
