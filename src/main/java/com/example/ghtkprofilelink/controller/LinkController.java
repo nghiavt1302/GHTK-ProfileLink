@@ -18,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.ghtkprofilelink.model.dto.LinkDto;
 import com.example.ghtkprofilelink.service.LinkService;
 
-
+@CrossOrigin
 @RestController
 @RequestMapping("api/v1.0/link")
 public class LinkController {

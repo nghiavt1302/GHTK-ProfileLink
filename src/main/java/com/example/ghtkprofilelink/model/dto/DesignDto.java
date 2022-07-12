@@ -28,4 +28,5 @@ public class DesignDto {
     private ButtonTypeEnum buttonType;
     @JsonProperty("button_color")
     private String buttonColor;
+    private String picture;
 }
