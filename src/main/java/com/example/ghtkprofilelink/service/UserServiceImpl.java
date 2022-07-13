@@ -1,5 +1,6 @@
 package com.example.ghtkprofilelink.service;
 
+import com.example.ghtkprofilelink.constants.Provider;
 import com.example.ghtkprofilelink.constants.StatusEnum;
 import com.example.ghtkprofilelink.model.dto.UserDto;
 import com.example.ghtkprofilelink.model.entity.UserEntity;
@@ -102,5 +103,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         );
 
         return new CustomUserDetails(user);
+    }
+
+    // Them user vao database khi login bang Facebook
+    public void processOAuthPostLogin(String username){
+        UserEntity existUser = userRepository.getUserByUsername(username);
+        if (existUser == null){
+            UserEntity newUser = new UserEntity();
+            newUser.setUsername(username);
+            newUser.setProvider(Provider.FACEBOOK);
+            newUser.setStatus(StatusEnum.ACTIVE);
+            userRepository.save(newUser);
+        }
     }
 }
