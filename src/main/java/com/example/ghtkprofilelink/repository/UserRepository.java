@@ -17,6 +17,8 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     Boolean existsByUsername(String username);
     Page<UserEntity> findByStatusEquals(StatusEnum statusEnum, Pageable pageable);
 
+    Optional<UserEntity> findByVerificationCode(String verificationCode);
+
     @Query("SELECT u FROM UserEntity u WHERE u.username = :username")
     public UserEntity getUserByUsername(@Param("username") String username);
 }
