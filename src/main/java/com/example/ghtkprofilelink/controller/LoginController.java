@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.UnsupportedEncodingException;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/test")
 public class LoginController {

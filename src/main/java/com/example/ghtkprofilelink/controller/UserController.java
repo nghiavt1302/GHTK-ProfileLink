@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin
 @RestController
 @RequestMapping("api/v1.0/user")
 public class UserController {
@@ -42,5 +43,11 @@ public class UserController {
     @DeleteMapping("")
     public ResponseEntity<Data> deleteByUsername(@RequestParam String username) {
         return ResponseEntity.ok(userService.deleteByUsername(username));
+    }
+
+    // Thymeleaf test login FB
+    @GetMapping("/login")
+    public String loginPage(){
+        return "login";
     }
 }

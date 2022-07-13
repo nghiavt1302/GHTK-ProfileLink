@@ -34,13 +34,13 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public Data getById(Long id) {
         ProfileEntity profile = profileRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
-        return new Data(true, "success",mapper.map(profile,ProfileDto.class));
+        return new Data(true, "success", mapper.map(profile, ProfileDto.class));
     }
 
     @Override
     public Data add(ProfileDto profileDto, MultipartFile file) {
         ProfileEntity profile = mapper.map(profileDto, ProfileEntity.class);
-        profile.setProfileLink("localhost:8080/"+profile.getShortBio());
+        profile.setProfileLink("localhost:8080/" + profile.getShortBio());
         if (!file.isEmpty()) {
             try {
                 Map x = this.cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
@@ -49,7 +49,8 @@ public class ProfileServiceImpl implements ProfileService {
                 System.out.println(e);
             }
         } else
-            profile.setAvatarLink("https://res.cloudinary.com/anhtuanbui/image/upload/v1657248868/knybg0tx6rj48d62nv4a.png");
+            profile.setAvatarLink(
+                    "https://res.cloudinary.com/anhtuanbui/image/upload/v1657248868/knybg0tx6rj48d62nv4a.png");
 
         return new Data(true, "success", mapper.map(profileRepository.save(profile), ProfileDto.class));
     }
@@ -77,34 +78,26 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public Data get(HttpSession session, Long id) {
+
+    public Data getProfileByShortBio(HttpSession session, String shortBio) {
         // TODO Auto-generated method stub
-        ProfileEntity profile = profileRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
-        Integer clickCount = profile.getClickCount();
-        // Integer count = (Integer) session.getAttribute("count");
+        ProfileEntity profile = profileRepository.getProfileByShortBio(shortBio);
+        Integer counter = profile.getClickCount();
         Long now = new Date().getTime();
-        Long firstTime = session.getCreationTime();
         Long lastTime = session.getLastAccessedTime();
 
-        if (now == firstTime) {
-            profile.setClickCount(clickCount + 1);
+        if (counter == null) {
+            profile.setClickCount(0);
         } else {
-            if (now >= lastTime + 3000) {
-                // session.setAttribute("count", (Integer) session.getAttribute("count") + 1);
-                profile.setClickCount(clickCount + 1);
+            if (now >= lastTime + 6000) {
+                counter += 1;
+                profile.setClickCount(counter);
             }
         }
         profileRepository.save(profile);
-        return new Data(true, "success", /* session.getAttribute("count").toString() + " " + */ clickCount);
+        return new Data(true, "success", mapper.map(profile, ProfileDto.class));
     }
-
-    @Override
-    public Data counter(HttpSession session, Long id) {
-        // TODO Auto-generated method stub
-        ProfileEntity profile = profileRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
-        Integer clickCount = profile.getClickCount();
-        // return count.toString();
-        return new Data(true, "success", clickCount);
-    }
+    
+    
 
 }
