@@ -44,10 +44,4 @@ public class UserController {
     public ResponseEntity<Data> deleteByUsername(@RequestParam String username) {
         return ResponseEntity.ok(userService.deleteByUsername(username));
     }
-
-    // Thymeleaf test login FB
-    @GetMapping("/login")
-    public String loginPage(){
-        return "login";
-    }
 }
