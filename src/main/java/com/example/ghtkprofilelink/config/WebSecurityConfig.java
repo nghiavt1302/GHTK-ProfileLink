@@ -3,7 +3,6 @@
 //import com.example.ghtkprofilelink.model.entity.CustomOAuth2User;
 //import com.example.ghtkprofilelink.service.CustomOAuth2UserService;
 //import com.example.ghtkprofilelink.service.UserDetailsServiceImpl;
-//import com.example.ghtkprofilelink.service.UserService;
 //import com.example.ghtkprofilelink.service.UserServiceImpl;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.context.annotation.Bean;
@@ -16,7 +15,6 @@
 //import org.springframework.security.core.Authentication;
 //import org.springframework.security.core.userdetails.UserDetailsService;
 //import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-//import org.springframework.security.oauth2.core.user.OAuth2User;
 //import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 //
 //import javax.servlet.ServletException;
