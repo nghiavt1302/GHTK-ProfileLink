@@ -23,7 +23,11 @@ public interface UserService {
 
     Data deleteByUsername(String username);
 
-    Data register(UserRegister userRegister, String siteURL) throws UnsupportedEncodingException, MessagingException;
+    Data register(UserRegister userRegister, StringBuffer siteURL) throws UnsupportedEncodingException, MessagingException;
 
     Data verify(String verificationCode);
+
+    Data updatePasswordToken(String mail, StringBuffer siteUrl) throws MessagingException;
+
+    Data updatePassword(String code, String password);
 }
