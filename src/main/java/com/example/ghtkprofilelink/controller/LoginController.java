@@ -55,7 +55,7 @@ public class LoginController {
     }
 
     @GetMapping("/test/register/verify")
-    public ResponseEntity<Data> verifyUser(@Param("code") String code) {
+    public ResponseEntity<Data> verifyUser(@RequestParam String code) {
         return ResponseEntity.ok(userService.verify(code));
     }
 
@@ -65,7 +65,7 @@ public class LoginController {
     }
 
     @PostMapping("/update_password_token")
-    public ResponseEntity<Data> updatePassword(@Param("code") String code, @RequestParam String password) {
+    public ResponseEntity<Data> updatePassword(@RequestParam String code, @RequestParam String password) {
         return ResponseEntity.ok(userService.updatePassword(code, password));
     }
 }
