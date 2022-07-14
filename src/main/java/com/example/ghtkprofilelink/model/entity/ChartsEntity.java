@@ -1,6 +1,8 @@
 package com.example.ghtkprofilelink.model.entity;
 
-import java.sql.Date;
+
+
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,11 +14,15 @@ import javax.persistence.Table;
 import com.example.ghtkprofilelink.model.dto.ChartsDto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
 @Table(name = "charts")
+@AllArgsConstructor
+@NoArgsConstructor
 public class ChartsEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
