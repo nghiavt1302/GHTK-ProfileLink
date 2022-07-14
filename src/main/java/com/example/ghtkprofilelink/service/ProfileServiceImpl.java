@@ -3,8 +3,10 @@ package com.example.ghtkprofilelink.service;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.example.ghtkprofilelink.model.dto.ProfileDto;
+import com.example.ghtkprofilelink.model.entity.ChartsEntity;
 import com.example.ghtkprofilelink.model.entity.ProfileEntity;
 import com.example.ghtkprofilelink.model.response.Data;
+import com.example.ghtkprofilelink.repository.ChartsRepository;
 import com.example.ghtkprofilelink.repository.ProfileRepository;
 
 import io.swagger.models.Model;
@@ -17,6 +19,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpSession;
 
+import java.time.Month;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 
@@ -24,6 +28,10 @@ import java.util.Map;
 public class ProfileServiceImpl implements ProfileService {
     @Autowired
     ProfileRepository profileRepository;
+
+    @Autowired
+    ChartsRepository chartsRepository;
+
     @Autowired
     Cloudinary cloudinary;
     @Autowired
@@ -78,26 +86,43 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-
     public Data getProfileByShortBio(HttpSession session, String shortBio) {
         // TODO Auto-generated method stub
+        Calendar cal = Calendar.getInstance();
         ProfileEntity profile = profileRepository.getProfileByShortBio(shortBio);
+        Integer profileId = profile.getId().intValue();
+        ChartsEntity charts = chartsRepository.findAllByProfileId(profileId).get(chartsRepository.findAllByProfileId(profileId).size() - 1);
+        Long countToMonth = charts.getClickCount();
         Integer counter = profile.getClickCount();
+        int monthRealTime = cal.get(Calendar.MONTH) + 1;
+        Date date = charts.getDate();
+        int monthDb = date.getMonth() + 1;
         Long now = new Date().getTime();
         Long lastTime = session.getLastAccessedTime();
 
-        if (counter == null) {
-            profile.setClickCount(0);
+        if (monthRealTime >= monthDb +1) {
+            counter += 1;
+            ChartsEntity chart = new ChartsEntity();
+            chart.setClickCount(1L);
+            chart.setCountry(charts.getCountry());
+            chart.setDate(new java.sql.Date(new Date().getTime()));
+            chart.setProfileId(profileId.intValue());
+            chartsRepository.save(chart);
         } else {
-            if (now >= lastTime + 6000) {
-                counter += 1;
-                profile.setClickCount(counter);
+            if (counter == null) {
+                profile.setClickCount(0);
+                charts.setClickCount(0L);
+            } else {
+                if (now >= lastTime + 6000) {
+                    counter += 1;
+                    countToMonth += 1L;
+                    profile.setClickCount(counter);
+                    charts.setClickCount(countToMonth);
+                }
             }
         }
         profileRepository.save(profile);
-        return new Data(true, "success", mapper.map(profile, ProfileDto.class));
+        return new Data(true, "success",  mapper.map(profile, ProfileDto.class));
     }
-    
-    
 
 }
