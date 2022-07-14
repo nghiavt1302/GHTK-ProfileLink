@@ -175,6 +175,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             newUser.setUsername(username);
             newUser.setProvider(Provider.FACEBOOK);
             newUser.setStatus(StatusEnum.ACTIVE);
+            newUser.setEnabled(true);
             userRepository.save(newUser);
         }
 
