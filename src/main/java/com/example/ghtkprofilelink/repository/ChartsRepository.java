@@ -12,6 +12,10 @@ import com.example.ghtkprofilelink.model.entity.ChartsEntity;
 @Repository
 public interface ChartsRepository extends JpaRepository<ChartsEntity, Long> {
 
+    ChartsEntity findAllById(Long profileId);
+
+    List<ChartsEntity> findAllByProfileId(Integer profileId);
+
     // Page<ChartsEntity> findByProfileId(Pageable pageable, @Param("profileId") Integer profileId);
 
 }
