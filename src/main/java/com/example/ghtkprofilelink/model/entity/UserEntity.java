@@ -29,13 +29,15 @@ public class UserEntity {
     @Column(name = "role")
     private Integer role;
 
-
     @Column(name = "verification_code", length = 64)
     private String verificationCode;
 
     private boolean enabled;
 
     private String mail;
+
+    @Column(name = "update_password_token", length = 64)
+    private String updatePasswordToken;
 
     @Enumerated(EnumType.STRING)
     private Provider provider;

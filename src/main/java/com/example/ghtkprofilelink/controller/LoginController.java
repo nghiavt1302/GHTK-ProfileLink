@@ -22,7 +22,6 @@ import java.io.UnsupportedEncodingException;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/test")
 public class LoginController {
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -31,7 +30,7 @@ public class LoginController {
     @Autowired
     private UserServiceImpl userService;
 
-    @PostMapping("/login")
+    @PostMapping("/test/login")
     public ResponseEntity<Data> authenticateUser(@Valid @RequestBody UserDto user) {
         // Xác thực thông tin người dùng Request lên
         Authentication authentication = authenticationManager.authenticate(
@@ -50,13 +49,23 @@ public class LoginController {
         return ResponseEntity.ok(new Data(true, "success", "Bearer " + jwt));
     }
 
-    @PostMapping("/register")
+    @PostMapping("/test/register")
     public ResponseEntity<Data> registerUser(@Valid @RequestBody UserRegister user, HttpServletRequest request) throws MessagingException, UnsupportedEncodingException {
-        return ResponseEntity.ok(userService.register(user, request.getRequestURL().toString()));
+        return ResponseEntity.ok(userService.register(user, request.getRequestURL().append("/verify?code=")));
     }
 
-    @GetMapping("/register/verify")
+    @GetMapping("/test/register/verify")
     public ResponseEntity<Data> verifyUser(@Param("code") String code) {
         return ResponseEntity.ok(userService.verify(code));
+    }
+
+    @GetMapping("/update_password_token")
+    public ResponseEntity<Data> updatePasswordToken(@RequestParam String mail, HttpServletRequest request) throws MessagingException {
+        return ResponseEntity.ok(userService.updatePasswordToken(mail, request.getRequestURL().append("/?code=")));
+    }
+
+    @PostMapping("/update_password_token")
+    public ResponseEntity<Data> updatePassword(@Param("code") String code, @RequestParam String password) {
+        return ResponseEntity.ok(userService.updatePassword(code, password));
     }
 }
