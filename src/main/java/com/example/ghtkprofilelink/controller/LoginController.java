@@ -2,12 +2,12 @@ package com.example.ghtkprofilelink.controller;
 
 import com.example.ghtkprofilelink.model.dto.UserDto;
 import com.example.ghtkprofilelink.model.dto.UserRegister;
+import com.example.ghtkprofilelink.model.playload.LoginResponse;
 import com.example.ghtkprofilelink.model.response.Data;
 import com.example.ghtkprofilelink.security.CustomUserDetails;
 import com.example.ghtkprofilelink.security.jwt.JwtTokenProvider;
 import com.example.ghtkprofilelink.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -45,8 +45,9 @@ public class LoginController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // Trả về jwt cho người dùng.
-        String jwt = tokenProvider.generateToken((CustomUserDetails) authentication.getPrincipal());
-        return ResponseEntity.ok(new Data(true, "success", "Bearer " + jwt));
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        String jwt = tokenProvider.generateToken(userDetails);
+        return ResponseEntity.ok(new Data(true, "success", new LoginResponse("Bearer " + jwt, userDetails.getUser())));
     }
 
     @PostMapping("/test/register")
