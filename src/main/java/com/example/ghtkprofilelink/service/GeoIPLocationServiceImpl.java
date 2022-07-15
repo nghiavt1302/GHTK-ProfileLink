@@ -6,8 +6,8 @@ import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.exception.GeoIp2Exception;
 import com.maxmind.geoip2.model.CityResponse;
 import org.springframework.stereotype.Service;
-// import ua_parser.Client;
-// import ua_parser.Parser;
+import ua_parser.Client;
+import ua_parser.Parser;
 
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,19 +37,19 @@ public class GeoIPLocationServiceImpl implements GeoIPLocationService {
      * @return Device info details
      * @throws IOException if not found
      */
-    // private String getDeviceDetails(String userAgent) throws IOException {
-    //     String deviceDetails = UNKNOWN;
+    private String getDeviceDetails(String userAgent) throws IOException {
+        String deviceDetails = UNKNOWN;
 
-    //     Parser parser = new Parser();
+        Parser parser = new Parser();
 
-    //     Client client = parser.parse(userAgent);
-    //     if (nonNull(client)) {
-    //         deviceDetails = client.userAgent.family + " " + client.userAgent.major + "." + client.userAgent.minor +
-    //                 " - " + client.os.family + " " + client.os.major + "." + client.os.minor;
-    //     }
+        Client client = parser.parse(userAgent);
+        if (nonNull(client)) {
+            deviceDetails = client.userAgent.family + " " + client.userAgent.major + "." + client.userAgent.minor +
+                    " - " + client.os.family + " " + client.os.major + "." + client.os.minor;
+        }
 
-    //     return deviceDetails;
-    // }
+        return deviceDetails;
+    }
 
     /**
      * get user position by ip address
@@ -78,8 +78,8 @@ public class GeoIPLocationServiceImpl implements GeoIPLocationService {
             position.setFullLocation(location);
             position.setLatitude((cityResponse.getLocation() != null) ? cityResponse.getLocation().getLatitude() : 0);
             position.setLongitude((cityResponse.getLocation() != null) ? cityResponse.getLocation().getLongitude() : 0);
-            position.setDevice(null);
-            // position.setDevice(getDeviceDetails(request.getHeader("user-agent")));
+            position.setDevice(getDeviceDetails(request.getHeader("user-agent")));
+            // position.setDevice(null);
             position.setIpAddress(ip);
 
         }
