@@ -51,7 +51,7 @@ public class DesignServiceImpl implements DesignService {
         if (designEntity.getBackgroundColor().equals("")) {
             designEntity.setBackgroundType(BackgroundTypeEnum.COLOR);
         }
-        if (!file.isEmpty()) {
+        if (file!=null) {
             try {
                 Map x = this.cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
                 designEntity.setBackgroundImage(x.get("url").toString());
@@ -73,7 +73,7 @@ public class DesignServiceImpl implements DesignService {
         if (designEntity.getBackgroundColor().equals("")) {
             designEntity.setBackgroundType(BackgroundTypeEnum.COLOR);
         }
-        if (!file.isEmpty()) {
+        if (file!=null) {
             try {
                 Map x = this.cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
                 designEntity.setBackgroundImage(x.get("url").toString());
