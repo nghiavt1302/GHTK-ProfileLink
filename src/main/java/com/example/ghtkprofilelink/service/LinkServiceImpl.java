@@ -61,7 +61,7 @@ public class LinkServiceImpl implements LinkService {
     @Override
     public Data add(LinkDto linkDTO, MultipartFile file) {
         LinkEntity link = mapper.map(linkDTO, LinkEntity.class);
-        if (!file.isEmpty()) {
+        if (file!=null) {
             try {
                 Map x = this.cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
                 link.setPicture(x.get("url").toString());
@@ -77,7 +77,7 @@ public class LinkServiceImpl implements LinkService {
         // TODO Auto-generated method stub
         LinkEntity link = linkRepository.findById(linkDTO.getId()).get().setValueFromDto(linkDTO);
         link.setId(id);
-        if (!file.isEmpty()) {
+        if (file!=null) {
             try {
                 Map x = this.cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
                 link.setPicture(x.get("url").toString());

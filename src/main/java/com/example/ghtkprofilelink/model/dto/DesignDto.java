@@ -29,4 +29,6 @@ public class DesignDto {
     @JsonProperty("button_color")
     private String buttonColor;
     private String picture;
+    @JsonProperty("text_color")
+    private String textColor;
 }
