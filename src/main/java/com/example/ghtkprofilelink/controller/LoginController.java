@@ -8,6 +8,7 @@ import com.example.ghtkprofilelink.security.CustomUserDetails;
 import com.example.ghtkprofilelink.security.jwt.JwtTokenProvider;
 import com.example.ghtkprofilelink.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
