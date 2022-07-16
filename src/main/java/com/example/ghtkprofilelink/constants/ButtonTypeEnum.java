@@ -9,7 +9,7 @@ public enum ButtonTypeEnum {
     CIRCLE_SOLID(0),
     CIRCLE_REGULAR(1),
     RECTANGLE_SOLID(2),
-    RECTANGLE_REGULAR(3),
+    RECTANGLE_REGULAR(3);
 
     private final int type;
 }
