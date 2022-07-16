@@ -58,7 +58,7 @@ public class ChartsServiceImpl implements ChartsService {
         // TODO Auto-generated method stub
         ChartsEntity charts = chartsRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
         chartsRepository.deleteById(id);
-        return new Data(true, "success", charts);
+        return new Data(true, "success", modelMapper.map(charts, ChartsDto.class));
     }
 
     @Override

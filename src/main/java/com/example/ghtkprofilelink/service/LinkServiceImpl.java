@@ -46,7 +46,7 @@ public class LinkServiceImpl implements LinkService {
     @Override
     public Data getById(Long id) {
         LinkEntity link = linkRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
-        return new Data(true, "success", link);
+        return new Data(true, "success", mapper.map(link, LinkDto.class));
     }
 
     @Override
@@ -93,7 +93,7 @@ public class LinkServiceImpl implements LinkService {
         // TODO Auto-generated method stub
         LinkEntity link = linkRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
         linkRepository.deleteById(id);
-        return new Data(true, "success", link);
+        return new Data(true, "success", mapper.map(link, LinkDto.class));
     }
 
     @Override
@@ -102,7 +102,7 @@ public class LinkServiceImpl implements LinkService {
         // TODO Auto-generated method stub
         if (linkEntity.isEmpty() == false) {
             return ResponseEntity.status(HttpStatus.OK).body(
-                    new Data(true, "successful delete", linkEntity));
+                    new Data(true, "successful delete", mapper.map(linkEntity, LinkDto.class)));
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                     new Data(false, "not found", ""));
