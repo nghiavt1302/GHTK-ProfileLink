@@ -126,27 +126,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // Thêm một lớp Filter kiểm tra jwt
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
-//        // FB
-//        http.authorizeRequests()
-//                .antMatchers().permitAll()
-//                .anyRequest().authenticated()
-//                .and()
-//                .formLogin().permitAll().loginPage("/login")
-//                .and()
-//                .oauth2Login()
-//                    .loginPage("/login")
-//                    .userInfoEndpoint()
-//                    .userService(oAuth2UserService)
-//                .and()
-//                .successHandler(new AuthenticationSuccessHandler() {
-//                    @Override
-//                    public void onAuthenticationSuccess(HttpServletRequest request,
-//                                                        HttpServletResponse response,
-//                                                        Authentication authentication) throws IOException, ServletException {
-//                        CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
-//                        userService.processOAuthPostLogin(oAuth2User.getName());
-//                    }
-//                });
     }
 
     @Override
