@@ -82,7 +82,7 @@ public class ProfileServiceImpl implements ProfileService {
     public Data delete(Long id) {
         ProfileEntity profile = profileRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
         profileRepository.deleteById(id);
-        return new Data(true, "success", profile);
+        return new Data(true, "success", mapper.map(profile, ProfileDto.class));
     }
 
     @Override
