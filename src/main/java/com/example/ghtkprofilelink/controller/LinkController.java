@@ -25,7 +25,7 @@ public class LinkController {
     public ResponseEntity<?> get(
             @PathVariable Long id
     ) {
-        return new ResponseEntity<>(linkService.getById(id), HttpStatus.valueOf(200));
+        return new ResponseEntity<>(linkService.getById(id), HttpStatus.OK);
     }
 
     @GetMapping("/list/{profileId}")
@@ -34,24 +34,24 @@ public class LinkController {
             @RequestParam("page_size") int pageSize,
             @PathVariable Long profileId
     ){
-        return new ResponseEntity<>(linkService.getByProfileId(PageRequest.of(page,pageSize),profileId),HttpStatus.valueOf(200));
+        return new ResponseEntity<>(linkService.getByProfileId(PageRequest.of(page,pageSize),profileId),HttpStatus.OK);
     }
     @PostMapping("")
     public ResponseEntity<?> add(@ModelAttribute LinkDto linkDto, @RequestParam MultipartFile file) {
-        return new ResponseEntity<>(linkService.add(linkDto, file), HttpStatus.valueOf(201));
+        return new ResponseEntity<>(linkService.add(linkDto, file), HttpStatus.CREATED);
     }
     @PutMapping("/{id}")
     public ResponseEntity<?> update(
             @ModelAttribute LinkDto linkDto,
-            @RequestParam MultipartFile file,
+            @RequestParam(required = false) MultipartFile file,
             @PathVariable Long id
     ) {
-        return new ResponseEntity<>(linkService.update(linkDto, file, id), HttpStatus.valueOf(201));
+        return new ResponseEntity<>(linkService.update(linkDto, file, id), HttpStatus.CREATED);
     }
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(
             @PathVariable Long id
     ) {
-        return new ResponseEntity<>(linkService.delete(id), HttpStatus.valueOf(200));
+        return new ResponseEntity<>(linkService.delete(id), HttpStatus.OK);
     }
 }
