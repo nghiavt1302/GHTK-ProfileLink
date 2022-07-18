@@ -1,8 +1,6 @@
 package com.example.ghtkprofilelink.model.dto;
 
-
-
-import java.time.LocalDate;
+import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -23,6 +21,6 @@ public class ChartsDto {
     @JsonProperty("profile_id")
     private Integer profileId;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate date;
+    private Date date;
     private String country;
 }

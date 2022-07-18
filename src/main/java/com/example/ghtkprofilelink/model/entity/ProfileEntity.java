@@ -1,6 +1,7 @@
 package com.example.ghtkprofilelink.model.entity;
 
 import com.example.ghtkprofilelink.constants.GenderEnum;
+import com.example.ghtkprofilelink.constants.StatusEnum;
 import com.example.ghtkprofilelink.model.dto.ProfileDto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -41,6 +42,7 @@ public class ProfileEntity {
     private Integer userId;
     @JsonProperty("design_id")
     private Long designId;
+    private StatusEnum status;
 
     public ProfileEntity setValueFromDto(ProfileDto profileDto) {
         this.id = profileDto.getId();

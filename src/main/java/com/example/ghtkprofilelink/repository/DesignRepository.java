@@ -1,6 +1,7 @@
 package com.example.ghtkprofilelink.repository;
 
 import com.example.ghtkprofilelink.constants.DesignTypeEnum;
+import com.example.ghtkprofilelink.constants.StatusEnum;
 import com.example.ghtkprofilelink.model.entity.DesignEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,5 +12,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DesignRepository extends JpaRepository<DesignEntity, Long> {
-    Page<DesignEntity> findByType(Pageable pageable, @Param("type") DesignTypeEnum designType);
+    Page<DesignEntity> findByTypeAndStatus(Pageable pageable, @Param("type") DesignTypeEnum designType, @Param("status") StatusEnum status);
 }

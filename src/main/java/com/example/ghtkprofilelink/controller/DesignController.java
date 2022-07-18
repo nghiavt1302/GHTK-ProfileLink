@@ -1,6 +1,7 @@
 package com.example.ghtkprofilelink.controller;
 
 import com.example.ghtkprofilelink.constants.DesignTypeEnum;
+import com.example.ghtkprofilelink.constants.StatusEnum;
 import com.example.ghtkprofilelink.model.dto.DesignDto;
 import com.example.ghtkprofilelink.service.DesignService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ public class DesignController {
             @RequestParam("page") int page,
             @RequestParam("page_size") int pageSize) {
         return new ResponseEntity<>(
-                designService.getListDesignByType(PageRequest.of(page, pageSize), DesignTypeEnum.DEFAULT),
+                designService.getListDesignByType(PageRequest.of(page, pageSize), DesignTypeEnum.DEFAULT, StatusEnum.ACTIVE),
                 HttpStatus.OK);
     }
 

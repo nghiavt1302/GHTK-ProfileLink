@@ -2,6 +2,7 @@ package com.example.ghtkprofilelink.service;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.example.ghtkprofilelink.constants.StatusEnum;
 import com.example.ghtkprofilelink.model.dto.ProfileDto;
 import com.example.ghtkprofilelink.model.entity.ChartsEntity;
 import com.example.ghtkprofilelink.model.entity.ProfileEntity;
@@ -9,8 +10,7 @@ import com.example.ghtkprofilelink.model.response.Data;
 import com.example.ghtkprofilelink.repository.ChartsRepository;
 import com.example.ghtkprofilelink.repository.ProfileRepository;
 
-import io.swagger.models.Model;
-
+import jdk.jshell.Snippet;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpSession;
 
-import java.time.Month;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
@@ -81,7 +80,8 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public Data delete(Long id) {
         ProfileEntity profile = profileRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
-        profileRepository.deleteById(id);
+        profile.setStatus(StatusEnum.INACTIVE);
+        profileRepository.save(profile);
         return new Data(true, "success", mapper.map(profile, ProfileDto.class));
     }
 

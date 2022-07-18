@@ -1,8 +1,6 @@
 package com.example.ghtkprofilelink.model.entity;
 
-
-
-import java.time.LocalDate;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -35,7 +33,7 @@ public class ChartsEntity {
     @Column(name = "profile_id")
     private Integer profileId;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate date;
+    private Date date;
     private String country;
 
     public ChartsEntity setValueByDto(ChartsDto chartsDto) {
