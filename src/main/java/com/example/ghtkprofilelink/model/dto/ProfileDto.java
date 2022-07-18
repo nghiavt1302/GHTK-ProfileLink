@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 
@@ -20,6 +21,7 @@ public class ProfileDto {
     private String shortBio;
     @JsonProperty("about")
     private String about;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthday;
     private GenderEnum gender;
     private String location;

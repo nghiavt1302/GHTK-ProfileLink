@@ -2,7 +2,7 @@ package com.example.ghtkprofilelink.model.entity;
 
 
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,6 +17,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Data
 @Entity
@@ -33,7 +34,8 @@ public class ChartsEntity {
     @JsonProperty("profile_id")
     @Column(name = "profile_id")
     private Integer profileId;
-    private Date date;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate date;
     private String country;
 
     public ChartsEntity setValueByDto(ChartsDto chartsDto) {
