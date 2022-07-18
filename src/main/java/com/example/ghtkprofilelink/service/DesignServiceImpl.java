@@ -4,6 +4,7 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.example.ghtkprofilelink.constants.BackgroundTypeEnum;
 import com.example.ghtkprofilelink.constants.DesignTypeEnum;
+import com.example.ghtkprofilelink.constants.StatusEnum;
 import com.example.ghtkprofilelink.model.dto.DesignDto;
 import com.example.ghtkprofilelink.model.entity.DesignEntity;
 import com.example.ghtkprofilelink.model.response.Data;
@@ -38,8 +39,8 @@ public class DesignServiceImpl implements DesignService {
     }
 
     @Override
-    public ListData getListDesignByType(Pageable pageable, DesignTypeEnum designType) {
-        Page<DesignEntity> pageDesign = designRepository.findByType(pageable, designType);
+    public ListData getListDesignByType(Pageable pageable, DesignTypeEnum designType, StatusEnum status) {
+        Page<DesignEntity> pageDesign = designRepository.findByTypeAndStatus(pageable, designType , status);
         Pagination pagination = new Pagination(pageDesign.getNumber(), pageDesign.getSize(), pageDesign.getTotalPages(), (int) pageDesign.getTotalElements());
         List<DesignDto> listDesignDto = pageDesign.stream().map(d -> modelMapper.map(d, DesignDto.class)).collect(Collectors.toList());
         return new ListData(true, "success", listDesignDto, pagination);
@@ -88,7 +89,8 @@ public class DesignServiceImpl implements DesignService {
     @Override
     public Data delete(Long id) {
         DesignEntity designEntity = designRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
-        designRepository.deleteById(id);
+        designEntity.setStatus(StatusEnum.INACTIVE);
+        designRepository.save(designEntity);
 
         return new Data(true, "success", modelMapper.map(designEntity, DesignDto.class));
     }
