@@ -58,4 +58,5 @@ public class ProfileEntity {
 
         return this;
     }
+
 }

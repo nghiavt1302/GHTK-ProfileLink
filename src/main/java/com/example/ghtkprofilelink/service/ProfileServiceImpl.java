@@ -21,6 +21,7 @@ import javax.servlet.http.HttpSession;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -91,36 +92,50 @@ public class ProfileServiceImpl implements ProfileService {
         Calendar cal = Calendar.getInstance();
         ProfileEntity profile = profileRepository.getProfileByShortBio(shortBio);
         Integer profileId = profile.getId().intValue();
-        ChartsEntity charts = chartsRepository.findAllByProfileId(profileId).get(chartsRepository.findAllByProfileId(profileId).size() - 1);
-        Long countToMonth = charts.getClickCount();
+        List<ChartsEntity> listCharts = chartsRepository.findAllByProfileId(profileId);
         Integer counter = profile.getClickCount();
-        int monthRealTime = cal.get(Calendar.MONTH) + 1;
-        Date date = charts.getDate();
-        int monthDb = date.getMonth() + 1;
-        Long now = new Date().getTime();
-        Long lastTime = session.getLastAccessedTime();
-
-        if (monthRealTime >= monthDb +1) {
+        if(listCharts.isEmpty()==true){
             counter += 1;
+            profile.setClickCount(counter);
             ChartsEntity chart = new ChartsEntity();
             chart.setClickCount(1L);
-            chart.setCountry(charts.getCountry());
+            chart.setCountry(null);
             chart.setDate(new java.sql.Date(new Date().getTime()));
             chart.setProfileId(profileId.intValue());
             chartsRepository.save(chart);
-        } else {
-            if (counter == null) {
-                profile.setClickCount(0);
-                charts.setClickCount(0L);
-            } else {
-                if (now >= lastTime + 6000) {
-                    counter += 1;
-                    countToMonth += 1L;
-                    profile.setClickCount(counter);
-                    charts.setClickCount(countToMonth);
+        }
+        else {
+            ChartsEntity charts = chartsRepository.findAllByProfileId(profileId).get(chartsRepository.findAllByProfileId(profileId).size() - 1);
+            Long countToMonth = charts.getClickCount();
+            int monthRealTime = cal.get(Calendar.MONTH) + 1;
+            Date date = charts.getDate();
+            int monthDb = date.getMonth() + 1;
+            Long now = new Date().getTime();
+            Long lastTime = session.getLastAccessedTime();
+            if ( monthRealTime >= monthDb +1){
+                counter += 1;
+                ChartsEntity chart = new ChartsEntity();
+                chart.setClickCount(1L);
+                chart.setCountry(charts.getCountry());
+                chart.setDate(new java.sql.Date(new Date().getTime()));
+                chart.setProfileId(profileId.intValue());
+                chartsRepository.save(chart);
+            }
+            else {
+                if (counter == null) {
+                    profile.setClickCount(0);
+                    charts.setClickCount(0L);
+                } else {
+                    if (now >= lastTime + 6000) {
+                        counter += 1;
+                        countToMonth += 1L;
+                        profile.setClickCount(counter);
+                        charts.setClickCount(countToMonth);
+                    }
                 }
             }
-        }
+            
+        } 
         profileRepository.save(profile);
         return new Data(true, "success",  mapper.map(profile, ProfileDto.class));
     }

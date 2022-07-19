@@ -22,12 +22,11 @@ public class GeoIPController {
         this.geoIPLocationService = geoIPLocationService;
     }
 
-    @GetMapping("/geoIP/{ipAddress}")
-    public GeoIP getLocation(@PathVariable String ipAddress, HttpServletRequest request
+    @GetMapping("/geoIP")
+    public GeoIP getLocation(HttpServletRequest request
     ) throws IOException, GeoIp2Exception {
-        String ipAddress1 = request.getHeader("X-FORWARDED-FOR");
-        System.out.println("\n\n\n\n"+ipAddress1+"\n\n\n\n");
-        return geoIPLocationService.getIpLocation(ipAddress, request);
+        String clientIp = geoIPLocationService.getClientIp(request);
+        return geoIPLocationService.getIpLocation(clientIp, request);
     }
 
     @GetMapping("/ipAddress")
