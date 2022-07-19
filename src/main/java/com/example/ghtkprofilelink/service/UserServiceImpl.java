@@ -114,7 +114,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public Data register(UserRegister userRegister, StringBuffer siteURL)
             throws UnsupportedEncodingException, MessagingException {
-        Optional<UserEntity> optional = userRepository.findByMail(userRegister.getMail());
+        Optional<UserEntity> optional = userRepository.findByUsername(userRegister.getUsername());
+        if(optional.isPresent()) return new Data(false, "username already exists", null);
+
+        optional = userRepository.findByMail(userRegister.getMail());
         if (optional.isPresent()) return new Data(false, "mail already exist", null);
 
         UserEntity user = new UserEntity().mapUserRegister(userRegister);

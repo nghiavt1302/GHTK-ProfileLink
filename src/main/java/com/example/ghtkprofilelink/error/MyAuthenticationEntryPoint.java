@@ -1,24 +1,30 @@
 package com.example.ghtkprofilelink.error;
 
+import com.example.ghtkprofilelink.model.response.ErrorMessage;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.OutputStream;
 
 @ControllerAdvice
 public class MyAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
-            throws IOException, ServletException {
+            throws IOException {
         // 401
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authentication Failed");
+        response.setContentType("application/json");
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        OutputStream out = response.getOutputStream();
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.writerWithDefaultPrettyPrinter().writeValue(out, new ErrorMessage(false, "username or password doesn't exist"));
+        out.flush();
     }
 
     @ExceptionHandler(AccessDeniedException.class)
@@ -26,18 +32,5 @@ public class MyAuthenticationEntryPoint implements AuthenticationEntryPoint {
                          AccessDeniedException accessDeniedException) throws IOException {
         // 403
         response.sendError(HttpServletResponse.SC_FORBIDDEN, "Authorization Failed : " + accessDeniedException.getMessage());
-    }
-
-    @ExceptionHandler(UsernameNotFoundException.class)
-    public void usernameNotFoundException(HttpServletRequest request, HttpServletResponse response,
-                                                  UsernameNotFoundException err) throws IOException {
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authentication Failed");
-    }
-
-    @ExceptionHandler(Exception.class)
-    public void commence(HttpServletRequest request, HttpServletResponse response,
-                                 Exception exception) throws IOException {
-        // 500
-        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal Server Error : " + exception.getMessage());
     }
 }

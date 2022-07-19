@@ -1,5 +1,6 @@
 package com.example.ghtkprofilelink.security;
 
+import com.example.ghtkprofilelink.error.MyAuthenticationEntryPoint;
 import com.example.ghtkprofilelink.model.entity.CustomOAuth2User;
 import com.example.ghtkprofilelink.security.jwt.JwtAuthenticationFilter;
 import com.example.ghtkprofilelink.service.CustomOAuth2UserService;
@@ -18,7 +19,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -125,6 +125,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         // Thêm một lớp Filter kiểm tra jwt
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        //Exception handling configuration
+        http.exceptionHandling().authenticationEntryPoint(new MyAuthenticationEntryPoint());
 
 //        // FB
 //        http.authorizeRequests()
