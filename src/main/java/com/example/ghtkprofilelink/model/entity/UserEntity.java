@@ -1,7 +1,9 @@
 package com.example.ghtkprofilelink.model.entity;
 
+import com.example.ghtkprofilelink.constants.Provider;
 import com.example.ghtkprofilelink.constants.StatusEnum;
 import com.example.ghtkprofilelink.model.dto.UserDto;
+import com.example.ghtkprofilelink.model.dto.UserRegister;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -27,10 +29,41 @@ public class UserEntity {
     @Column(name = "role")
     private Integer role;
 
+    @Column(name = "verification_code", length = 64)
+    private String verificationCode;
+
+    private boolean enabled;
+
+    private String mail;
+
+    @Column(name = "update_password_token", length = 64)
+    private String updatePasswordToken;
+
+    @Enumerated(EnumType.STRING)
+    private Provider provider;
+
+    public Provider getProvider(){
+        return provider;
+    }
+
+    public void setProvider(Provider provider) {
+        this.provider = provider;
+    }
+
+
     public UserEntity mapUserDto(UserDto userDto) {
         this.setId(null);
         this.setUsername(userDto.getUsername());
         this.setStatus(StatusEnum.ACTIVE);
+//        this.setRole(userDto.getRole());
+        return this;
+    }
+
+    public UserEntity mapUserRegister(UserRegister userRegister) {
+        this.setId(null);
+        this.setUsername(userRegister.getUsername());
+        this.setStatus(StatusEnum.ACTIVE);
+        this.setMail(userRegister.getMail());
 //        this.setRole(userDto.getRole());
         return this;
     }

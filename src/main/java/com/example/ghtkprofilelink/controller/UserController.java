@@ -5,9 +5,11 @@ import com.example.ghtkprofilelink.model.response.Data;
 import com.example.ghtkprofilelink.model.response.ListData;
 import com.example.ghtkprofilelink.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin
 @RestController
 @RequestMapping("api/v1.0/user")
 public class UserController {
@@ -15,8 +17,8 @@ public class UserController {
     private UserServiceImpl userService;
 
     @GetMapping()
-    public ResponseEntity<ListData> getAll(@RequestParam int page, @RequestParam int pageSize) {
-        return ResponseEntity.ok(userService.getAll(page, pageSize));
+    public ResponseEntity<?> getAll(@RequestParam int page, @RequestParam int pageSize) {
+        return  new ResponseEntity<>(userService.getAll(page, pageSize), HttpStatus.valueOf(200));
     }
 
 //    @GetMapping("/{id}")
@@ -25,22 +27,22 @@ public class UserController {
 //    }
 
     @GetMapping("/username")
-    public ResponseEntity<Data> getByUsername(@RequestParam String username) {
-        return ResponseEntity.ok(userService.getByUsername(username));
+    public ResponseEntity<?> getByUsername(@RequestParam String username) {
+        return new ResponseEntity<>(userService.getByUsername(username) ,HttpStatus.valueOf(200));
     }
 
     @PostMapping("add")
-    public ResponseEntity<Data> add(@RequestBody UserDto userDto) {
-        return ResponseEntity.ok(userService.add(userDto));
+    public ResponseEntity<?> add(@RequestBody UserDto userDto) {
+        return new ResponseEntity<>(userService.add(userDto), HttpStatus.valueOf(200));
     }
 
     @PutMapping()
-    public ResponseEntity<Data> update(@RequestBody UserDto userDto) {
-        return ResponseEntity.ok(userService.update(userDto));
+    public ResponseEntity<?> update(@RequestBody UserDto userDto) {
+        return new ResponseEntity<>(userService.update(userDto), HttpStatus.valueOf(200));
     }
 
     @DeleteMapping("")
-    public ResponseEntity<Data> deleteByUsername(@RequestParam String username) {
-        return ResponseEntity.ok(userService.deleteByUsername(username));
+    public ResponseEntity<?> deleteByUsername(@RequestParam String username) {
+        return new ResponseEntity<>(userService.deleteByUsername(username), HttpStatus.valueOf(200));
     }
 }

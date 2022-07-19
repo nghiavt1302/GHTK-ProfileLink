@@ -1,23 +1,23 @@
-package com.example.ghtkprofilelink.security;
+package com.example.ghtkprofilelink.model.entity;
 
-import com.example.ghtkprofilelink.model.entity.UserEntity;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 
-@Data
-@AllArgsConstructor
-public class CustomUserDetails implements UserDetails {
+public class MyUserDetails implements UserDetails {
     private UserEntity user;
+
+    public MyUserDetails(UserEntity user){
+        this.user = user;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(new SimpleGrantedAuthority(user.getRole().toString()));
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority((String.valueOf(user.getRole())));
+        return Arrays.asList(authority);
     }
 
     @Override
@@ -47,6 +47,6 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return user.isEnabled();
+        return true;
     }
 }

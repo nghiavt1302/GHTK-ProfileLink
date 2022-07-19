@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+@CrossOrigin
 @RestController
 @RequestMapping("api/v1.0/design")
 public class DesignController {
@@ -22,20 +23,20 @@ public class DesignController {
             @RequestParam("page_size") int pageSize) {
         return new ResponseEntity<>(
                 designService.getListDesignByType(PageRequest.of(page, pageSize), DesignTypeEnum.DEFAULT),
-                HttpStatus.valueOf(200));
+                HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(
             @PathVariable Long id) {
-        return new ResponseEntity<>(designService.getById(id), HttpStatus.valueOf(200));
+        return new ResponseEntity<>(designService.getById(id), HttpStatus.OK);
     }
 
     @PostMapping("")
     public ResponseEntity<?> add(
             @ModelAttribute DesignDto designDto,
             @RequestParam(required = false) MultipartFile file) {
-        return new ResponseEntity<>(designService.add(designDto, file), HttpStatus.valueOf(201));
+        return new ResponseEntity<>(designService.add(designDto, file), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
@@ -43,12 +44,12 @@ public class DesignController {
             @RequestBody DesignDto designDto,
             @RequestParam(required = false) MultipartFile file,
             @PathVariable Long id) {
-        return new ResponseEntity<>(designService.update(designDto, file, id), HttpStatus.valueOf(201));
+        return new ResponseEntity<>(designService.update(designDto, file, id), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(
             @PathVariable Long id) {
-        return new ResponseEntity<>(designService.delete(id), HttpStatus.valueOf(200));
+        return new ResponseEntity<>(designService.delete(id), HttpStatus.OK);
     }
 }

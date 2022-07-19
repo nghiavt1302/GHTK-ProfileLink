@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+@CrossOrigin
 @RestController
 @RequestMapping("api/v1.0/profile")
 public class ProfileController {
@@ -23,27 +24,27 @@ public class ProfileController {
     @GetMapping("/{id}")
     public ResponseEntity<?> get(
             @PathVariable Long id) {
-        return new ResponseEntity<>(profileService.getById(id), HttpStatus.valueOf(200));
+        return new ResponseEntity<>(profileService.getById(id), HttpStatus.OK);
     }
 
     @PostMapping("")
     public ResponseEntity<?> add(@ModelAttribute ProfileDto profileDto, @RequestParam(required = false) MultipartFile file) {
-        return new ResponseEntity<>(profileService.add(profileDto, file), HttpStatus.valueOf(201));
+        return new ResponseEntity<>(profileService.add(profileDto, file), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> update(
             @ModelAttribute ProfileDto profileDto,
-            @RequestParam MultipartFile file,
+            @RequestParam(required = false) MultipartFile file,
             @PathVariable Long id) {
-        return new ResponseEntity<>(profileService.update(profileDto, file, id), HttpStatus.valueOf(201));
+        return new ResponseEntity<>(profileService.update(profileDto, file, id), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(
             @PathVariable Long id) {
 
-        return new ResponseEntity<>(profileService.delete(id), HttpStatus.valueOf(200));
+        return new ResponseEntity<>(profileService.delete(id), HttpStatus.OK);
     }
 
     @GetMapping("/getbyshortbio")

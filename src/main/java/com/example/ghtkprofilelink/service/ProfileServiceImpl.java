@@ -50,7 +50,7 @@ public class ProfileServiceImpl implements ProfileService {
     public Data add(ProfileDto profileDto, MultipartFile file) {
         ProfileEntity profile = mapper.map(profileDto, ProfileEntity.class);
         profile.setProfileLink("localhost:8080/" + profile.getShortBio());
-        if (!file.isEmpty()) {
+        if (file!=null) {
             try {
                 Map x = this.cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
                 profile.setAvatarLink(x.get("url").toString());
@@ -68,7 +68,7 @@ public class ProfileServiceImpl implements ProfileService {
     public Data update(ProfileDto profileDto, MultipartFile file, Long id) {
         ProfileEntity profile = profileRepository.findById(profileDto.getId()).get().setValueFromDto(profileDto);
         profile.setId(id);
-        if (!file.isEmpty()) {
+        if (file!=null) {
             try {
                 Map x = this.cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
                 profile.setAvatarLink(x.get("url").toString());
@@ -83,7 +83,7 @@ public class ProfileServiceImpl implements ProfileService {
     public Data delete(Long id) {
         ProfileEntity profile = profileRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
         profileRepository.deleteById(id);
-        return new Data(true, "success", profile);
+        return new Data(true, "success", mapper.map(profile, ProfileDto.class));
     }
 
     @Override

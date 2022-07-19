@@ -35,6 +35,9 @@ public class DesignEntity {
     private ButtonTypeEnum buttonType;
     @JsonProperty("button_color")
     private String buttonColor;
+    private String picture;
+    @JsonProperty("text_color")
+    private String textColor;
 
     public DesignEntity setValueByDto(DesignDto designDto) {
         this.id = designDto.getId();
@@ -46,6 +49,8 @@ public class DesignEntity {
         this.font = designDto.getFont();
         this.buttonType = designDto.getButtonType();
         this.buttonColor = designDto.getButtonColor();
+        this.picture=designDto.getPicture();
+        this.textColor = designDto.getTextColor();
 
         return this;
     }
