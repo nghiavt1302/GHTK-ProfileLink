@@ -2,13 +2,11 @@ package com.example.ghtkprofilelink.service;
 
 import com.example.ghtkprofilelink.model.dto.UserDto;
 import com.example.ghtkprofilelink.model.dto.UserRegister;
-import com.example.ghtkprofilelink.model.entity.UserEntity;
 import com.example.ghtkprofilelink.model.response.Data;
 import com.example.ghtkprofilelink.model.response.ListData;
 
 import javax.mail.MessagingException;
 import java.io.UnsupportedEncodingException;
-import java.util.List;
 
 public interface UserService {
     ListData getAll(int page, int pageSize);
@@ -33,9 +31,7 @@ public interface UserService {
 
     Data updatePassword(String code, String password);
 
-<<<<<<< HEAD
     Data forgotPassword(String mail) throws MessagingException;
-=======
+
     void processOAuthPostLogin(String username, String email);
->>>>>>> 545338cc02a259ea984582b1bcc288e8d53822cc
 }
