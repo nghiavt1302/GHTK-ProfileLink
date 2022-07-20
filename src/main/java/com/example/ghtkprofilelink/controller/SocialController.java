@@ -46,6 +46,6 @@ public class SocialController {
             @RequestParam("page_size") int pageSize,
             @PathVariable Long profileId
     ){
-        return new ResponseEntity<>(socialService.getByProfileId(PageRequest.of(page,pageSize),profileId),HttpStatus.valueOf(200));
+        return new ResponseEntity<>(socialService.getByProfileId(PageRequest.of(page,pageSize),profileId),HttpStatus.OK);
     }
 }

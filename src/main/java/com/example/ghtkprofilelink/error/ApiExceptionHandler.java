@@ -44,4 +44,10 @@ public class ApiExceptionHandler {
     public ErrorMessage sqlIntegrityConstraintViolationException(SQLIntegrityConstraintViolationException e) {
         return new ErrorMessage(false, e.getMessage());
     }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public ErrorMessage catchException(SQLIntegrityConstraintViolationException e) {
+        return new ErrorMessage(false, e.getMessage());
+    }
 }

@@ -2,6 +2,7 @@ package com.example.ghtkprofilelink.service;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.example.ghtkprofilelink.constants.StatusEnum;
 import com.example.ghtkprofilelink.model.dto.ProfileDto;
 import com.example.ghtkprofilelink.model.entity.ChartsEntity;
 import com.example.ghtkprofilelink.model.entity.ProfileEntity;
@@ -9,8 +10,7 @@ import com.example.ghtkprofilelink.model.response.Data;
 import com.example.ghtkprofilelink.repository.ChartsRepository;
 import com.example.ghtkprofilelink.repository.ProfileRepository;
 
-import io.swagger.models.Model;
-
+import jdk.jshell.Snippet;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,9 +19,9 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpSession;
 
-import java.time.Month;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -49,7 +49,7 @@ public class ProfileServiceImpl implements ProfileService {
     public Data add(ProfileDto profileDto, MultipartFile file) {
         ProfileEntity profile = mapper.map(profileDto, ProfileEntity.class);
         profile.setProfileLink("localhost:8080/" + profile.getShortBio());
-        if (!file.isEmpty()) {
+        if (file!=null) {
             try {
                 Map x = this.cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
                 profile.setAvatarLink(x.get("url").toString());
@@ -67,7 +67,7 @@ public class ProfileServiceImpl implements ProfileService {
     public Data update(ProfileDto profileDto, MultipartFile file, Long id) {
         ProfileEntity profile = profileRepository.findById(profileDto.getId()).get().setValueFromDto(profileDto);
         profile.setId(id);
-        if (!file.isEmpty()) {
+        if (file!=null) {
             try {
                 Map x = this.cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
                 profile.setAvatarLink(x.get("url").toString());
@@ -81,8 +81,9 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public Data delete(Long id) {
         ProfileEntity profile = profileRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
-        profileRepository.deleteById(id);
-        return new Data(true, "success", profile);
+        profile.setStatus(StatusEnum.INACTIVE);
+        profileRepository.save(profile);
+        return new Data(true, "success", mapper.map(profile, ProfileDto.class));
     }
 
     @Override
@@ -91,36 +92,50 @@ public class ProfileServiceImpl implements ProfileService {
         Calendar cal = Calendar.getInstance();
         ProfileEntity profile = profileRepository.getProfileByShortBio(shortBio);
         Integer profileId = profile.getId().intValue();
-        ChartsEntity charts = chartsRepository.findAllByProfileId(profileId).get(chartsRepository.findAllByProfileId(profileId).size() - 1);
-        Long countToMonth = charts.getClickCount();
+        List<ChartsEntity> listCharts = chartsRepository.findAllByProfileId(profileId);
         Integer counter = profile.getClickCount();
-        int monthRealTime = cal.get(Calendar.MONTH) + 1;
-        Date date = charts.getDate();
-        int monthDb = date.getMonth() + 1;
-        Long now = new Date().getTime();
-        Long lastTime = session.getLastAccessedTime();
-
-        if (monthRealTime >= monthDb +1) {
+        if(listCharts.isEmpty()==true){
             counter += 1;
+            profile.setClickCount(counter);
             ChartsEntity chart = new ChartsEntity();
             chart.setClickCount(1L);
-            chart.setCountry(charts.getCountry());
+            chart.setCountry(null);
             chart.setDate(new java.sql.Date(new Date().getTime()));
             chart.setProfileId(profileId.intValue());
             chartsRepository.save(chart);
-        } else {
-            if (counter == null) {
-                profile.setClickCount(0);
-                charts.setClickCount(0L);
-            } else {
-                if (now >= lastTime + 6000) {
-                    counter += 1;
-                    countToMonth += 1L;
-                    profile.setClickCount(counter);
-                    charts.setClickCount(countToMonth);
+        }
+        else {
+            ChartsEntity charts = chartsRepository.findAllByProfileId(profileId).get(chartsRepository.findAllByProfileId(profileId).size() - 1);
+            Long countToMonth = charts.getClickCount();
+            int monthRealTime = cal.get(Calendar.MONTH) + 1;
+            Date date = charts.getDate();
+            int monthDb = date.getMonth() + 1;
+            Long now = new Date().getTime();
+            Long lastTime = session.getLastAccessedTime();
+            if ( monthRealTime >= monthDb +1){
+                counter += 1;
+                ChartsEntity chart = new ChartsEntity();
+                chart.setClickCount(1L);
+                chart.setCountry(charts.getCountry());
+                chart.setDate(new java.sql.Date(new Date().getTime()));
+                chart.setProfileId(profileId.intValue());
+                chartsRepository.save(chart);
+            }
+            else {
+                if (counter == null) {
+                    profile.setClickCount(0);
+                    charts.setClickCount(0L);
+                } else {
+                    if (now >= lastTime + 6000) {
+                        counter += 1;
+                        countToMonth += 1L;
+                        profile.setClickCount(counter);
+                        charts.setClickCount(countToMonth);
+                    }
                 }
             }
-        }
+            
+        } 
         profileRepository.save(profile);
         return new Data(true, "success",  mapper.map(profile, ProfileDto.class));
     }
