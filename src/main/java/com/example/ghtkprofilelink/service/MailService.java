@@ -1,9 +1,8 @@
 package com.example.ghtkprofilelink.service;
 
-import com.example.ghtkprofilelink.model.entity.UserEntity;
-
 import javax.mail.MessagingException;
+import java.util.Map;
 
 public interface MailService {
-    void sendMail(UserEntity user, String siteUrl, String template, String subject) throws MessagingException;
+    void sendMail(Map<String, Object> props, String mail, String template, String subject) throws MessagingException;
 }

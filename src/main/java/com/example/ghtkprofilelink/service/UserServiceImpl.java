@@ -15,7 +15,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -25,10 +24,10 @@ import org.springframework.stereotype.Service;
 import javax.mail.MessagingException;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
-import javax.persistence.Version;
 import javax.transaction.Transactional;
 import java.io.UnsupportedEncodingException;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -115,10 +114,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public Data register(UserRegister userRegister, StringBuffer siteURL)
+    public Data register(UserRegister userRegister, StringBuffer siteUrl)
             throws UnsupportedEncodingException, MessagingException {
         Optional<UserEntity> optional = userRepository.findByUsername(userRegister.getUsername());
-        if(optional.isPresent()) return new Data(false, "username already exists", null);
+        if (optional.isPresent()) return new Data(false, "username already exists", null);
 
         optional = userRepository.findByMail(userRegister.getMail());
         if (optional.isPresent()) return new Data(false, "mail already exist", null);
@@ -131,8 +130,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         userRepository.save(user);
 
         // Gui mail
-        mailService.sendMail(user, siteURL.append(user.getVerificationCode()).toString(), "sendMail", "Xác thực tài khoản");
-        return new Data(true, "send mail success", siteURL);
+        Map<String, Object> props = new HashMap<>();
+        props.put("name", user.getUsername());
+        props.put("url", siteUrl.append(user.getVerificationCode()).toString());
+
+        mailService.sendMail(props, user.getMail(), "sendMail", "Xác thực tài khoản");
+        return new Data(true, "send mail success", siteUrl);
     }
 
     @Override
@@ -156,7 +159,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         user.setUpdatePasswordToken(RandomString.make(64));
         userRepository.save(user);
 //
-        mailService.sendMail(user, siteUrl.append(user.getUpdatePasswordToken()).toString(), "updatePassword", "Đổi mật khẩu");
+        Map<String, Object> props = new HashMap<>();
+        props.put("name", user.getUsername());
+        props.put("url", siteUrl.append(user.getUpdatePasswordToken()).toString());
+
+        mailService.sendMail(props, user.getMail(), "updatePassword", "Đổi mật khẩu");
         return new Data(true, "update password success", siteUrl);
     }
 
@@ -166,11 +173,31 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         if (!optionalUser.isPresent()) {
             return new Data(false, "password token not found", null);
         }
+
         UserEntity user = optionalUser.get();
         user.setPassword(passwordEncoder.encode(password));
         user.setUpdatePasswordToken(null);
         userRepository.save(user);
         return new Data(true, "update password success", null);
+    }
+
+    @Override
+    public Data forgotPassword(String mail) throws MessagingException {
+        Optional<UserEntity> optionalUser = userRepository.findByMail(mail);
+        if (!optionalUser.isPresent()) return new Data(false, "mail not found", null);
+
+        String pass = RandomString.make(10);
+
+        UserEntity user = optionalUser.get();
+        user.setPassword(passwordEncoder.encode(pass));
+        userRepository.save(user);
+//
+        Map<String, Object> props = new HashMap<>();
+        props.put("name", user.getUsername());
+        props.put("pass", pass);
+
+        mailService.sendMail(props, user.getMail(), "forgotPassword", "Quên mật khẩu");
+        return new Data(true, "forgot password success", pass);
     }
 
     // Convert FB username (Vu Trong Nghia -> vutrongnghia)
@@ -200,7 +227,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         if (existEmail == null) {
             String nameConverted = convertFbUsername(username);
             UserEntity existUsername = userRepository.getUserByUsername(nameConverted);
-            if (existUsername == null){
+            if (existUsername == null) {
                 UserEntity newUser = new UserEntity();
                 newUser.setUsername(nameConverted);
                 newUser.setMail(email);

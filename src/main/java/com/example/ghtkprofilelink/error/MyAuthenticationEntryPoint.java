@@ -23,7 +23,7 @@ public class MyAuthenticationEntryPoint implements AuthenticationEntryPoint {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         OutputStream out = response.getOutputStream();
         ObjectMapper mapper = new ObjectMapper();
-        mapper.writerWithDefaultPrettyPrinter().writeValue(out, new ErrorMessage(false, "username or password doesn't exist"));
+        mapper.writerWithDefaultPrettyPrinter().writeValue(out, new ErrorMessage(false, authException.getMessage()));
         out.flush();
     }
 
