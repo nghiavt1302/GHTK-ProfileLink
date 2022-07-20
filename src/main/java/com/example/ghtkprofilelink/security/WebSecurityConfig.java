@@ -113,7 +113,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                                                         HttpServletResponse response,
                                                         Authentication authentication) throws IOException, ServletException {
                         CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
-                        userService.processOAuthPostLogin(oAuth2User.getName());
+                        String username = oAuth2User.getName();
+                        String email = oAuth2User.getEmail();
+                        userService.processOAuthPostLogin(username, email);
                     }
                 });
     // Tất cả các request khác đều cần phải xác thực mới được truy cập

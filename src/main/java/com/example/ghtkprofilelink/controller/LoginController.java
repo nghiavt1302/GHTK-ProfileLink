@@ -8,6 +8,7 @@ import com.example.ghtkprofilelink.security.CustomUserDetails;
 import com.example.ghtkprofilelink.security.jwt.JwtTokenProvider;
 import com.example.ghtkprofilelink.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -56,7 +57,7 @@ public class LoginController {
     }
 
     @GetMapping("/test/register/verify")
-    public ResponseEntity<Data> verifyUser(@RequestParam String code) {
+    public ResponseEntity<Data> verifyUser(@Param("code") String code) {
         return ResponseEntity.ok(userService.verify(code));
     }
 
@@ -66,7 +67,7 @@ public class LoginController {
     }
 
     @PostMapping("/update_password_token")
-    public ResponseEntity<Data> updatePassword(@RequestParam String code, @RequestParam String password) {
+    public ResponseEntity<Data> updatePassword(@Param("code") String code, @RequestParam String password) {
         return ResponseEntity.ok(userService.updatePassword(code, password));
     }
 }

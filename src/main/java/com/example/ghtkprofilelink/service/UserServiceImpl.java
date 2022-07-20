@@ -15,6 +15,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,8 +25,10 @@ import org.springframework.stereotype.Service;
 import javax.mail.MessagingException;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.Version;
 import javax.transaction.Transactional;
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -170,17 +173,51 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return new Data(true, "update password success", null);
     }
 
-    // Them user vao database khi login bang Facebook
-    public void processOAuthPostLogin(String username) {
-        UserEntity existUser = userRepository.getUserByUsername(username);
-        if (existUser == null) {
-            UserEntity newUser = new UserEntity();
-            newUser.setUsername(username);
-            newUser.setProvider(Provider.FACEBOOK);
-            newUser.setStatus(StatusEnum.ACTIVE);
-            newUser.setEnabled(true);
-            userRepository.save(newUser);
-        }
+    // Convert FB username (Vu Trong Nghia -> vutrongnghia)
+    public String convertFbUsername(String fbName){
+        return fbName.toLowerCase().replaceAll(" ","");
+    }
 
+    // Them so tu 0, 1, 2, ... vao sau username neu bi trung
+    public String duplicateUsernameHandle(String nameConverted){
+        String addInt = nameConverted;
+        int i = 0;
+        do {
+            UserEntity existUser = userRepository.getUserByUsername(addInt);
+            if (existUser == null){
+                return addInt;
+            }else {
+                addInt = nameConverted.concat(String.valueOf(i));
+                i++;
+            }
+        }while (true);
+    }
+
+    // Them user vao database khi login bang Facebook
+    @Override
+    public void processOAuthPostLogin(String username, String email) {
+        UserEntity existEmail = userRepository.getUserByEmail(email);
+        if (existEmail == null) {
+            String nameConverted = convertFbUsername(username);
+            UserEntity existUsername = userRepository.getUserByUsername(nameConverted);
+            if (existUsername == null){
+                UserEntity newUser = new UserEntity();
+                newUser.setUsername(nameConverted);
+                newUser.setMail(email);
+                newUser.setProvider(Provider.FACEBOOK);
+                newUser.setStatus(StatusEnum.ACTIVE);
+                newUser.setEnabled(true);
+                userRepository.save(newUser);
+            } else {
+                String nameFix = duplicateUsernameHandle(nameConverted);
+                UserEntity newUser = new UserEntity();
+                newUser.setUsername(nameFix);
+                newUser.setMail(email);
+                newUser.setProvider(Provider.FACEBOOK);
+                newUser.setStatus(StatusEnum.ACTIVE);
+                newUser.setEnabled(true);
+                userRepository.save(newUser);
+            }
+        }
     }
 }

@@ -3,6 +3,7 @@ package com.example.ghtkprofilelink.model.entity;
 import com.example.ghtkprofilelink.constants.BackgroundTypeEnum;
 import com.example.ghtkprofilelink.constants.ButtonTypeEnum;
 import com.example.ghtkprofilelink.constants.DesignTypeEnum;
+import com.example.ghtkprofilelink.constants.StatusEnum;
 import com.example.ghtkprofilelink.model.dto.DesignDto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -36,6 +37,9 @@ public class DesignEntity {
     @JsonProperty("button_color")
     private String buttonColor;
     private String picture;
+    @JsonProperty("text_color")
+    private String textColor;
+    private StatusEnum status;
 
     public DesignEntity setValueByDto(DesignDto designDto) {
         this.id = designDto.getId();
@@ -48,6 +52,7 @@ public class DesignEntity {
         this.buttonType = designDto.getButtonType();
         this.buttonColor = designDto.getButtonColor();
         this.picture=designDto.getPicture();
+        this.textColor = designDto.getTextColor();
 
         return this;
     }

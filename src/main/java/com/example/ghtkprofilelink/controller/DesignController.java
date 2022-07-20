@@ -1,6 +1,7 @@
 package com.example.ghtkprofilelink.controller;
 
 import com.example.ghtkprofilelink.constants.DesignTypeEnum;
+import com.example.ghtkprofilelink.constants.StatusEnum;
 import com.example.ghtkprofilelink.model.dto.DesignDto;
 import com.example.ghtkprofilelink.service.DesignService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,21 +23,21 @@ public class DesignController {
             @RequestParam("page") int page,
             @RequestParam("page_size") int pageSize) {
         return new ResponseEntity<>(
-                designService.getListDesignByType(PageRequest.of(page, pageSize), DesignTypeEnum.DEFAULT),
-                HttpStatus.valueOf(200));
+                designService.getListDesignByType(PageRequest.of(page, pageSize), DesignTypeEnum.DEFAULT, StatusEnum.ACTIVE),
+                HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(
             @PathVariable Long id) {
-        return new ResponseEntity<>(designService.getById(id), HttpStatus.valueOf(200));
+        return new ResponseEntity<>(designService.getById(id), HttpStatus.OK);
     }
 
     @PostMapping("")
     public ResponseEntity<?> add(
             @ModelAttribute DesignDto designDto,
             @RequestParam(required = false) MultipartFile file) {
-        return new ResponseEntity<>(designService.add(designDto, file), HttpStatus.valueOf(201));
+        return new ResponseEntity<>(designService.add(designDto, file), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
@@ -44,12 +45,12 @@ public class DesignController {
             @RequestBody DesignDto designDto,
             @RequestParam(required = false) MultipartFile file,
             @PathVariable Long id) {
-        return new ResponseEntity<>(designService.update(designDto, file, id), HttpStatus.valueOf(201));
+        return new ResponseEntity<>(designService.update(designDto, file, id), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(
             @PathVariable Long id) {
-        return new ResponseEntity<>(designService.delete(id), HttpStatus.valueOf(200));
+        return new ResponseEntity<>(designService.delete(id), HttpStatus.OK);
     }
 }
