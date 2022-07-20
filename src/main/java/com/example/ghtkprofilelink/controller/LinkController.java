@@ -37,7 +37,7 @@ public class LinkController {
         return new ResponseEntity<>(linkService.getByProfileId(PageRequest.of(page,pageSize),profileId),HttpStatus.OK);
     }
     @PostMapping("")
-    public ResponseEntity<?> add(@ModelAttribute LinkDto linkDto, @RequestParam MultipartFile file) {
+    public ResponseEntity<?> add(@ModelAttribute LinkDto linkDto, @RequestParam(required = false) MultipartFile file) {
         return new ResponseEntity<>(linkService.add(linkDto, file), HttpStatus.CREATED);
     }
     @PutMapping("/{id}")

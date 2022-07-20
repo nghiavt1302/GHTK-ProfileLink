@@ -3,7 +3,7 @@ package com.example.ghtkprofilelink.controller;
 import com.example.ghtkprofilelink.constants.DesignTypeEnum;
 import com.example.ghtkprofilelink.constants.StatusEnum;
 import com.example.ghtkprofilelink.model.dto.DesignDto;
-import com.example.ghtkprofilelink.service.DesignService;
+import com.example.ghtkprofilelink.service.DesignServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -16,7 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("api/v1.0/design")
 public class DesignController {
     @Autowired
-    DesignService designService;
+    DesignServiceImpl designService;
 
     @GetMapping("")
     public ResponseEntity<?> getListDesignDefault(
@@ -27,7 +27,7 @@ public class DesignController {
                 HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/get/{id}")
     public ResponseEntity<?> getById(
             @PathVariable Long id) {
         return new ResponseEntity<>(designService.getById(id), HttpStatus.OK);

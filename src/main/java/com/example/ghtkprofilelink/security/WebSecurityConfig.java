@@ -97,7 +97,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         // Enable CORS and disable CSRF
         http.cors().and().csrf().disable()
-                .authorizeRequests().antMatchers("/test/**", "/swagger-ui.html#", "/loginFb").permitAll() // Cho phép tất cả mọi người truy cập vào login
+                .authorizeRequests().antMatchers("/test/**", "/swagger-ui.html#", "/loginFb","/api/v1.0/design/get/**","/api/v1.0/link/list/**","/api/v1.0/profile/getbyshortbio").permitAll() // Cho phép tất cả mọi người truy cập vào login
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().permitAll().loginPage("/loginFb")
