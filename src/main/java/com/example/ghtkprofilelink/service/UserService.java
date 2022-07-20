@@ -30,4 +30,6 @@ public interface UserService {
     Data updatePasswordToken(String mail, StringBuffer siteUrl) throws MessagingException;
 
     Data updatePassword(String code, String password);
+
+    Data forgotPassword(String mail) throws MessagingException;
 }

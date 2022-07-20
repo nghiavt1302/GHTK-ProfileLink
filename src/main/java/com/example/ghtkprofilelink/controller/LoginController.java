@@ -69,4 +69,9 @@ public class LoginController {
     public ResponseEntity<Data> updatePassword(@RequestParam String code, @RequestParam String password) {
         return ResponseEntity.ok(userService.updatePassword(code, password));
     }
+
+    @GetMapping("/test/forgot_password")
+    public ResponseEntity<Data> forgotPassword(@RequestParam String mail) throws MessagingException {
+        return ResponseEntity.ok(userService.forgotPassword(mail));
+    }
 }
