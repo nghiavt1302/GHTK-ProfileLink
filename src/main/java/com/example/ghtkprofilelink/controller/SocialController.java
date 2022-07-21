@@ -40,7 +40,7 @@ public class SocialController {
         return ResponseEntity.ok(socialService.delete(id));
     }
 
-    @GetMapping("/social/{profileId}")
+    @GetMapping("/get/{profileId}")
     public ResponseEntity<?> getByProfileId(
             @RequestParam("page") int page,
             @RequestParam("page_size") int pageSize,
