@@ -48,11 +48,18 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public Data add(ProfileDto profileDto, MultipartFile file) {
         ProfileEntity profile = mapper.map(profileDto, ProfileEntity.class);
+        Integer profileId = profile.getId().intValue();
         profile.setProfileLink("localhost:8080/" + profile.getShortBio());
-        if (file!=null) {
+        if (file != null) {
             try {
                 Map x = this.cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
                 profile.setAvatarLink(x.get("url").toString());
+                ChartsEntity chart = new ChartsEntity();
+                chart.setClickCount(1L);
+                chart.setCountry(null);
+                chart.setDate(new java.sql.Date(new Date().getTime()));
+                chart.setProfileId(profileId.intValue());
+                chartsRepository.save(chart);
             } catch (Exception e) {
                 System.out.println(e);
             }
@@ -67,7 +74,7 @@ public class ProfileServiceImpl implements ProfileService {
     public Data update(ProfileDto profileDto, MultipartFile file, Long id) {
         ProfileEntity profile = profileRepository.findById(profileDto.getId()).get().setValueFromDto(profileDto);
         profile.setId(id);
-        if (file!=null) {
+        if (file != null) {
             try {
                 Map x = this.cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
                 profile.setAvatarLink(x.get("url").toString());
@@ -92,52 +99,38 @@ public class ProfileServiceImpl implements ProfileService {
         Calendar cal = Calendar.getInstance();
         ProfileEntity profile = profileRepository.getProfileByShortBio(shortBio);
         Integer profileId = profile.getId().intValue();
-        List<ChartsEntity> listCharts = chartsRepository.findAllByProfileId(profileId);
         Integer counter = profile.getClickCount();
-        if(listCharts.isEmpty()==true){
+        ChartsEntity charts = chartsRepository.findAllByProfileId(profileId)
+                .get(chartsRepository.findAllByProfileId(profileId).size() - 1);
+        Long countToMonth = charts.getClickCount();
+        int monthRealTime = cal.get(Calendar.MONTH) + 1;
+        Date date = charts.getDate();
+        int monthDb = date.getMonth() + 1;
+        Long now = new Date().getTime();
+        Long lastTime = session.getLastAccessedTime();
+        if (monthRealTime >= monthDb + 1) {
             counter += 1;
-            profile.setClickCount(counter);
             ChartsEntity chart = new ChartsEntity();
             chart.setClickCount(1L);
-            chart.setCountry(null);
+            chart.setCountry(charts.getCountry());
             chart.setDate(new java.sql.Date(new Date().getTime()));
             chart.setProfileId(profileId.intValue());
             chartsRepository.save(chart);
-        }
-        else {
-            ChartsEntity charts = chartsRepository.findAllByProfileId(profileId).get(chartsRepository.findAllByProfileId(profileId).size() - 1);
-            Long countToMonth = charts.getClickCount();
-            int monthRealTime = cal.get(Calendar.MONTH) + 1;
-            Date date = charts.getDate();
-            int monthDb = date.getMonth() + 1;
-            Long now = new Date().getTime();
-            Long lastTime = session.getLastAccessedTime();
-            if ( monthRealTime >= monthDb +1){
-                counter += 1;
-                ChartsEntity chart = new ChartsEntity();
-                chart.setClickCount(1L);
-                chart.setCountry(charts.getCountry());
-                chart.setDate(new java.sql.Date(new Date().getTime()));
-                chart.setProfileId(profileId.intValue());
-                chartsRepository.save(chart);
-            }
-            else {
-                if (counter == null) {
-                    profile.setClickCount(0);
-                    charts.setClickCount(0L);
-                } else {
-                    if (now >= lastTime + 6000) {
-                        counter += 1;
-                        countToMonth += 1L;
-                        profile.setClickCount(counter);
-                        charts.setClickCount(countToMonth);
-                    }
+        } else {
+            if (counter == null) {
+                profile.setClickCount(0);
+                charts.setClickCount(0L);
+            } else {
+                if (now >= lastTime + 6000) {
+                    counter += 1;
+                    countToMonth += 1L;
+                    profile.setClickCount(counter);
+                    charts.setClickCount(countToMonth);
                 }
             }
-            
-        } 
+        }
         profileRepository.save(profile);
-        return new Data(true, "success",  mapper.map(profile, ProfileDto.class));
+        return new Data(true, "success", mapper.map(profile, ProfileDto.class));
     }
 
 }
