@@ -14,7 +14,9 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
     Optional<UserEntity> findByUsername(String username);
+
     Boolean existsByUsername(String username);
+
     Page<UserEntity> findByStatusEquals(StatusEnum statusEnum, Pageable pageable);
 
     Optional<UserEntity> findByVerificationCode(String verificationCode);
@@ -27,5 +29,5 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     Optional<UserEntity> findByMail(String mail);
 
-    Optional<UserEntity> findByUpdatePasswordToken(String password);
+    Optional<UserEntity> findByUpdatePasswordToken(String token);
 }
