@@ -1,7 +1,6 @@
 package com.example.ghtkprofilelink.model.entity;
 
 import com.example.ghtkprofilelink.constants.Provider;
-import com.example.ghtkprofilelink.constants.StatusEnum;
 import com.example.ghtkprofilelink.model.dto.UserDto;
 import com.example.ghtkprofilelink.model.dto.UserRegister;
 import lombok.Data;
@@ -23,8 +22,8 @@ public class UserEntity {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "status")
-    private StatusEnum status;
+//    @Column(name = "status")
+//    private StatusEnum status;
 
     @Column(name = "role")
     private Integer role;
@@ -54,7 +53,7 @@ public class UserEntity {
     public UserEntity mapUserDto(UserDto userDto) {
         this.setId(null);
         this.setUsername(userDto.getUsername());
-        this.setStatus(StatusEnum.ACTIVE);
+//        this.setStatus(StatusEnum.ACTIVE);
 //        this.setRole(userDto.getRole());
         return this;
     }
@@ -62,7 +61,7 @@ public class UserEntity {
     public UserEntity mapUserRegister(UserRegister userRegister) {
         this.setId(null);
         this.setUsername(userRegister.getUsername());
-        this.setStatus(StatusEnum.ACTIVE);
+//        this.setStatus(StatusEnum.ACTIVE);
         this.setMail(userRegister.getMail());
 //        this.setRole(userDto.getRole());
         return this;

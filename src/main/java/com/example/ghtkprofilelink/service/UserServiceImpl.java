@@ -1,20 +1,15 @@
 package com.example.ghtkprofilelink.service;
 
 import com.example.ghtkprofilelink.constants.Provider;
-import com.example.ghtkprofilelink.constants.StatusEnum;
 import com.example.ghtkprofilelink.model.dto.UserDto;
 import com.example.ghtkprofilelink.model.dto.UserRegister;
 import com.example.ghtkprofilelink.model.entity.UserEntity;
 import com.example.ghtkprofilelink.model.response.Data;
-import com.example.ghtkprofilelink.model.response.ListData;
-import com.example.ghtkprofilelink.model.response.Pagination;
 import com.example.ghtkprofilelink.repository.UserRepository;
 import com.example.ghtkprofilelink.security.CustomUserDetails;
 import net.bytebuddy.utility.RandomString;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -41,14 +36,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Autowired
     private MailServiceImpl mailService;
 
-    @Override
-    public ListData getAll(int page, int pageSize) {
-        Page<UserDto> userEntities = userRepository.findByStatusEquals(StatusEnum.ACTIVE, PageRequest.of(page, pageSize))
-                .map(userEntity -> mapper.map(userEntity, UserDto.class));
-
-        return new ListData(true, "success", userEntities.getContent(),
-                new Pagination(userEntities.getNumber(), userEntities.getSize(), userEntities.getTotalPages(), (int) userEntities.getTotalElements()));
-    }
+//    @Override
+//    Chua dung
+//    public ListData getAll(int page, int pageSize) {
+//        Page<UserDto> userEntities = userRepository.findByStatusEquals(StatusEnum.ACTIVE, PageRequest.of(page, pageSize))
+//                .map(userEntity -> mapper.map(userEntity, UserDto.class));
+//
+//        return new ListData(true, "success", userEntities.getContent(),
+//                new Pagination(userEntities.getNumber(), userEntities.getSize(), userEntities.getTotalPages(), (int) userEntities.getTotalElements()));
+//    }
 
     @Override
     public Data getById(Long id) {
@@ -85,7 +81,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public Data deleteById(Long id) {
         if (!userRepository.existsById(id)) throw new EntityNotFoundException();
         UserEntity user = userRepository.getById(id);
-        user.setStatus(StatusEnum.INACTIVE);
+//        user.setStatus(StatusEnum.INACTIVE);
+        user.setEnabled(false);
         return new Data(true, "success", mapper.map(userRepository.save(user), UserDto.class));
     }
 
@@ -93,7 +90,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public Data deleteByUsername(String username) {
         if (!userRepository.existsByUsername(username)) throw new EntityNotFoundException();
         UserEntity user = userRepository.findByUsername(username).get();
-        user.setStatus(StatusEnum.INACTIVE);
+//        user.setStatus(StatusEnum.INACTIVE);
+        user.setEnabled(false);
         return new Data(true, "success", mapper.map(userRepository.save(user), UserDto.class));
     }
 
@@ -232,7 +230,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 newUser.setUsername(nameConverted);
                 newUser.setMail(email);
                 newUser.setProvider(Provider.FACEBOOK);
-                newUser.setStatus(StatusEnum.ACTIVE);
+//                newUser.setStatus(StatusEnum.ACTIVE);
                 newUser.setEnabled(true);
                 userRepository.save(newUser);
             } else {
@@ -241,7 +239,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 newUser.setUsername(nameFix);
                 newUser.setMail(email);
                 newUser.setProvider(Provider.FACEBOOK);
-                newUser.setStatus(StatusEnum.ACTIVE);
+//                newUser.setStatus(StatusEnum.ACTIVE);
                 newUser.setEnabled(true);
                 userRepository.save(newUser);
             }

@@ -1,8 +1,6 @@
 package com.example.ghtkprofilelink.controller;
 
 import com.example.ghtkprofilelink.model.dto.UserDto;
-import com.example.ghtkprofilelink.model.response.Data;
-import com.example.ghtkprofilelink.model.response.ListData;
 import com.example.ghtkprofilelink.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,10 +14,10 @@ public class UserController {
     @Autowired
     private UserServiceImpl userService;
 
-    @GetMapping()
-    public ResponseEntity<?> getAll(@RequestParam int page, @RequestParam int pageSize) {
-        return  new ResponseEntity<>(userService.getAll(page, pageSize), HttpStatus.valueOf(200));
-    }
+//    @GetMapping()
+//    public ResponseEntity<?> getAll(@RequestParam int page, @RequestParam int pageSize) {
+//        return  new ResponseEntity<>(userService.getAll(page, pageSize), HttpStatus.valueOf(200));
+//    }
 
 //    @GetMapping("/{id}")
 //    public ResponseEntity<Data> getById(@PathVariable Long id) {
@@ -44,5 +42,10 @@ public class UserController {
     @DeleteMapping("")
     public ResponseEntity<?> deleteByUsername(@RequestParam String username) {
         return new ResponseEntity<>(userService.deleteByUsername(username), HttpStatus.valueOf(200));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteById(@PathVariable Long id) {
+        return new ResponseEntity<>(userService.deleteById(id), HttpStatus.valueOf(200));
     }
 }

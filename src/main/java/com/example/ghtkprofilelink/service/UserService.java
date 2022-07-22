@@ -3,13 +3,12 @@ package com.example.ghtkprofilelink.service;
 import com.example.ghtkprofilelink.model.dto.UserDto;
 import com.example.ghtkprofilelink.model.dto.UserRegister;
 import com.example.ghtkprofilelink.model.response.Data;
-import com.example.ghtkprofilelink.model.response.ListData;
 
 import javax.mail.MessagingException;
 import java.io.UnsupportedEncodingException;
 
 public interface UserService {
-    ListData getAll(int page, int pageSize);
+//    ListData getAll(int page, int pageSize);
 
     Data getById(Long id);
 
