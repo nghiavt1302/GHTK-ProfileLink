@@ -1,6 +1,7 @@
 package com.example.ghtkprofilelink.model.entity;
 
 import com.example.ghtkprofilelink.constants.Provider;
+import com.example.ghtkprofilelink.constants.RoleEnum;
 import com.example.ghtkprofilelink.model.dto.UserDto;
 import com.example.ghtkprofilelink.model.dto.UserRegister;
 import lombok.Data;
@@ -26,7 +27,7 @@ public class UserEntity {
 //    private StatusEnum status;
 
     @Column(name = "role")
-    private Integer role;
+    private RoleEnum role;
 
     @Column(name = "verification_code", length = 64)
     private String verificationCode;

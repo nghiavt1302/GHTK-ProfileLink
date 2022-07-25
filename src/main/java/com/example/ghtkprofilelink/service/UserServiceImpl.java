@@ -1,6 +1,7 @@
 package com.example.ghtkprofilelink.service;
 
 import com.example.ghtkprofilelink.constants.Provider;
+import com.example.ghtkprofilelink.constants.RoleEnum;
 import com.example.ghtkprofilelink.model.dto.UserDto;
 import com.example.ghtkprofilelink.model.dto.UserRegister;
 import com.example.ghtkprofilelink.model.entity.UserEntity;
@@ -63,8 +64,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         if (userRepository.existsByUsername(userDto.getUsername())) throw new EntityExistsException();
         UserEntity user = new UserEntity().mapUserDto(userDto);
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        //        * Mac dinh de Role la 0
-        user.setRole(0);
+        //        * Mac dinh de Role la USER
+        user.setRole(RoleEnum.USER);
         return new Data(true, "success", mapper.map(userRepository.save(user), UserDto.class));
     }
 
@@ -123,7 +124,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         UserEntity user = new UserEntity().mapUserRegister(userRegister);
         user.setPassword(passwordEncoder.encode(userRegister.getPassword()));
         user.setEnabled(false);
-        user.setRole(0);// * Mac dinh de Role la 0
+        user.setRole(RoleEnum.USER);// * Mac dinh de Role la USER
         user.setVerificationCode(RandomString.make(64));
         userRepository.save(user);
 
@@ -231,6 +232,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 newUser.setMail(email);
                 newUser.setProvider(Provider.FACEBOOK);
 //                newUser.setStatus(StatusEnum.ACTIVE);
+                newUser.setRole(RoleEnum.USER); // * Mac dinh de Role la USER
                 newUser.setEnabled(true);
                 userRepository.save(newUser);
             } else {
@@ -240,6 +242,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 newUser.setMail(email);
                 newUser.setProvider(Provider.FACEBOOK);
 //                newUser.setStatus(StatusEnum.ACTIVE);
+                newUser.setRole(RoleEnum.USER); // * Mac dinh de Role la USER
                 newUser.setEnabled(true);
                 userRepository.save(newUser);
             }
