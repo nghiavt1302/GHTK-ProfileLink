@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import javax.persistence.EntityNotFoundException;
 
 
+import com.example.ghtkprofilelink.constants.StatusEnum;
 import com.example.ghtkprofilelink.model.response.ListData;
 import com.example.ghtkprofilelink.repository.ProfileRepository;
 import org.modelmapper.ModelMapper;
@@ -92,7 +93,8 @@ public class LinkServiceImpl implements LinkService {
     public Data delete(Long id) {
         // TODO Auto-generated method stub
         LinkEntity link = linkRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
-        linkRepository.deleteById(id);
+        link.setStatus(StatusEnum.INACTIVE);
+        linkRepository.save(link);
         return new Data(true, "success", mapper.map(link, LinkDto.class));
     }
 

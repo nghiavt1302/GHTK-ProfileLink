@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.example.ghtkprofilelink.constants.StatusEnum;
 import com.example.ghtkprofilelink.model.dto.ChartsDto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -35,6 +36,7 @@ public class ChartsEntity {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date date;
     private String country;
+    private StatusEnum status;
 
     public ChartsEntity setValueByDto(ChartsDto chartsDto) {
         this.id = chartsDto.getId();

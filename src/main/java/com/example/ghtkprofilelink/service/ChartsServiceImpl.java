@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
 
+import com.example.ghtkprofilelink.constants.StatusEnum;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
@@ -57,7 +58,8 @@ public class ChartsServiceImpl implements ChartsService {
     public Data delete(Long id) {
         // TODO Auto-generated method stub
         ChartsEntity charts = chartsRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
-        chartsRepository.deleteById(id);
+        charts.setStatus(StatusEnum.INACTIVE);
+        chartsRepository.save(charts);
         return new Data(true, "success", modelMapper.map(charts, ChartsDto.class));
     }
 
