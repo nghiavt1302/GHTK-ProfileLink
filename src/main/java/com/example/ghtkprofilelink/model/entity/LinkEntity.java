@@ -6,6 +6,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.example.ghtkprofilelink.constants.StatusEnum;
 import com.example.ghtkprofilelink.constants.TypeEnum;
 import com.example.ghtkprofilelink.model.dto.LinkDto;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -33,6 +34,7 @@ public class LinkEntity {
     private Long profileId;
     @JsonProperty("click_count")
     private Long clickCount;
+    private StatusEnum status;
 
     public LinkEntity setValueFromDto(LinkDto linkDto) {
         this.id = linkDto.getId();
