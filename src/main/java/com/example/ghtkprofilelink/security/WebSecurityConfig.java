@@ -1,5 +1,6 @@
 package com.example.ghtkprofilelink.security;
 
+import com.example.ghtkprofilelink.constants.RoleEnum;
 import com.example.ghtkprofilelink.error.MyAuthenticationEntryPoint;
 import com.example.ghtkprofilelink.model.entity.CustomOAuth2User;
 import com.example.ghtkprofilelink.security.jwt.JwtAuthenticationFilter;
@@ -8,6 +9,7 @@ import com.example.ghtkprofilelink.service.UserDetailsServiceImpl;
 import com.example.ghtkprofilelink.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.BeanIds;
@@ -76,13 +78,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        // Set session management to stateless
+//        * Set session management to stateless
         http = http
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and();
 
-        // Set unauthorized requests exception handler
+//        * Set unauthorized requests exception handler
         http = http
                 .exceptionHandling()
                 .authenticationEntryPoint(
@@ -95,11 +97,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 )
                 .and();
 
-        // Enable CORS and disable CSRF
+//        * Enable CORS and disable CSRF and config oauth2
         http.cors().and().csrf().disable()
-                .authorizeRequests().antMatchers("/test/**", "/swagger-ui.html#", "/loginFb","/api/v1.0/design/get/**","/api/v1.0/link/list/**","/api/v1.0/profile/getbyshortbio","/api/v1.0/social/get/**").permitAll() // Cho phép tất cả mọi người truy cập vào login
-                .anyRequest().authenticated()
-                .and()
                 .formLogin().permitAll().loginPage("/loginFb")
                 .and()
                 .oauth2Login()
@@ -118,18 +117,38 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         userService.processOAuthPostLogin(username, email);
                     }
                 });
-    // Tất cả các request khác đều cần phải xác thực mới được truy cập
+        // Tất cả các request khác đều cần phải xác thực mới được truy cập
 //                .and().formLogin() // Cho phép người dùng xác thực bằng form login
 //                .defaultSuccessUrl("/swagger-ui.html#/").permitAll() // Tất cả đều được truy cập vào địa chỉ này
 //                .and().logout().permitAll(); // Cho phép logout
 
 
-
-        // Thêm một lớp Filter kiểm tra jwt
+//        * Thêm một lớp Filter kiểm tra jwt
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
-        //Exception handling configuration
+//        * Exception handling configuration
         http.exceptionHandling().authenticationEntryPoint(new MyAuthenticationEntryPoint());
+
+//        * Phan quyen
+        http.authorizeRequests()
+                // * Cho phép tất cả mọi người truy cập kể cả chưa đăng nhập
+                .antMatchers("/test/**", "/swagger-ui.html#", "/loginFb", "/api/v1.0/design/get/**",
+                        "/api/v1.0/link/list/**", "/api/v1.0/profile/getbyshortbio", "/api/v1.0/social/get/**").permitAll()
+
+                // * Cho phép tất cả mọi người đăng nhập rồi truy cập
+                .antMatchers("/update_password_token", "/api/v1.0/user/username", "/api/v1.0/user/add", "api/v1.0/charts", "api/v1.0/link", "api/v1.0/profile",
+                        "/api/v1.0/social").hasAnyRole(RoleEnum.USER.name(), RoleEnum.USER_VIP.name(), RoleEnum.ADMIN.name())
+
+                // * Cho phép USER_VIP và ADMIN truy cập
+                .antMatchers(HttpMethod.POST, "api/v1.0/design").hasAnyAuthority(RoleEnum.USER_VIP.name(), RoleEnum.ADMIN.name())
+                .antMatchers("api/v1.0/design/{id}").hasAnyRole(RoleEnum.USER_VIP.name(), RoleEnum.ADMIN.name())
+
+                // * Cho phép USER_VIP truy cập
+                .antMatchers().hasRole(RoleEnum.USER_VIP.name())
+
+                // * Cho phép ADMIN truy cập
+                .antMatchers().hasRole(RoleEnum.ADMIN.name())
+                .anyRequest().authenticated();
 
 //        // FB
 //        http.authorizeRequests()
