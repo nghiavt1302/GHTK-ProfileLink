@@ -53,4 +53,11 @@ public class DesignController {
             @PathVariable Long id) {
         return new ResponseEntity<>(designService.delete(id), HttpStatus.OK);
     }
+
+    @GetMapping("/{name}")
+    public ResponseEntity<?> getByName(
+            @PathVariable String name
+    ){
+        return new ResponseEntity<>(designService.findByName(name),HttpStatus.OK);
+    }
 }

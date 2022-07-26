@@ -18,4 +18,6 @@ public interface DesignService {
     Data update(DesignDto designDto, MultipartFile file, Long id);
 
     Data delete(Long id);
+
+    Data findByName(String name);
 }
