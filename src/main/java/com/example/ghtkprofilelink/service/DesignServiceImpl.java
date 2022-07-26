@@ -50,6 +50,8 @@ public class DesignServiceImpl implements DesignService {
     @Override
     public Data add(DesignDto designDto, MultipartFile file) {
         DesignEntity designEntity = modelMapper.map(designDto, DesignEntity.class);
+        designEntity.setStatus(StatusEnum.ACTIVE);
+
         if (!designEntity.getBackgroundColor().equals("")) {
             designEntity.setBackgroundType(BackgroundTypeEnum.COLOR);
         }
@@ -100,7 +102,7 @@ public class DesignServiceImpl implements DesignService {
     public Data findByName(String name){
         Optional<DesignEntity> designEntity = designRepository.findByName(name);
         if(designEntity.isPresent()){
-            return new Data(true, "success", modelMapper.map(designEntity, DesignDto.class));
+            return new Data(true, "success", modelMapper.map(designEntity.get(), DesignDto.class));
         } else return new Data(true, "success", null);
     }
 }
