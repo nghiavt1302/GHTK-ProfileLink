@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import  java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
@@ -49,7 +50,7 @@ public class DesignServiceImpl implements DesignService {
     @Override
     public Data add(DesignDto designDto, MultipartFile file) {
         DesignEntity designEntity = modelMapper.map(designDto, DesignEntity.class);
-        if (designEntity.getBackgroundColor().equals("")) {
+        if (!designEntity.getBackgroundColor().equals("")) {
             designEntity.setBackgroundType(BackgroundTypeEnum.COLOR);
         }
         if (file!=null) {
@@ -93,5 +94,13 @@ public class DesignServiceImpl implements DesignService {
         designRepository.save(designEntity);
 
         return new Data(true, "success", modelMapper.map(designEntity, DesignDto.class));
+    }
+
+    @Override
+    public Data findByName(String name){
+        Optional<DesignEntity> designEntity = designRepository.findByName(name);
+        if(designEntity.isPresent()){
+            return new Data(true, "success", modelMapper.map(designEntity, DesignDto.class));
+        } else return new Data(true, "success", null);
     }
 }
