@@ -39,6 +39,11 @@ public class ChartsController {
     public ResponseEntity<Data> delete(@PathVariable Long id) {
         return ResponseEntity.ok(chartsService.delete(id));
     }
+    
+    @GetMapping("/gettopprofiletomonth")
+    public ResponseEntity<ListData> getTopProfileToMonth(@RequestParam int page, @RequestParam int pageSize) {
+        return ResponseEntity.ok(chartsService.getTopProfileToMonth(page, pageSize));
+    }
 
     // @GetMapping("/getbyprofileid")
     // public ResponseEntity<ListData> getByProfileId(@RequestParam("page") int page,

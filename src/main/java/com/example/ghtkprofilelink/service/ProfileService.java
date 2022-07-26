@@ -2,9 +2,12 @@ package com.example.ghtkprofilelink.service;
 
 import com.example.ghtkprofilelink.model.dto.ProfileDto;
 import com.example.ghtkprofilelink.model.response.Data;
+import com.example.ghtkprofilelink.model.response.ListData;
+
 import io.swagger.models.Model;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface ProfileService {
@@ -18,5 +21,6 @@ public interface ProfileService {
 
     Data getProfileByShortBio(HttpSession session,String shortBio);
 
+    ListData getTopProfile(int page, int pageSize);
 
 }

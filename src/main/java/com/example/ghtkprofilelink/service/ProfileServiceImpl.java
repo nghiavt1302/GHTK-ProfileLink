@@ -7,12 +7,18 @@ import com.example.ghtkprofilelink.model.dto.ProfileDto;
 import com.example.ghtkprofilelink.model.entity.ChartsEntity;
 import com.example.ghtkprofilelink.model.entity.ProfileEntity;
 import com.example.ghtkprofilelink.model.response.Data;
+import com.example.ghtkprofilelink.model.response.ListData;
+import com.example.ghtkprofilelink.model.response.Pagination;
 import com.example.ghtkprofilelink.repository.ChartsRepository;
 import com.example.ghtkprofilelink.repository.ProfileRepository;
 
 import jdk.jshell.Snippet;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -48,11 +54,18 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public Data add(ProfileDto profileDto, MultipartFile file) {
         ProfileEntity profile = mapper.map(profileDto, ProfileEntity.class);
+        Integer profileId = profile.getId().intValue();
         profile.setProfileLink("localhost:8080/" + profile.getShortBio());
-        if (file!=null) {
+        if (file != null) {
             try {
                 Map x = this.cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
                 profile.setAvatarLink(x.get("url").toString());
+                ChartsEntity chart = new ChartsEntity();
+                chart.setClickCount(1L);
+                chart.setCountry(null);
+                chart.setDate(new java.sql.Date(new Date().getTime()));
+                chart.setProfileId(profileId.intValue());
+                chartsRepository.save(chart);
             } catch (Exception e) {
                 System.out.println(e);
             }
@@ -67,7 +80,7 @@ public class ProfileServiceImpl implements ProfileService {
     public Data update(ProfileDto profileDto, MultipartFile file, Long id) {
         ProfileEntity profile = profileRepository.findById(profileDto.getId()).get().setValueFromDto(profileDto);
         profile.setId(id);
-        if (file!=null) {
+        if (file != null) {
             try {
                 Map x = this.cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
                 profile.setAvatarLink(x.get("url").toString());
@@ -92,52 +105,49 @@ public class ProfileServiceImpl implements ProfileService {
         Calendar cal = Calendar.getInstance();
         ProfileEntity profile = profileRepository.getProfileByShortBio(shortBio);
         Integer profileId = profile.getId().intValue();
-        List<ChartsEntity> listCharts = chartsRepository.findAllByProfileId(profileId);
         Integer counter = profile.getClickCount();
-        if(listCharts.isEmpty()==true){
+        ChartsEntity charts = chartsRepository.findAllByProfileId(profileId)
+                .get(chartsRepository.findAllByProfileId(profileId).size() - 1);
+        Long countToMonth = charts.getClickCount();
+        int monthRealTime = cal.get(Calendar.MONTH) + 1;
+        Date date = charts.getDate();
+        int monthDb = date.getMonth() + 1;
+        Long now = new Date().getTime();
+        Long lastTime = session.getLastAccessedTime();
+        if (monthRealTime >= monthDb + 1) {
             counter += 1;
-            profile.setClickCount(counter);
             ChartsEntity chart = new ChartsEntity();
             chart.setClickCount(1L);
-            chart.setCountry(null);
+            chart.setCountry(charts.getCountry());
             chart.setDate(new java.sql.Date(new Date().getTime()));
             chart.setProfileId(profileId.intValue());
             chartsRepository.save(chart);
-        }
-        else {
-            ChartsEntity charts = chartsRepository.findAllByProfileId(profileId).get(chartsRepository.findAllByProfileId(profileId).size() - 1);
-            Long countToMonth = charts.getClickCount();
-            int monthRealTime = cal.get(Calendar.MONTH) + 1;
-            Date date = charts.getDate();
-            int monthDb = date.getMonth() + 1;
-            Long now = new Date().getTime();
-            Long lastTime = session.getLastAccessedTime();
-            if ( monthRealTime >= monthDb +1){
-                counter += 1;
-                ChartsEntity chart = new ChartsEntity();
-                chart.setClickCount(1L);
-                chart.setCountry(charts.getCountry());
-                chart.setDate(new java.sql.Date(new Date().getTime()));
-                chart.setProfileId(profileId.intValue());
-                chartsRepository.save(chart);
-            }
-            else {
-                if (counter == null) {
-                    profile.setClickCount(0);
-                    charts.setClickCount(0L);
-                } else {
-                    if (now >= lastTime + 6000) {
-                        counter += 1;
-                        countToMonth += 1L;
-                        profile.setClickCount(counter);
-                        charts.setClickCount(countToMonth);
-                    }
+        } else {
+            if (counter == null) {
+                profile.setClickCount(0);
+                charts.setClickCount(0L);
+            } else {
+                if (now >= lastTime + 6000) {
+                    counter += 1;
+                    countToMonth += 1L;
+                    profile.setClickCount(counter);
+                    charts.setClickCount(countToMonth);
                 }
             }
-            
-        } 
+        }
         profileRepository.save(profile);
-        return new Data(true, "success",  mapper.map(profile, ProfileDto.class));
+        return new Data(true, "success", mapper.map(profile, ProfileDto.class));
     }
+
+    @Override
+    public ListData getTopProfile(int page, int pageSize) {
+        // TODO Auto-generated method stub
+        Page<ProfileEntity> profileEntities = profileRepository.getTopProfile(PageRequest.of(page, pageSize));
+        return new ListData(true, "success", profileEntities.getContent(),
+                new Pagination(profileEntities.getNumber(), profileEntities.getSize(), profileEntities.getTotalPages(),
+                        (int) profileEntities.getTotalElements()));
+    }
+
+    
 
 }

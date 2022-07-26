@@ -1,21 +1,16 @@
 package com.example.ghtkprofilelink.service;
 
 import com.example.ghtkprofilelink.constants.Provider;
-import com.example.ghtkprofilelink.constants.StatusEnum;
+import com.example.ghtkprofilelink.constants.RoleEnum;
 import com.example.ghtkprofilelink.model.dto.UserDto;
 import com.example.ghtkprofilelink.model.dto.UserRegister;
 import com.example.ghtkprofilelink.model.entity.UserEntity;
 import com.example.ghtkprofilelink.model.response.Data;
-import com.example.ghtkprofilelink.model.response.ListData;
-import com.example.ghtkprofilelink.model.response.Pagination;
 import com.example.ghtkprofilelink.repository.UserRepository;
 import com.example.ghtkprofilelink.security.CustomUserDetails;
 import net.bytebuddy.utility.RandomString;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -25,10 +20,10 @@ import org.springframework.stereotype.Service;
 import javax.mail.MessagingException;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
-import javax.persistence.Version;
 import javax.transaction.Transactional;
 import java.io.UnsupportedEncodingException;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -42,14 +37,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Autowired
     private MailServiceImpl mailService;
 
-    @Override
-    public ListData getAll(int page, int pageSize) {
-        Page<UserDto> userEntities = userRepository.findByStatusEquals(StatusEnum.ACTIVE, PageRequest.of(page, pageSize))
-                .map(userEntity -> mapper.map(userEntity, UserDto.class));
-
-        return new ListData(true, "success", userEntities.getContent(),
-                new Pagination(userEntities.getNumber(), userEntities.getSize(), userEntities.getTotalPages(), (int) userEntities.getTotalElements()));
-    }
+//    @Override
+//    Chua dung
+//    public ListData getAll(int page, int pageSize) {
+//        Page<UserDto> userEntities = userRepository.findByStatusEquals(StatusEnum.ACTIVE, PageRequest.of(page, pageSize))
+//                .map(userEntity -> mapper.map(userEntity, UserDto.class));
+//
+//        return new ListData(true, "success", userEntities.getContent(),
+//                new Pagination(userEntities.getNumber(), userEntities.getSize(), userEntities.getTotalPages(), (int) userEntities.getTotalElements()));
+//    }
 
     @Override
     public Data getById(Long id) {
@@ -68,8 +64,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         if (userRepository.existsByUsername(userDto.getUsername())) throw new EntityExistsException();
         UserEntity user = new UserEntity().mapUserDto(userDto);
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        //        * Mac dinh de Role la 0
-        user.setRole(0);
+        //        * Mac dinh de Role la USER
+        user.setRole(RoleEnum.USER);
         return new Data(true, "success", mapper.map(userRepository.save(user), UserDto.class));
     }
 
@@ -86,7 +82,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public Data deleteById(Long id) {
         if (!userRepository.existsById(id)) throw new EntityNotFoundException();
         UserEntity user = userRepository.getById(id);
-        user.setStatus(StatusEnum.INACTIVE);
+//        user.setStatus(StatusEnum.INACTIVE);
+        user.setEnabled(false);
         return new Data(true, "success", mapper.map(userRepository.save(user), UserDto.class));
     }
 
@@ -94,7 +91,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public Data deleteByUsername(String username) {
         if (!userRepository.existsByUsername(username)) throw new EntityNotFoundException();
         UserEntity user = userRepository.findByUsername(username).get();
-        user.setStatus(StatusEnum.INACTIVE);
+//        user.setStatus(StatusEnum.INACTIVE);
+        user.setEnabled(false);
         return new Data(true, "success", mapper.map(userRepository.save(user), UserDto.class));
     }
 
@@ -115,10 +113,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public Data register(UserRegister userRegister, StringBuffer siteURL)
+    public Data register(UserRegister userRegister, StringBuffer siteUrl)
             throws UnsupportedEncodingException, MessagingException {
         Optional<UserEntity> optional = userRepository.findByUsername(userRegister.getUsername());
-        if(optional.isPresent()) return new Data(false, "username already exists", null);
+        if (optional.isPresent()) return new Data(false, "username already exists", null);
 
         optional = userRepository.findByMail(userRegister.getMail());
         if (optional.isPresent()) return new Data(false, "mail already exist", null);
@@ -126,13 +124,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         UserEntity user = new UserEntity().mapUserRegister(userRegister);
         user.setPassword(passwordEncoder.encode(userRegister.getPassword()));
         user.setEnabled(false);
-        user.setRole(0);// * Mac dinh de Role la 0
+        user.setRole(RoleEnum.USER);// * Mac dinh de Role la USER
         user.setVerificationCode(RandomString.make(64));
         userRepository.save(user);
 
         // Gui mail
-        mailService.sendMail(user, siteURL.append(user.getVerificationCode()).toString(), "sendMail", "Xác thực tài khoản");
-        return new Data(true, "send mail success", siteURL);
+        Map<String, Object> props = new HashMap<>();
+        props.put("name", user.getUsername());
+        props.put("url", siteUrl.append(user.getVerificationCode()).toString());
+
+        mailService.sendMail(props, user.getMail(), "sendMail", "Xác thực tài khoản");
+        return new Data(true, "send mail success", siteUrl);
     }
 
     @Override
@@ -156,7 +158,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         user.setUpdatePasswordToken(RandomString.make(64));
         userRepository.save(user);
 //
-        mailService.sendMail(user, siteUrl.append(user.getUpdatePasswordToken()).toString(), "updatePassword", "Đổi mật khẩu");
+        Map<String, Object> props = new HashMap<>();
+        props.put("name", user.getUsername());
+        props.put("url", siteUrl.append(user.getUpdatePasswordToken()).toString());
+
+        mailService.sendMail(props, user.getMail(), "updatePassword", "Đổi mật khẩu");
         return new Data(true, "update password success", siteUrl);
     }
 
@@ -166,11 +172,31 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         if (!optionalUser.isPresent()) {
             return new Data(false, "password token not found", null);
         }
+
         UserEntity user = optionalUser.get();
         user.setPassword(passwordEncoder.encode(password));
         user.setUpdatePasswordToken(null);
         userRepository.save(user);
         return new Data(true, "update password success", null);
+    }
+
+    @Override
+    public Data forgotPassword(String mail) throws MessagingException {
+        Optional<UserEntity> optionalUser = userRepository.findByMail(mail);
+        if (!optionalUser.isPresent()) return new Data(false, "mail not found", null);
+
+        String pass = RandomString.make(10);
+
+        UserEntity user = optionalUser.get();
+        user.setPassword(passwordEncoder.encode(pass));
+        userRepository.save(user);
+//
+        Map<String, Object> props = new HashMap<>();
+        props.put("name", user.getUsername());
+        props.put("pass", pass);
+
+        mailService.sendMail(props, user.getMail(), "forgotPassword", "Quên mật khẩu");
+        return new Data(true, "forgot password success", pass);
     }
 
     // Convert FB username (Vu Trong Nghia -> vutrongnghia)
@@ -200,12 +226,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         if (existEmail == null) {
             String nameConverted = convertFbUsername(username);
             UserEntity existUsername = userRepository.getUserByUsername(nameConverted);
-            if (existUsername == null){
+            if (existUsername == null) {
                 UserEntity newUser = new UserEntity();
                 newUser.setUsername(nameConverted);
                 newUser.setMail(email);
                 newUser.setProvider(Provider.FACEBOOK);
-                newUser.setStatus(StatusEnum.ACTIVE);
+//                newUser.setStatus(StatusEnum.ACTIVE);
+                newUser.setRole(RoleEnum.USER); // * Mac dinh de Role la USER
                 newUser.setEnabled(true);
                 userRepository.save(newUser);
             } else {
@@ -214,7 +241,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 newUser.setUsername(nameFix);
                 newUser.setMail(email);
                 newUser.setProvider(Provider.FACEBOOK);
-                newUser.setStatus(StatusEnum.ACTIVE);
+//                newUser.setStatus(StatusEnum.ACTIVE);
+                newUser.setRole(RoleEnum.USER); // * Mac dinh de Role la USER
                 newUser.setEnabled(true);
                 userRepository.save(newUser);
             }

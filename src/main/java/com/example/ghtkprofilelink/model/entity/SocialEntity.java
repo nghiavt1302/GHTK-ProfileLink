@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.example.ghtkprofilelink.constants.StatusEnum;
 import com.example.ghtkprofilelink.model.dto.SocialDto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -14,7 +15,7 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "social")
+@Table(name = "socials")
 public class SocialEntity {
     @Id
     @Column(name = "id")
@@ -33,6 +34,7 @@ public class SocialEntity {
     @JsonProperty("click_count")
     @Column(name = "click_count")
     private Long clickCount;
+    private StatusEnum status;
 
     public SocialEntity setValueFromDto(SocialDto socialDto) {
         this.id = socialDto.getId();
