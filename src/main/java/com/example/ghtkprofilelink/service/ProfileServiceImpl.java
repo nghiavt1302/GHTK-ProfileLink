@@ -54,26 +54,28 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public Data add(ProfileDto profileDto, MultipartFile file) {
         ProfileEntity profile = mapper.map(profileDto, ProfileEntity.class);
-        Integer profileId = profile.getId().intValue();
-        profile.setProfileLink("localhost:8080/" + profile.getShortBio());
+
+
         if (file != null) {
             try {
                 Map x = this.cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
                 profile.setAvatarLink(x.get("url").toString());
-                ChartsEntity chart = new ChartsEntity();
-                chart.setClickCount(1L);
-                chart.setCountry(null);
-                chart.setDate(new java.sql.Date(new Date().getTime()));
-                chart.setProfileId(profileId.intValue());
-                chartsRepository.save(chart);
+
             } catch (Exception e) {
                 System.out.println(e);
             }
         } else
             profile.setAvatarLink(
                     "https://res.cloudinary.com/anhtuanbui/image/upload/v1657248868/knybg0tx6rj48d62nv4a.png");
-
-        return new Data(true, "success", mapper.map(profileRepository.save(profile), ProfileDto.class));
+        ProfileEntity profileEntity=profileRepository.save(profile);
+        Integer profileId = profileEntity.getId().intValue();
+        ChartsEntity chart = new ChartsEntity();
+        chart.setClickCount(1L);
+        chart.setCountry(null);
+        chart.setDate(new java.sql.Date(new Date().getTime()));
+        chart.setProfileId(profileId.intValue());
+        chartsRepository.save(chart);
+        return new Data(true, "success", mapper.map(profileEntity, ProfileDto.class));
     }
 
     @Override

@@ -126,7 +126,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         user.setEnabled(false);
         user.setRole(RoleEnum.USER);// * Mac dinh de Role la USER
         user.setVerificationCode(RandomString.make(64));
-        userRepository.save(user);
+
 
         // Gui mail
         Map<String, Object> props = new HashMap<>();
@@ -134,7 +134,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         props.put("url", siteUrl.append(user.getVerificationCode()).toString());
 
         mailService.sendMail(props, user.getMail(), "sendMail", "Xác thực tài khoản");
-        return new Data(true, "send mail success", siteUrl);
+        return new Data(true, "send mail success", mapper.map(userRepository.save(user),UserDto.class));
     }
 
     @Override

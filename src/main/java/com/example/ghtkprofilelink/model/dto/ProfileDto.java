@@ -25,14 +25,10 @@ public class ProfileDto {
     private LocalDate birthday;
     private GenderEnum gender;
     private String location;
-    @JsonProperty("profile_link")
-    private String profileLink;
     @JsonProperty("avatar_link")
     private String avatarLink;
     @JsonProperty("click_count")
     private Integer clickCount;
-    @JsonProperty("user_id")
-    private Integer userId;
     @JsonProperty("design_id")
     private Long designId;
 }
