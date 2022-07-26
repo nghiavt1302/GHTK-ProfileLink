@@ -2,6 +2,7 @@ package com.example.ghtkprofilelink.controller;
 
 import com.example.ghtkprofilelink.model.dto.ProfileDto;
 import com.example.ghtkprofilelink.model.response.Data;
+import com.example.ghtkprofilelink.model.response.ListData;
 import com.example.ghtkprofilelink.service.ProfileService;
 
 import io.github.bucket4j.Bandwidth;
@@ -71,6 +72,11 @@ public class ProfileController {
         }
 
         return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
+    }
+
+    @GetMapping("/gettopprofile")
+    public ResponseEntity<ListData> getTopProfile(@RequestParam int page, @RequestParam int pageSize) {
+        return ResponseEntity.ok(profileService.getTopProfile(page, pageSize));
     }
 
 }
