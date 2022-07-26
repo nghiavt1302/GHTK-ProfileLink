@@ -54,7 +54,7 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public Data add(ProfileDto profileDto, MultipartFile file) {
         ProfileEntity profile = mapper.map(profileDto, ProfileEntity.class);
-
+        profile.setStatus(StatusEnum.ACTIVE);
 
         if (file != null) {
             try {
