@@ -7,12 +7,18 @@ import com.example.ghtkprofilelink.model.dto.ProfileDto;
 import com.example.ghtkprofilelink.model.entity.ChartsEntity;
 import com.example.ghtkprofilelink.model.entity.ProfileEntity;
 import com.example.ghtkprofilelink.model.response.Data;
+import com.example.ghtkprofilelink.model.response.ListData;
+import com.example.ghtkprofilelink.model.response.Pagination;
 import com.example.ghtkprofilelink.repository.ChartsRepository;
 import com.example.ghtkprofilelink.repository.ProfileRepository;
 
 import jdk.jshell.Snippet;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -132,5 +138,16 @@ public class ProfileServiceImpl implements ProfileService {
         profileRepository.save(profile);
         return new Data(true, "success", mapper.map(profile, ProfileDto.class));
     }
+
+    @Override
+    public ListData getTopProfile(int page, int pageSize) {
+        // TODO Auto-generated method stub
+        Page<ProfileEntity> profileEntities = profileRepository.getTopProfile(PageRequest.of(page, pageSize));
+        return new ListData(true, "success", profileEntities.getContent(),
+                new Pagination(profileEntities.getNumber(), profileEntities.getSize(), profileEntities.getTotalPages(),
+                        (int) profileEntities.getTotalElements()));
+    }
+
+    
 
 }

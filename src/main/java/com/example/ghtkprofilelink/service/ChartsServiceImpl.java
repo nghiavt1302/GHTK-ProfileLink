@@ -72,6 +72,15 @@ public class ChartsServiceImpl implements ChartsService {
                         (int) chartsEntities.getTotalElements()));
     }
 
+    @Override
+    public ListData getTopProfileToMonth(int page, int pageSize) {
+        // TODO Auto-generated method stub
+        Page<ChartsEntity> chartsEntities = chartsRepository.getTopProfileToMonth(PageRequest.of(page, pageSize));
+        return new ListData(true, "success", chartsEntities.getContent(),
+                new Pagination(chartsEntities.getNumber(), chartsEntities.getSize(), chartsEntities.getTotalPages(),
+                        (int) chartsEntities.getTotalElements()));
+    }
+
     // @Override
     // public ListData getByProfileId(Pageable pageable,Integer profileId) {
     // // TODO Auto-generated method stub
