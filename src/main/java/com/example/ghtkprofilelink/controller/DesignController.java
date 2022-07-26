@@ -54,7 +54,7 @@ public class DesignController {
         return new ResponseEntity<>(designService.delete(id), HttpStatus.OK);
     }
 
-    @GetMapping("/{name}")
+    @GetMapping("/get-by-name/{name}")
     public ResponseEntity<?> getByName(
             @PathVariable String name
     ){
