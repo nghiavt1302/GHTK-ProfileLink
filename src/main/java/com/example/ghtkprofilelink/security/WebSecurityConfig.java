@@ -138,11 +138,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 
                 // * Cho phép tất cả mọi người đăng nhập rồi truy cập
                 .antMatchers("/update_password_token", "/api/v1.0/user/username", "/api/v1.0/user/add", "/api/v1.0/charts", "/api/v1.0/link", "/api/v1.0/profile",
-                        "/api/v1.0/social").hasAnyRole(RoleEnum.USER.name(), RoleEnum.USER_VIP.name(), RoleEnum.ADMIN.name())
+                        "/api/v1.0/social").hasAnyAuthority(RoleEnum.USER.name(), RoleEnum.USER_VIP.name(), RoleEnum.ADMIN.name())
 
                 // * Cho phép USER_VIP và ADMIN truy cập
                 .antMatchers(HttpMethod.POST, "/api/v1.0/design").hasAnyAuthority(RoleEnum.USER_VIP.name(), RoleEnum.ADMIN.name())
-                .antMatchers("/api/v1.0/design/{id}").hasAnyRole(RoleEnum.USER_VIP.name(), RoleEnum.ADMIN.name())
+                .antMatchers("/api/v1.0/design/{id}").hasAnyAuthority(RoleEnum.USER_VIP.name(), RoleEnum.ADMIN.name())
 
                 // * Cho phép USER_VIP truy cập
                 .antMatchers().hasRole(RoleEnum.USER_VIP.name())

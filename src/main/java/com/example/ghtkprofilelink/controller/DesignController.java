@@ -42,7 +42,7 @@ public class DesignController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> update(
-            @RequestBody DesignDto designDto,
+            @ModelAttribute DesignDto designDto,
             @RequestParam(required = false) MultipartFile file,
             @PathVariable Long id) {
         return new ResponseEntity<>(designService.update(designDto, file, id), HttpStatus.CREATED);
