@@ -1,6 +1,6 @@
 package com.example.ghtkprofilelink.service;
 
-import com.example.ghtkprofilelink.constants.Provider;
+import com.example.ghtkprofilelink.constants.ProviderEnum;
 import com.example.ghtkprofilelink.constants.RoleEnum;
 import com.example.ghtkprofilelink.model.dto.UserDto;
 import com.example.ghtkprofilelink.model.dto.UserRegister;
@@ -221,31 +221,32 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     // Them user vao database khi login bang Facebook
     @Override
-    public void processOAuthPostLogin(String username, String email) {
-        UserEntity existEmail = userRepository.getUserByEmail(email);
+    public UserEntity processOAuthPostLogin(UserEntity userEntity,ProviderEnum provider) {
+        UserEntity existEmail = userRepository.getUserByEmail(userEntity.getMail());
         if (existEmail == null) {
-            String nameConverted = convertFbUsername(username);
+            String nameConverted = convertFbUsername(userEntity.getUsername());
             UserEntity existUsername = userRepository.getUserByUsername(nameConverted);
             if (existUsername == null) {
                 UserEntity newUser = new UserEntity();
                 newUser.setUsername(nameConverted);
-                newUser.setMail(email);
-                newUser.setProvider(Provider.FACEBOOK);
+                newUser.setMail(userEntity.getMail());
+                newUser.setProviderEnum(ProviderEnum.FACEBOOK);
 //                newUser.setStatus(StatusEnum.ACTIVE);
                 newUser.setRole(RoleEnum.USER); // * Mac dinh de Role la USER
                 newUser.setEnabled(true);
-                userRepository.save(newUser);
+                return userRepository.save(newUser);
             } else {
                 String nameFix = duplicateUsernameHandle(nameConverted);
                 UserEntity newUser = new UserEntity();
                 newUser.setUsername(nameFix);
-                newUser.setMail(email);
-                newUser.setProvider(Provider.FACEBOOK);
+                newUser.setMail(userEntity.getMail());
+                newUser.setProviderEnum(provider);
 //                newUser.setStatus(StatusEnum.ACTIVE);
                 newUser.setRole(RoleEnum.USER); // * Mac dinh de Role la USER
                 newUser.setEnabled(true);
-                userRepository.save(newUser);
+                return userRepository.save(newUser);
             }
-        }
+
+        } else return existEmail;
     }
 }
