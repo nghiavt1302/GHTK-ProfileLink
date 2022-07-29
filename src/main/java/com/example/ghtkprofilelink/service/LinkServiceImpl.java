@@ -93,8 +93,7 @@ public class LinkServiceImpl implements LinkService {
     public Data delete(Long id) {
         // TODO Auto-generated method stub
         LinkEntity link = linkRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
-        link.setStatus(StatusEnum.INACTIVE);
-        linkRepository.save(link);
+        linkRepository.deleteById(id);
         return new Data(true, "success", mapper.map(link, LinkDto.class));
     }
 

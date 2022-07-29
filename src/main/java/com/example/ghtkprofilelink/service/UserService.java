@@ -1,7 +1,9 @@
 package com.example.ghtkprofilelink.service;
 
+import com.example.ghtkprofilelink.constants.ProviderEnum;
 import com.example.ghtkprofilelink.model.dto.UserDto;
 import com.example.ghtkprofilelink.model.dto.UserRegister;
+import com.example.ghtkprofilelink.model.entity.UserEntity;
 import com.example.ghtkprofilelink.model.response.Data;
 
 import javax.mail.MessagingException;
@@ -16,7 +18,7 @@ public interface UserService {
 
     Data add(UserDto userDto);
 
-    Data update(UserDto userDto);
+    Data update(UserDto userDto,Long id);
 
     Data deleteById(Long id);
 
@@ -32,5 +34,5 @@ public interface UserService {
 
     Data forgotPassword(String mail) throws MessagingException;
 
-    void processOAuthPostLogin(String username, String email);
+    UserEntity processOAuthPostLogin(UserEntity userEntity, ProviderEnum provider);
 }

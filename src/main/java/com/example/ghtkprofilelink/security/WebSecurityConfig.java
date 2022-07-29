@@ -98,25 +98,25 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and();
 
 //        * Enable CORS and disable CSRF and config oauth2
-        http.cors().and().csrf().disable()
-                .formLogin().permitAll().loginPage("/loginFb")
-                .and()
-                .oauth2Login()
-                .loginPage("/loginFb")
-                .userInfoEndpoint()
-                .userService(oAuth2UserService)
-                .and()
-                .successHandler(new AuthenticationSuccessHandler() {
-                    @Override
-                    public void onAuthenticationSuccess(HttpServletRequest request,
-                                                        HttpServletResponse response,
-                                                        Authentication authentication) throws IOException, ServletException {
-                        CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
-                        String username = oAuth2User.getName();
-                        String email = oAuth2User.getEmail();
-                        userService.processOAuthPostLogin(username, email);
-                    }
-                });
+        http.cors().and().csrf().disable();
+//                .formLogin().permitAll().loginPage("/loginFb")
+//                .and()
+//                .oauth2Login()
+//                .loginPage("/loginFb")
+//                .userInfoEndpoint()
+//                .userService(oAuth2UserService)
+//                .and()
+//                .successHandler(new AuthenticationSuccessHandler() {
+//                    @Override
+//                    public void onAuthenticationSuccess(HttpServletRequest request,
+//                                                        HttpServletResponse response,
+//                                                        Authentication authentication) throws IOException, ServletException {
+//                        CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
+//                        String username = oAuth2User.getName();
+//                        String email = oAuth2User.getEmail();
+//                        userService.processOAuthPostLogin(username, email);
+//                    }
+//                });
         // Tất cả các request khác đều cần phải xác thực mới được truy cập
 //                .and().formLogin() // Cho phép người dùng xác thực bằng form login
 //                .defaultSuccessUrl("/swagger-ui.html#/").permitAll() // Tất cả đều được truy cập vào địa chỉ này
@@ -132,7 +132,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //        * Phan quyen
         http.authorizeRequests()
                 // * Cho phép tất cả mọi người truy cập kể cả chưa đăng nhập
-                .antMatchers("/test/**", "/swagger-ui.html#", "/loginFb", "/api/v1.0/design/get/**",
+                .antMatchers("/test/**", "/swagger-ui.html#", "/login/oauth/**", "/api/v1.0/design/get/**",
                         "/api/v1.0/link/list/**", "/api/v1.0/profile/getbyshortbio", "/api/v1.0/social/get/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/v1.0/profile").permitAll()
                 

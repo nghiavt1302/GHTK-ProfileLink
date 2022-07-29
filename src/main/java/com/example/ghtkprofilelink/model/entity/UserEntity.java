@@ -1,9 +1,10 @@
 package com.example.ghtkprofilelink.model.entity;
 
-import com.example.ghtkprofilelink.constants.Provider;
+import com.example.ghtkprofilelink.constants.ProviderEnum;
 import com.example.ghtkprofilelink.constants.RoleEnum;
 import com.example.ghtkprofilelink.model.dto.UserDto;
 import com.example.ghtkprofilelink.model.dto.UserRegister;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -34,19 +35,22 @@ public class UserEntity {
 
     private boolean enabled;
 
+    @JsonProperty("is_profile")
+    private Boolean isProfile;
+
     private String mail;
 
     @Column(name = "update_password_token", length = 64)
     private String updatePasswordToken;
 
     @Enumerated(EnumType.STRING)
-    private Provider provider;
+    private ProviderEnum provider;
 
-    public Provider getProvider(){
+    public ProviderEnum getProvider(){
         return provider;
     }
 
-    public void setProvider(Provider provider) {
+    public void setProvider(ProviderEnum provider) {
         this.provider = provider;
     }
 

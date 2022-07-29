@@ -1,7 +1,6 @@
 package com.example.ghtkprofilelink.controller;
 
 import com.example.ghtkprofilelink.model.dto.ProfileDto;
-import com.example.ghtkprofilelink.model.response.Data;
 import com.example.ghtkprofilelink.model.response.ListData;
 import com.example.ghtkprofilelink.service.ProfileService;
 
@@ -11,12 +10,10 @@ import io.github.bucket4j.Bucket4j;
 import io.github.bucket4j.Refill;
 
 import java.time.Duration;
-import java.util.Date;
 import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
