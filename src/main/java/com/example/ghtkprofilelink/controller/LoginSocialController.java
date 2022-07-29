@@ -36,14 +36,9 @@ public class LoginSocialController {
     @Value("${spring.security.oauth2.client.registration.google.clientId}")
     String googleClientId;
 
-    @Value("${jwt.secret}")
-    String secretPsw;
-
     @Autowired
     UserServiceImpl userService;
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
     @Autowired
 
     private JwtTokenProvider tokenProvider;
@@ -58,6 +53,8 @@ public class LoginSocialController {
         final GoogleIdToken googleIdToken = GoogleIdToken.parse(verifier.getJsonFactory(), tokenDto.getValue());
         final GoogleIdToken.Payload payload = googleIdToken.getPayload();
         UserEntity userEntity = new UserEntity();
+        userEntity.setMail(payload.getEmail());
+        userEntity.setUsername(payload.getEmail());
         TokenDto tokenRes = addToken(userService.processOAuthPostLogin(userEntity, ProviderEnum.GOOGLE));
         return new ResponseEntity<>(new Data(true, "success", new LoginResponse("Bearer " + tokenRes.getValue(), userEntity)),HttpStatus.OK);
 
@@ -66,29 +63,19 @@ public class LoginSocialController {
     @PostMapping("/facebook")
     public ResponseEntity<?> facebook(@RequestBody TokenDto tokenDto) throws IOException {
         Facebook facebook = new FacebookTemplate(tokenDto.getValue());
-        final String [] fields = {"email", "picture"};
+        final String [] fields = {"email","name"};
         User user = facebook.fetchObject("me", User.class, fields);
         UserEntity userEntity = new UserEntity();
-
-        TokenDto tokenRes = addToken(userService.processOAuthPostLogin(userEntity,ProviderEnum.FACEBOOK));
+        userEntity.setMail(user.getEmail());
+        userEntity.setUsername(user.getName());
+        userEntity=userService.processOAuthPostLogin(userEntity,ProviderEnum.FACEBOOK);
+        TokenDto tokenRes = addToken(userEntity);
         return new ResponseEntity<>(new Data(true, "success", new LoginResponse("Bearer " + tokenRes.getValue(), userEntity)),HttpStatus.OK);
 
     }
 
     public TokenDto addToken(UserEntity user){
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        user.getMail(),
-                        user.getUsername()
-                )
-        );
-
-        // Nếu không xảy ra exception tức là thông tin hợp lệ
-        // Set thông tin authentication vào Security Context
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        // Trả về jwt cho người dùng.
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        CustomUserDetails userDetails=new CustomUserDetails(user);
         String jwt = tokenProvider.generateToken(userDetails);
         return new TokenDto(jwt);
     }

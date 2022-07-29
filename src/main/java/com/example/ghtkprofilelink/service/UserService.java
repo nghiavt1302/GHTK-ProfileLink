@@ -18,7 +18,7 @@ public interface UserService {
 
     Data add(UserDto userDto);
 
-    Data update(UserDto userDto);
+    Data update(UserDto userDto,Long id);
 
     Data deleteById(Long id);
 

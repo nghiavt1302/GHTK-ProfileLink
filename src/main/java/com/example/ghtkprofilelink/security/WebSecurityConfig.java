@@ -98,7 +98,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and();
 
 //        * Enable CORS and disable CSRF and config oauth2
-//        http.cors().and().csrf().disable()
+        http.cors().and().csrf().disable();
 //                .formLogin().permitAll().loginPage("/loginFb")
 //                .and()
 //                .oauth2Login()

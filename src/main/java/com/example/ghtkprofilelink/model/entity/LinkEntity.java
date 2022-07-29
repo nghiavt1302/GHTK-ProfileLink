@@ -34,7 +34,6 @@ public class LinkEntity {
     private Long profileId;
     @JsonProperty("click_count")
     private Long clickCount;
-    private StatusEnum status;
 
     public LinkEntity setValueFromDto(LinkDto linkDto) {
         this.id = linkDto.getId();
