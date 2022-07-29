@@ -97,18 +97,6 @@ public class LinkServiceImpl implements LinkService {
         return new Data(true, "success", mapper.map(link, LinkDto.class));
     }
 
-    @Override
-    public ResponseEntity<Data> getAll() {
-        List<LinkEntity> linkEntity = linkRepository.findAll();
-        // TODO Auto-generated method stub
-        if (linkEntity.isEmpty() == false) {
-            return ResponseEntity.status(HttpStatus.OK).body(
-                    new Data(true, "successful delete", mapper.map(linkEntity, LinkDto.class)));
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                    new Data(false, "not found", ""));
-        }
-    }
 
 
 }
