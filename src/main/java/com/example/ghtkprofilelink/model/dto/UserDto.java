@@ -1,6 +1,7 @@
 package com.example.ghtkprofilelink.model.dto;
 
 import com.example.ghtkprofilelink.constants.RoleEnum;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -14,4 +15,6 @@ public class UserDto {
     private String password;
     private String mail;
     private RoleEnum role;
+    @JsonProperty("is_profile")
+    private Boolean isProfile;
 }

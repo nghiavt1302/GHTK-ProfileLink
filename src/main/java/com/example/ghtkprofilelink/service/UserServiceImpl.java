@@ -1,6 +1,6 @@
 package com.example.ghtkprofilelink.service;
 
-import com.example.ghtkprofilelink.constants.Provider;
+import com.example.ghtkprofilelink.constants.ProviderEnum;
 import com.example.ghtkprofilelink.constants.RoleEnum;
 import com.example.ghtkprofilelink.model.dto.UserDto;
 import com.example.ghtkprofilelink.model.dto.UserRegister;
@@ -22,9 +22,11 @@ import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.io.UnsupportedEncodingException;
+import java.text.Normalizer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 @Service
 public class UserServiceImpl implements UserService, UserDetailsService {
@@ -66,16 +68,18 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         //        * Mac dinh de Role la USER
         user.setRole(RoleEnum.USER);
+        user.setProvider(ProviderEnum.DEFAULT);
+        user.setIsProfile(false);
         return new Data(true, "success", mapper.map(userRepository.save(user), UserDto.class));
     }
 
     @Override
-    public Data update(UserDto userDto) {
-        if (!userRepository.existsByUsername(userDto.getUsername())) throw new EntityNotFoundException();
-        UserEntity userRepo = userRepository.findByUsername(userDto.getUsername()).get();
-        userRepo.setPassword(passwordEncoder.encode(userRepo.getPassword()));
+    public Data update(UserDto userDto,Long id) {
+        UserEntity userEntity = userRepository.findByUsername(userDto.getUsername()).orElseThrow(()->new EntityNotFoundException());
+        userEntity.setRole(userDto.getRole());
+        userEntity.setIsProfile(userDto.getIsProfile());
 
-        return new Data(true, "success", mapper.map(userRepository.save(userRepo), UserDto.class));
+        return new Data(true, "success", mapper.map(userRepository.save(userEntity), UserDto.class));
     }
 
     @Override
@@ -124,6 +128,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         UserEntity user = new UserEntity().mapUserRegister(userRegister);
         user.setPassword(passwordEncoder.encode(userRegister.getPassword()));
         user.setEnabled(false);
+        user.setIsProfile(false);
         user.setRole(RoleEnum.USER);// * Mac dinh de Role la USER
         user.setVerificationCode(RandomString.make(64));
 
@@ -201,7 +206,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     // Convert FB username (Vu Trong Nghia -> vutrongnghia)
     public String convertFbUsername(String fbName){
-        return fbName.toLowerCase().replaceAll(" ","");
+        String temp = Normalizer.normalize(fbName, Normalizer.Form.NFD);
+        Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+        return pattern.matcher(temp).replaceAll("").toLowerCase().replaceAll(" ","");
     }
 
     // Them so tu 0, 1, 2, ... vao sau username neu bi trung
@@ -221,31 +228,34 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     // Them user vao database khi login bang Facebook
     @Override
-    public void processOAuthPostLogin(String username, String email) {
-        UserEntity existEmail = userRepository.getUserByEmail(email);
+    public UserEntity processOAuthPostLogin(UserEntity userEntity,ProviderEnum provider) {
+        UserEntity existEmail = userRepository.getUserByEmail(userEntity.getMail());
         if (existEmail == null) {
-            String nameConverted = convertFbUsername(username);
+            String nameConverted = convertFbUsername(userEntity.getUsername());
             UserEntity existUsername = userRepository.getUserByUsername(nameConverted);
             if (existUsername == null) {
                 UserEntity newUser = new UserEntity();
                 newUser.setUsername(nameConverted);
-                newUser.setMail(email);
-                newUser.setProvider(Provider.FACEBOOK);
+                newUser.setMail(userEntity.getMail());
+                newUser.setProvider(ProviderEnum.FACEBOOK);
 //                newUser.setStatus(StatusEnum.ACTIVE);
                 newUser.setRole(RoleEnum.USER); // * Mac dinh de Role la USER
                 newUser.setEnabled(true);
-                userRepository.save(newUser);
+                newUser.setIsProfile(false);
+                return userRepository.save(newUser);
             } else {
                 String nameFix = duplicateUsernameHandle(nameConverted);
                 UserEntity newUser = new UserEntity();
                 newUser.setUsername(nameFix);
-                newUser.setMail(email);
-                newUser.setProvider(Provider.FACEBOOK);
+                newUser.setMail(userEntity.getMail());
+                newUser.setProvider(provider);
 //                newUser.setStatus(StatusEnum.ACTIVE);
                 newUser.setRole(RoleEnum.USER); // * Mac dinh de Role la USER
                 newUser.setEnabled(true);
-                userRepository.save(newUser);
+                newUser.setIsProfile(false);
+                return userRepository.save(newUser);
             }
-        }
+
+        } else return existEmail;
     }
 }

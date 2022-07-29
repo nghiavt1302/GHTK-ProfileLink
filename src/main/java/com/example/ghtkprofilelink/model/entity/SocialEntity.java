@@ -34,7 +34,6 @@ public class SocialEntity {
     @JsonProperty("click_count")
     @Column(name = "click_count")
     private Long clickCount;
-    private StatusEnum status;
 
     public SocialEntity setValueFromDto(SocialDto socialDto) {
         this.id = socialDto.getId();
