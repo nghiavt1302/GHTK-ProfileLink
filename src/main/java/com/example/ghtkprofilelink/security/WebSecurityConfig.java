@@ -133,7 +133,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 // * Cho phép tất cả mọi người truy cập kể cả chưa đăng nhập
                 .antMatchers("/test/**", "/swagger-ui.html#", "/login/oauth/**", "/api/v1.0/design/get/**",
-                        "/api/v1.0/link/list/**", "/api/v1.0/profile/getbyshortbio", "/api/v1.0/social/get/**").permitAll()
+                        "/api/v1.0/link/list/**", "/api/v1.0/profile/shortbio", "/api/v1.0/social/get/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/v1.0/profile").permitAll()
                 
                 // * Cho phép tất cả mọi người đăng nhập rồi truy cập
