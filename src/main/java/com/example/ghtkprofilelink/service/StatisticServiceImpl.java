@@ -1,30 +1,26 @@
 package com.example.ghtkprofilelink.service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import javax.persistence.EntityNotFoundException;
 
 import com.example.ghtkprofilelink.constants.StatusEnum;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import com.example.ghtkprofilelink.model.dto.ChartsDto;
-import com.example.ghtkprofilelink.model.entity.ChartsEntity;
+import com.example.ghtkprofilelink.model.dto.StatisticDto;
+import com.example.ghtkprofilelink.model.entity.StatisticEntity;
 import com.example.ghtkprofilelink.model.response.Data;
 import com.example.ghtkprofilelink.model.response.ListData;
 import com.example.ghtkprofilelink.model.response.Pagination;
-import com.example.ghtkprofilelink.repository.ChartsRepository;
+import com.example.ghtkprofilelink.repository.StatisticRepository;
 
 @Service
-public class ChartsServiceImpl implements ChartsService {
+public class StatisticServiceImpl implements StatisticService {
 
     @Autowired
-    ChartsRepository chartsRepository;
+    StatisticRepository statisticRepository;
 
     @Autowired
     ModelMapper modelMapper;
@@ -32,41 +28,41 @@ public class ChartsServiceImpl implements ChartsService {
     @Override
     public Data getById(Long id) {
         // TODO Auto-generated method stub
-        ChartsEntity charts = chartsRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
-        return new Data(true, "success", modelMapper.map(charts, ChartsDto.class));
+        StatisticEntity charts = statisticRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
+        return new Data(true, "success", modelMapper.map(charts, StatisticDto.class));
     }
 
     @Override
-    public Data add(ChartsDto chartsDto) {
+    public Data add(StatisticDto statisticDto) {
         // TODO Auto-generated method stub
-        ChartsEntity charts = modelMapper.map(chartsDto, ChartsEntity.class);
-        return new Data(true, "success", modelMapper.map(chartsRepository.save(charts), ChartsDto.class));
+        StatisticEntity charts = modelMapper.map(statisticDto, StatisticEntity.class);
+        return new Data(true, "success", modelMapper.map(statisticRepository.save(charts), StatisticDto.class));
     }
 
     @Override
-    public Data update(ChartsDto chartsDto, Long id) {
+    public Data update(StatisticDto statisticDto, Long id) {
         // TODO Auto-generated method stub
-        if (!chartsRepository.existsById(chartsDto.getId()))
+        if (!statisticRepository.existsById(statisticDto.getId()))
             throw new EntityNotFoundException();
-        ChartsEntity chartsRepo = chartsRepository.getById(chartsDto.getId());
-        ChartsEntity charts = modelMapper.map(chartsDto, ChartsEntity.class);
+        StatisticEntity chartsRepo = statisticRepository.getById(statisticDto.getId());
+        StatisticEntity charts = modelMapper.map(statisticDto, StatisticEntity.class);
         charts.setId(chartsRepo.getId());
-        return new Data(true, "success", modelMapper.map(chartsRepository.save(charts), ChartsDto.class));
+        return new Data(true, "success", modelMapper.map(statisticRepository.save(charts), StatisticDto.class));
     }
 
     @Override
     public Data delete(Long id) {
         // TODO Auto-generated method stub
-        ChartsEntity charts = chartsRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
+        StatisticEntity charts = statisticRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
         charts.setStatus(StatusEnum.INACTIVE);
-        chartsRepository.save(charts);
-        return new Data(true, "success", modelMapper.map(charts, ChartsDto.class));
+        statisticRepository.save(charts);
+        return new Data(true, "success", modelMapper.map(charts, StatisticDto.class));
     }
 
     @Override
     public ListData getAll(int page, int pageSize) {
         // TODO Auto-generated method stub
-        Page<ChartsEntity> chartsEntities = chartsRepository.findAll(PageRequest.of(page, pageSize));
+        Page<StatisticEntity> chartsEntities = statisticRepository.findAll(PageRequest.of(page, pageSize));
         return new ListData(true, "success", chartsEntities.getContent(),
                 new Pagination(chartsEntities.getNumber(), chartsEntities.getSize(), chartsEntities.getTotalPages(),
                         (int) chartsEntities.getTotalElements()));
@@ -75,7 +71,7 @@ public class ChartsServiceImpl implements ChartsService {
     @Override
     public ListData getTopProfileToMonth(int page, int pageSize) {
         // TODO Auto-generated method stub
-        Page<ChartsEntity> chartsEntities = chartsRepository.getTopProfileToMonth(PageRequest.of(page, pageSize));
+        Page<StatisticEntity> chartsEntities = statisticRepository.getTopProfileToMonth(PageRequest.of(page, pageSize));
         return new ListData(true, "success", chartsEntities.getContent(),
                 new Pagination(chartsEntities.getNumber(), chartsEntities.getSize(), chartsEntities.getTotalPages(),
                         (int) chartsEntities.getTotalElements()));

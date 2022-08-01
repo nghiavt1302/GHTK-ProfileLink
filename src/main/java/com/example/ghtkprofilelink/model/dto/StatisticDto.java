@@ -14,7 +14,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ChartsDto {
+public class StatisticDto {
     private Long id;
     @JsonProperty("click_count")
     private Long clickCount;
