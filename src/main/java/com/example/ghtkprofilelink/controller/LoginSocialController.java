@@ -17,10 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import com.google.api.client.json.jackson2.JacksonFactory;
 
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.social.facebook.api.Facebook;
 import org.springframework.social.facebook.api.User;
 import org.springframework.social.facebook.api.impl.FacebookTemplate;
@@ -57,7 +53,6 @@ public class LoginSocialController {
         userEntity.setUsername(payload.getEmail());
         TokenDto tokenRes = addToken(userService.processOAuthPostLogin(userEntity, ProviderEnum.GOOGLE));
         return new ResponseEntity<>(new Data(true, "success", new LoginResponse("Bearer " + tokenRes.getValue(), userEntity)),HttpStatus.OK);
-
     }
 
     @PostMapping("/facebook")

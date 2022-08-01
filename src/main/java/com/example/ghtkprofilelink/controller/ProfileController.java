@@ -62,7 +62,7 @@ public class ProfileController {
                 .build();
     }
 
-    @GetMapping("/getbyshortbio")
+    @GetMapping("/shortbio")
     public ResponseEntity<?> getByShortBio(HttpSession session, @RequestParam String shortBio) {
         if (bucket.tryConsume(1)) {
             return ResponseEntity.ok(profileService.getProfileByShortBio(session, shortBio));
@@ -71,7 +71,7 @@ public class ProfileController {
         return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
     }
 
-    @GetMapping("/gettopprofile")
+    @GetMapping("/top")
     public ResponseEntity<ListData> getTopProfile(@RequestParam int page, @RequestParam int pageSize) {
         return ResponseEntity.ok(profileService.getTopProfile(page, pageSize));
     }

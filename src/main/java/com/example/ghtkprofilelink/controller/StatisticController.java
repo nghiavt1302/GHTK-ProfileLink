@@ -1,19 +1,19 @@
 package com.example.ghtkprofilelink.controller;
 
-import com.example.ghtkprofilelink.model.dto.ChartsDto;
+import com.example.ghtkprofilelink.model.dto.StatisticDto;
 import com.example.ghtkprofilelink.model.response.Data;
 import com.example.ghtkprofilelink.model.response.ListData;
-import com.example.ghtkprofilelink.service.ChartsServiceImpl;
+import com.example.ghtkprofilelink.service.StatisticServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin
 @RestController
-@RequestMapping("api/v1.0/charts")
-public class ChartsController {
+@RequestMapping("api/v1.0/statistic")
+public class StatisticController {
     @Autowired
-    ChartsServiceImpl chartsService;
+    StatisticServiceImpl chartsService;
 
     @GetMapping()
     public ResponseEntity<ListData> getAll(@RequestParam int page, @RequestParam int pageSize) {
@@ -26,13 +26,13 @@ public class ChartsController {
     }
 
     @PostMapping()
-    public ResponseEntity<Data> add(@RequestBody ChartsDto chartsDto) {
-        return ResponseEntity.ok(chartsService.add(chartsDto));
+    public ResponseEntity<Data> add(@RequestBody StatisticDto statisticDto) {
+        return ResponseEntity.ok(chartsService.add(statisticDto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Data> update(@RequestBody ChartsDto chartsDto, @PathVariable Long id) {
-        return ResponseEntity.ok(chartsService.update(chartsDto, id));
+    public ResponseEntity<Data> update(@RequestBody StatisticDto statisticDto, @PathVariable Long id) {
+        return ResponseEntity.ok(chartsService.update(statisticDto, id));
     }
 
     @DeleteMapping("/{id}")
@@ -40,7 +40,7 @@ public class ChartsController {
         return ResponseEntity.ok(chartsService.delete(id));
     }
     
-    @GetMapping("/gettopprofiletomonth")
+    @GetMapping("/top-month")
     public ResponseEntity<ListData> getTopProfileToMonth(@RequestParam int page, @RequestParam int pageSize) {
         return ResponseEntity.ok(chartsService.getTopProfileToMonth(page, pageSize));
     }

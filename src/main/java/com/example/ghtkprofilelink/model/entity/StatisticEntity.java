@@ -10,7 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import com.example.ghtkprofilelink.constants.StatusEnum;
-import com.example.ghtkprofilelink.model.dto.ChartsDto;
+import com.example.ghtkprofilelink.model.dto.StatisticDto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
@@ -20,10 +20,10 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 @Data
 @Entity
-@Table(name = "charts")
+@Table(name = "statistics")
 @AllArgsConstructor
 @NoArgsConstructor
-public class ChartsEntity {
+public class StatisticEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -38,12 +38,12 @@ public class ChartsEntity {
     private String country;
     private StatusEnum status;
 
-    public ChartsEntity setValueByDto(ChartsDto chartsDto) {
-        this.id = chartsDto.getId();
-        this.clickCount = chartsDto.getClickCount();
-        this.profileId = chartsDto.getProfileId();
-        this.date = chartsDto.getDate();
-        this.country = chartsDto.getCountry();
+    public StatisticEntity setValueByDto(StatisticDto statisticDto) {
+        this.id = statisticDto.getId();
+        this.clickCount = statisticDto.getClickCount();
+        this.profileId = statisticDto.getProfileId();
+        this.date = statisticDto.getDate();
+        this.country = statisticDto.getCountry();
 
         return this;
     }

@@ -4,21 +4,18 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.example.ghtkprofilelink.constants.StatusEnum;
 import com.example.ghtkprofilelink.model.dto.ProfileDto;
-import com.example.ghtkprofilelink.model.entity.ChartsEntity;
+import com.example.ghtkprofilelink.model.entity.StatisticEntity;
 import com.example.ghtkprofilelink.model.entity.ProfileEntity;
 import com.example.ghtkprofilelink.model.response.Data;
 import com.example.ghtkprofilelink.model.response.ListData;
 import com.example.ghtkprofilelink.model.response.Pagination;
-import com.example.ghtkprofilelink.repository.ChartsRepository;
+import com.example.ghtkprofilelink.repository.StatisticRepository;
 import com.example.ghtkprofilelink.repository.ProfileRepository;
 
-import jdk.jshell.Snippet;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,7 +24,6 @@ import javax.servlet.http.HttpSession;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 @Service
@@ -36,7 +32,7 @@ public class ProfileServiceImpl implements ProfileService {
     ProfileRepository profileRepository;
 
     @Autowired
-    ChartsRepository chartsRepository;
+    StatisticRepository statisticRepository;
 
     @Autowired
     Cloudinary cloudinary;
@@ -69,12 +65,12 @@ public class ProfileServiceImpl implements ProfileService {
                     "https://res.cloudinary.com/anhtuanbui/image/upload/v1657248868/knybg0tx6rj48d62nv4a.png");
         ProfileEntity profileEntity=profileRepository.save(profile);
         Integer profileId = profileEntity.getId().intValue();
-        ChartsEntity chart = new ChartsEntity();
+        StatisticEntity chart = new StatisticEntity();
         chart.setClickCount(1L);
         chart.setCountry(null);
         chart.setDate(new java.sql.Date(new Date().getTime()));
         chart.setProfileId(profileId.intValue());
-        chartsRepository.save(chart);
+        statisticRepository.save(chart);
         return new Data(true, "success", mapper.map(profileEntity, ProfileDto.class));
     }
 
@@ -108,8 +104,8 @@ public class ProfileServiceImpl implements ProfileService {
         ProfileEntity profile = profileRepository.getProfileByShortBio(shortBio);
         Integer profileId = profile.getId().intValue();
         Integer counter = profile.getClickCount();
-        ChartsEntity charts = chartsRepository.findAllByProfileId(profileId)
-                .get(chartsRepository.findAllByProfileId(profileId).size() - 1);
+        StatisticEntity charts = statisticRepository.findAllByProfileId(profileId)
+                .get(statisticRepository.findAllByProfileId(profileId).size() - 1);
         Long countToMonth = charts.getClickCount();
         int monthRealTime = cal.get(Calendar.MONTH) + 1;
         Date date = charts.getDate();
@@ -118,12 +114,12 @@ public class ProfileServiceImpl implements ProfileService {
         Long lastTime = session.getLastAccessedTime();
         if (monthRealTime >= monthDb + 1) {
             counter += 1;
-            ChartsEntity chart = new ChartsEntity();
+            StatisticEntity chart = new StatisticEntity();
             chart.setClickCount(1L);
             chart.setCountry(charts.getCountry());
             chart.setDate(new java.sql.Date(new Date().getTime()));
             chart.setProfileId(profileId.intValue());
-            chartsRepository.save(chart);
+            statisticRepository.save(chart);
         } else {
             if (counter == null) {
                 profile.setClickCount(0);
