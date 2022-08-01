@@ -5,6 +5,7 @@ import com.example.ghtkprofilelink.model.response.Data;
 import com.example.ghtkprofilelink.model.response.ListData;
 import com.example.ghtkprofilelink.service.StatisticServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,8 +42,8 @@ public class StatisticController {
     }
     
     @GetMapping("/top-month")
-    public ResponseEntity<ListData> getTopProfileToMonth(@RequestParam int page, @RequestParam int pageSize) {
-        return ResponseEntity.ok(chartsService.getTopProfileToMonth(page, pageSize));
+    public ResponseEntity<?> getTopProfileToMonth(@RequestParam("page") int page, @RequestParam("page_size") int pageSize) {
+        return new ResponseEntity<>(chartsService.getTopProfileToMonth(page, pageSize), HttpStatus.OK);
     }
 
     // @GetMapping("/getbyprofileid")

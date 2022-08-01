@@ -71,7 +71,7 @@ public class StatisticServiceImpl implements StatisticService {
     @Override
     public ListData getTopProfileToMonth(int page, int pageSize) {
         // TODO Auto-generated method stub
-        Page<StatisticEntity> chartsEntities = statisticRepository.getTopProfileToMonth(PageRequest.of(page, pageSize));
+        Page<StatisticDto> chartsEntities = statisticRepository.getTopProfileToMonth(PageRequest.of(page, pageSize));
         return new ListData(true, "success", chartsEntities.getContent(),
                 new Pagination(chartsEntities.getNumber(), chartsEntities.getSize(), chartsEntities.getTotalPages(),
                         (int) chartsEntities.getTotalElements()));
