@@ -213,14 +213,19 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     // Them so tu 0, 1, 2, ... vao sau username neu bi trung
     public String duplicateUsernameHandle(String nameConverted){
-        String addInt = nameConverted;
+        int index=nameConverted.indexOf("@");
+        String addInt;
+        if(index>0){
+             addInt = nameConverted.substring(0,index);
+        } else addInt = nameConverted;
+
         int i = 0;
         do {
             UserEntity existUser = userRepository.getUserByUsername(addInt);
             if (existUser == null){
                 return addInt;
             }else {
-                addInt = nameConverted.concat(String.valueOf(i));
+                addInt = addInt.concat(String.valueOf(i));
                 i++;
             }
         }while (true);
