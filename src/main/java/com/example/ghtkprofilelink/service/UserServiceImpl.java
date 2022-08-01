@@ -205,27 +205,27 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     // Convert FB username (Vu Trong Nghia -> vutrongnghia)
-    public String convertFbUsername(String fbName){
-        String temp = Normalizer.normalize(fbName, Normalizer.Form.NFD);
+    public String convertUsername(String name){
+        int index=name.indexOf("@");
+        String username;
+        if(index>0){
+            username=name.substring(0,index);
+        } else username=name;
+        String temp = Normalizer.normalize(username, Normalizer.Form.NFD);
         Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
         return pattern.matcher(temp).replaceAll("").toLowerCase().replaceAll(" ","");
     }
 
     // Them so tu 0, 1, 2, ... vao sau username neu bi trung
     public String duplicateUsernameHandle(String nameConverted){
-        int index=nameConverted.indexOf("@");
-        String addInt;
-        if(index>0){
-             addInt = nameConverted.substring(0,index);
-        } else addInt = nameConverted;
-
+        String addInt = nameConverted;
         int i = 0;
         do {
             UserEntity existUser = userRepository.getUserByUsername(addInt);
             if (existUser == null){
                 return addInt;
             }else {
-                addInt = addInt.concat(String.valueOf(i));
+                addInt = nameConverted.concat(String.valueOf(i));
                 i++;
             }
         }while (true);
@@ -236,7 +236,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public UserEntity processOAuthPostLogin(UserEntity userEntity,ProviderEnum provider) {
         UserEntity existEmail = userRepository.getUserByEmail(userEntity.getMail());
         if (existEmail == null) {
-            String nameConverted = convertFbUsername(userEntity.getUsername());
+            String nameConverted = convertUsername(userEntity.getUsername());
             UserEntity existUsername = userRepository.getUserByUsername(nameConverted);
             if (existUsername == null) {
                 UserEntity newUser = new UserEntity();
