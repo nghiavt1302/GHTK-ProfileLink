@@ -16,11 +16,6 @@ public class LinkController {
     @Autowired
     LinkService linkService;
 
-    @GetMapping("")
-    public ResponseEntity<?> get() {
-        return ResponseEntity.ok(linkService.getAll());
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<?> get(
             @PathVariable Long id
