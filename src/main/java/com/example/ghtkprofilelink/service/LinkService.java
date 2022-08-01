@@ -20,5 +20,4 @@ public interface LinkService {
 
     Data delete(Long id);
 
-    ResponseEntity<Data> getAll();
 }

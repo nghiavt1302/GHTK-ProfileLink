@@ -122,8 +122,8 @@ public class ProfileServiceImpl implements ProfileService {
             statisticRepository.save(chart);
         } else {
             if (counter == null) {
-                profile.setClickCount(0);
-                charts.setClickCount(0L);
+                profile.setClickCount(1);
+                charts.setClickCount(1L);
             } else {
                 if (now >= lastTime + 6000) {
                     counter += 1;
