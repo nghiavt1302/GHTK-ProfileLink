@@ -23,4 +23,9 @@ public class StatisticDto {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date date;
     private String country;
+    @JsonProperty("avatar_link")
+    private String avatarLink;
+    private String fullname;
+    @JsonProperty("short_bio")
+    private String shortBio;
 }

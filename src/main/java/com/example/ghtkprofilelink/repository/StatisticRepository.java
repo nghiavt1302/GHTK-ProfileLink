@@ -2,6 +2,7 @@ package com.example.ghtkprofilelink.repository;
 
 import java.util.List;
 
+import com.example.ghtkprofilelink.model.dto.StatisticDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,6 +21,6 @@ public interface StatisticRepository extends JpaRepository<StatisticEntity, Long
 
     // Page<ChartsEntity> findByProfileId(Pageable pageable, @Param("profileId")
     // Integer profileId);
-    @Query("SELECT p FROM StatisticEntity p where month(date) = month(now()) - 1 and year(date) = year(now()) ORDER BY p.clickCount DESC")
-    Page<StatisticEntity> getTopProfileToMonth(Pageable pageable);
+    @Query("SELECT new com.example.ghtkprofilelink.model.dto.StatisticDto(s.id,s.clickCount,s.profileId,s.date,s.country,p.avatarLink,p.fullname,p.shortBio) FROM StatisticEntity s, ProfileEntity p where p.id=s.profileId and month(date) = month(now()) - 1 and year(date) = year(now()) ORDER BY p.clickCount DESC")
+    Page<StatisticDto> getTopProfileToMonth(Pageable pageable);
 }
