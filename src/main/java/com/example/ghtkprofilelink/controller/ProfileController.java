@@ -72,8 +72,8 @@ public class ProfileController {
     }
 
     @GetMapping("/top")
-    public ResponseEntity<ListData> getTopProfile(@RequestParam int page, @RequestParam int pageSize) {
-        return ResponseEntity.ok(profileService.getTopProfile(page, pageSize));
+    public ResponseEntity<?> getTopProfile(@RequestParam("page") int page, @RequestParam("page_size") int pageSize) {
+        return new ResponseEntity<>(profileService.getTopProfile(page, pageSize),HttpStatus.OK);
     }
 
 }
