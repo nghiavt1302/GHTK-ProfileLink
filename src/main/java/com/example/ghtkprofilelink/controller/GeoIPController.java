@@ -22,7 +22,7 @@ public class GeoIPController {
         this.geoIPLocationService = geoIPLocationService;
     }
 
-    @GetMapping("/geoIP")
+    @GetMapping("")
     public GeoIP getLocation(HttpServletRequest request
     ) throws IOException, GeoIp2Exception {
         String clientIp = geoIPLocationService.getClientIp(request);
