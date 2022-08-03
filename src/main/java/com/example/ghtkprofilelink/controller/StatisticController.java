@@ -46,7 +46,7 @@ public class StatisticController {
     }
     
     @GetMapping("/top-month")
-    public ResponseEntity<?> getTopProfileToMonth(@RequestParam("page") int page, @RequestParam("page_size") int pageSize) {
+    public ResponseEntity<?> getTopProfileToMonth(@RequestParam("page") int page, @RequestParam("page-size") int pageSize) {
         return new ResponseEntity<>(chartsService.getTopProfileToMonth(page, pageSize), HttpStatus.OK);
     }
 
