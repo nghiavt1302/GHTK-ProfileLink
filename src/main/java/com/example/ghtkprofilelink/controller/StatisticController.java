@@ -3,7 +3,7 @@ package com.example.ghtkprofilelink.controller;
 import com.example.ghtkprofilelink.model.dto.StatisticDto;
 import com.example.ghtkprofilelink.model.response.Data;
 import com.example.ghtkprofilelink.model.response.ListData;
-import com.example.ghtkprofilelink.service.StatisticServiceImpl;
+import com.example.ghtkprofilelink.service.impl.StatisticServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,8 +13,12 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("api/v1.0/statistic")
 public class StatisticController {
-    @Autowired
+
     StatisticServiceImpl chartsService;
+
+    public StatisticController(StatisticServiceImpl chartsService) {
+        this.chartsService = chartsService;
+    }
 
     @GetMapping()
     public ResponseEntity<ListData> getAll(@RequestParam int page, @RequestParam int pageSize) {
@@ -42,7 +46,7 @@ public class StatisticController {
     }
     
     @GetMapping("/top-month")
-    public ResponseEntity<?> getTopProfileToMonth(@RequestParam("page") int page, @RequestParam("page_size") int pageSize) {
+    public ResponseEntity<?> getTopProfileToMonth(@RequestParam("page") int page, @RequestParam("page-size") int pageSize) {
         return new ResponseEntity<>(chartsService.getTopProfileToMonth(page, pageSize), HttpStatus.OK);
     }
 

@@ -1,4 +1,4 @@
-package com.example.ghtkprofilelink.service;
+package com.example.ghtkprofilelink.service.impl;
 
 import java.util.List;
 import java.util.Map;
@@ -10,6 +10,7 @@ import javax.persistence.EntityNotFoundException;
 import com.example.ghtkprofilelink.constants.StatusEnum;
 import com.example.ghtkprofilelink.model.response.ListData;
 import com.example.ghtkprofilelink.repository.ProfileRepository;
+import com.example.ghtkprofilelink.service.LinkService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -32,17 +33,21 @@ import com.example.ghtkprofilelink.repository.LinkRepository;
 
 @Service
 public class LinkServiceImpl implements LinkService {
-    @Autowired
-    LinkRepository linkRepository;
 
-    @Autowired
-    Cloudinary cloudinary;
+    private final LinkRepository linkRepository;
 
-    @Autowired
-    ModelMapper mapper;
+    private final Cloudinary cloudinary;
 
-    @Autowired
-    ProfileRepository profileRepository;
+    private final ModelMapper mapper;
+
+    private final ProfileRepository profileRepository;
+
+    public LinkServiceImpl(LinkRepository linkRepository, Cloudinary cloudinary, ModelMapper mapper, ProfileRepository profileRepository) {
+        this.linkRepository = linkRepository;
+        this.cloudinary = cloudinary;
+        this.mapper = mapper;
+        this.profileRepository = profileRepository;
+    }
 
     @Override
     public Data getById(Long id) {

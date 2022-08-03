@@ -6,8 +6,8 @@ import com.example.ghtkprofilelink.model.playload.LoginResponse;
 import com.example.ghtkprofilelink.model.response.Data;
 import com.example.ghtkprofilelink.security.CustomUserDetails;
 import com.example.ghtkprofilelink.security.jwt.JwtTokenProvider;
-import com.example.ghtkprofilelink.service.UserServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.ghtkprofilelink.service.impl.UserServiceImpl;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,12 +23,21 @@ import java.io.UnsupportedEncodingException;
 @CrossOrigin
 @RestController
 public class LoginController {
-    @Autowired
-    private AuthenticationManager authenticationManager;
-    @Autowired
-    private JwtTokenProvider tokenProvider;
-    @Autowired
-    private UserServiceImpl userService;
+
+    private final AuthenticationManager authenticationManager;
+
+    private final JwtTokenProvider tokenProvider;
+
+    private final UserServiceImpl userService;
+
+    private final ModelMapper mapper;
+
+    public LoginController(AuthenticationManager authenticationManager, JwtTokenProvider tokenProvider, UserServiceImpl userService, ModelMapper mapper) {
+        this.authenticationManager = authenticationManager;
+        this.tokenProvider = tokenProvider;
+        this.userService = userService;
+        this.mapper = mapper;
+    }
 
     @PostMapping("/test/login")
     public ResponseEntity<Data> authenticateUser(@Valid @RequestBody UserDto user) {
@@ -47,7 +56,7 @@ public class LoginController {
         // Trả về jwt cho người dùng.
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         String jwt = tokenProvider.generateToken(userDetails);
-        return ResponseEntity.ok(new Data(true, "success", new LoginResponse("Bearer " + jwt, userDetails.getUser())));
+        return ResponseEntity.ok(new Data(true, "success", new LoginResponse("Bearer " + jwt,mapper.map(userDetails.getUser(),UserDto.class))));
     }
 
     @PostMapping("/test/register")
@@ -60,17 +69,17 @@ public class LoginController {
         return ResponseEntity.ok(userService.verify(code));
     }
 
-    @GetMapping("/update_password_token")
+    @GetMapping("/update-password-token")
     public ResponseEntity<Data> updatePasswordToken(@RequestParam String mail) throws MessagingException {
         return ResponseEntity.ok(userService.updatePasswordToken(mail, new StringBuffer("http://localhost:4200/update_password_token?code=")));
     }
 
-    @PostMapping("/test/update_password_token")
+    @PostMapping("/test/update-passwor-token")
     public ResponseEntity<Data> updatePassword(@RequestParam String code, @RequestParam String password) {
         return ResponseEntity.ok(userService.updatePassword(code, password));
     }
 
-    @GetMapping("/test/forgot_password")
+    @GetMapping("/test/forgot-password")
     public ResponseEntity<Data> forgotPassword(@RequestParam String mail) throws MessagingException {
         return ResponseEntity.ok(userService.forgotPassword(mail));
     }

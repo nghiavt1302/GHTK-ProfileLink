@@ -1,4 +1,4 @@
-package com.example.ghtkprofilelink.service;
+package com.example.ghtkprofilelink.service.impl;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
@@ -12,8 +12,8 @@ import com.example.ghtkprofilelink.model.response.Pagination;
 import com.example.ghtkprofilelink.repository.StatisticRepository;
 import com.example.ghtkprofilelink.repository.ProfileRepository;
 
+import com.example.ghtkprofilelink.service.ProfileService;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -24,22 +24,27 @@ import javax.servlet.http.HttpSession;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class ProfileServiceImpl implements ProfileService {
-    @Autowired
-    ProfileRepository profileRepository;
 
-    @Autowired
-    StatisticRepository statisticRepository;
+    private final ProfileRepository profileRepository;
 
-    @Autowired
-    Cloudinary cloudinary;
-    @Autowired
-    ModelMapper mapper;
+    private final StatisticRepository statisticRepository;
 
-    ProfileDto profileDto;
+    private final Cloudinary cloudinary;
+
+    private final ModelMapper mapper;
+
+    public ProfileServiceImpl(ProfileRepository profileRepository, StatisticRepository statisticRepository, Cloudinary cloudinary, ModelMapper mapper) {
+        this.profileRepository = profileRepository;
+        this.statisticRepository = statisticRepository;
+        this.cloudinary = cloudinary;
+        this.mapper = mapper;
+    }
 
     @Override
     public Data getById(Long id) {
@@ -141,7 +146,8 @@ public class ProfileServiceImpl implements ProfileService {
     public ListData getTopProfile(int page, int pageSize) {
         // TODO Auto-generated method stub
         Page<ProfileEntity> profileEntities = profileRepository.getTopProfile(PageRequest.of(page, pageSize));
-        return new ListData(true, "success", profileEntities.getContent(),
+        List<ProfileDto> profileDtos = profileEntities.stream().map(l -> mapper.map(l, ProfileDto.class)).collect(Collectors.toList());
+        return new ListData(true, "success", profileDtos,
                 new Pagination(profileEntities.getNumber(), profileEntities.getSize(), profileEntities.getTotalPages(),
                         (int) profileEntities.getTotalElements()));
     }
