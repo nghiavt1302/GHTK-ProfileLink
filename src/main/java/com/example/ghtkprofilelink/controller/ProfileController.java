@@ -3,6 +3,7 @@ package com.example.ghtkprofilelink.controller;
 import com.example.ghtkprofilelink.model.dto.ProfileDto;
 import com.example.ghtkprofilelink.model.response.ListData;
 import com.example.ghtkprofilelink.service.ProfileService;
+import com.example.ghtkprofilelink.service.impl.ProfileServiceImpl;
 
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
@@ -11,6 +12,7 @@ import io.github.bucket4j.Refill;
 
 import java.time.Duration;
 import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +27,8 @@ public class ProfileController {
     private final Bucket bucket;
 
     @Autowired
-    ProfileService profileService;
+    private ProfileService profileService;
+
 
     @GetMapping("/{id}")
     public ResponseEntity<?> get(
@@ -72,7 +75,7 @@ public class ProfileController {
     }
 
     @GetMapping("/top")
-    public ResponseEntity<ListData> getTopProfile(@RequestParam int page, @RequestParam int pageSize) {
+    public ResponseEntity<ListData> getTopProfile(@RequestParam("page") int page, @RequestParam("page-size") int pageSize) {
         return ResponseEntity.ok(profileService.getTopProfile(page, pageSize));
     }
 

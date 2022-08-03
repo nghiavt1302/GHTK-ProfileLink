@@ -1,8 +1,9 @@
-package com.example.ghtkprofilelink.service;
+package com.example.ghtkprofilelink.service.impl;
 
 import javax.persistence.EntityNotFoundException;
 
 import com.example.ghtkprofilelink.constants.StatusEnum;
+import com.example.ghtkprofilelink.service.StatisticService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,11 +20,14 @@ import com.example.ghtkprofilelink.repository.StatisticRepository;
 @Service
 public class StatisticServiceImpl implements StatisticService {
 
-    @Autowired
-    StatisticRepository statisticRepository;
+    private final StatisticRepository statisticRepository;
 
-    @Autowired
-    ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
+
+    public StatisticServiceImpl(StatisticRepository statisticRepository, ModelMapper modelMapper) {
+        this.statisticRepository = statisticRepository;
+        this.modelMapper = modelMapper;
+    }
 
     @Override
     public Data getById(Long id) {
@@ -71,7 +75,7 @@ public class StatisticServiceImpl implements StatisticService {
     @Override
     public ListData getTopProfileToMonth(int page, int pageSize) {
         // TODO Auto-generated method stub
-        Page<StatisticEntity> chartsEntities = statisticRepository.getTopProfileToMonth(PageRequest.of(page, pageSize));
+        Page<StatisticDto> chartsEntities = statisticRepository.getTopProfileToMonth(PageRequest.of(page, pageSize));
         return new ListData(true, "success", chartsEntities.getContent(),
                 new Pagination(chartsEntities.getNumber(), chartsEntities.getSize(), chartsEntities.getTotalPages(),
                         (int) chartsEntities.getTotalElements()));

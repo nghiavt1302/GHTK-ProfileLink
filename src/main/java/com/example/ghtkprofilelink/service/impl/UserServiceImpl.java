@@ -1,4 +1,4 @@
-package com.example.ghtkprofilelink.service;
+package com.example.ghtkprofilelink.service.impl;
 
 import com.example.ghtkprofilelink.constants.ProviderEnum;
 import com.example.ghtkprofilelink.constants.RoleEnum;
@@ -8,6 +8,7 @@ import com.example.ghtkprofilelink.model.entity.UserEntity;
 import com.example.ghtkprofilelink.model.response.Data;
 import com.example.ghtkprofilelink.repository.UserRepository;
 import com.example.ghtkprofilelink.security.CustomUserDetails;
+import com.example.ghtkprofilelink.service.UserService;
 import net.bytebuddy.utility.RandomString;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,16 +31,23 @@ import java.util.regex.Pattern;
 
 @Service
 public class UserServiceImpl implements UserService, UserDetailsService {
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private ModelMapper mapper;
-    @Autowired
-    public PasswordEncoder passwordEncoder;
-    @Autowired
-    private MailServiceImpl mailService;
 
-//    @Override
+    private final UserRepository userRepository;
+
+    private final ModelMapper mapper;
+
+    private final PasswordEncoder passwordEncoder;
+
+    private final MailServiceImpl mailService;
+
+    public UserServiceImpl(UserRepository userRepository, ModelMapper mapper, PasswordEncoder passwordEncoder, MailServiceImpl mailService) {
+        this.userRepository = userRepository;
+        this.mapper = mapper;
+        this.passwordEncoder = passwordEncoder;
+        this.mailService = mailService;
+    }
+
+    //    @Override
 //    Chua dung
 //    public ListData getAll(int page, int pageSize) {
 //        Page<UserDto> userEntities = userRepository.findByStatusEquals(StatusEnum.ACTIVE, PageRequest.of(page, pageSize))

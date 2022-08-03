@@ -9,17 +9,21 @@ import org.springframework.web.bind.annotation.*;
 import com.example.ghtkprofilelink.model.dto.SocialDto;
 import com.example.ghtkprofilelink.model.response.Data;
 import com.example.ghtkprofilelink.model.response.ListData;
-import com.example.ghtkprofilelink.service.SocialServiceImpl;
+import com.example.ghtkprofilelink.service.impl.SocialServiceImpl;
 
 @CrossOrigin
 @RestController
 @RequestMapping("api/v1.0/social")
 public class SocialController {
 
-    @Autowired
     SocialServiceImpl socialService;
+
+    public SocialController(SocialServiceImpl socialService) {
+        this.socialService = socialService;
+    }
+
     @GetMapping()
-    public ResponseEntity<ListData> getAll(@RequestParam int page, @RequestParam int pageSize) {
+    public ResponseEntity<ListData> getAll(@RequestParam("page") int page, @RequestParam("page-size") int pageSize) {
         return ResponseEntity.ok(socialService.getAll(page, pageSize));
     }
     @GetMapping("/{id}")
@@ -43,7 +47,7 @@ public class SocialController {
     @GetMapping("/get/{profileId}")
     public ResponseEntity<?> getByProfileId(
             @RequestParam("page") int page,
-            @RequestParam("page_size") int pageSize,
+            @RequestParam("page-size") int pageSize,
             @PathVariable Long profileId
     ){
         return new ResponseEntity<>(socialService.getByProfileId(PageRequest.of(page,pageSize),profileId),HttpStatus.OK);

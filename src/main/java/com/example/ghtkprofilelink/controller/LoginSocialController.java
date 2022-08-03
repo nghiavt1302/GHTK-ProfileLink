@@ -2,16 +2,17 @@ package com.example.ghtkprofilelink.controller;
 
 import com.example.ghtkprofilelink.constants.ProviderEnum;
 import com.example.ghtkprofilelink.model.dto.TokenDto;
+import com.example.ghtkprofilelink.model.dto.UserDto;
 import com.example.ghtkprofilelink.model.entity.UserEntity;
 import com.example.ghtkprofilelink.model.playload.LoginResponse;
 import com.example.ghtkprofilelink.model.response.Data;
 import com.example.ghtkprofilelink.security.CustomUserDetails;
 import com.example.ghtkprofilelink.security.jwt.JwtTokenProvider;
-import com.example.ghtkprofilelink.service.UserServiceImpl;
+import com.example.ghtkprofilelink.service.impl.UserServiceImpl;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,12 +33,17 @@ public class LoginSocialController {
     @Value("${spring.security.oauth2.client.registration.google.clientId}")
     String googleClientId;
 
-    @Autowired
-    UserServiceImpl userService;
+    private final UserServiceImpl userService;
 
-    @Autowired
+    private final JwtTokenProvider tokenProvider;
 
-    private JwtTokenProvider tokenProvider;
+    private final ModelMapper mapper;
+
+    public LoginSocialController(UserServiceImpl userService, JwtTokenProvider tokenProvider, ModelMapper mapper) {
+        this.userService = userService;
+        this.tokenProvider = tokenProvider;
+        this.mapper = mapper;
+    }
 
     @PostMapping("/google")
     public ResponseEntity<?> google(@RequestBody TokenDto tokenDto) throws IOException {
@@ -52,7 +58,7 @@ public class LoginSocialController {
         userEntity.setMail(payload.getEmail());
         userEntity.setUsername(payload.getEmail());
         TokenDto tokenRes = addToken(userService.processOAuthPostLogin(userEntity, ProviderEnum.GOOGLE));
-        return new ResponseEntity<>(new Data(true, "success", new LoginResponse("Bearer " + tokenRes.getValue(), userEntity)),HttpStatus.OK);
+        return new ResponseEntity<>(new Data(true, "success", new LoginResponse("Bearer " + tokenRes.getValue(), mapper.map(userEntity, UserDto.class))),HttpStatus.OK);
     }
 
     @PostMapping("/facebook")
@@ -65,7 +71,7 @@ public class LoginSocialController {
         userEntity.setUsername(user.getName());
         userEntity=userService.processOAuthPostLogin(userEntity,ProviderEnum.FACEBOOK);
         TokenDto tokenRes = addToken(userEntity);
-        return new ResponseEntity<>(new Data(true, "success", new LoginResponse("Bearer " + tokenRes.getValue(), userEntity)),HttpStatus.OK);
+        return new ResponseEntity<>(new Data(true, "success", new LoginResponse("Bearer " + tokenRes.getValue(), mapper.map(userEntity,UserDto.class))),HttpStatus.OK);
 
     }
 

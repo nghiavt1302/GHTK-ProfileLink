@@ -1,6 +1,6 @@
 package com.example.ghtkprofilelink.model.playload;
 
-import com.example.ghtkprofilelink.model.entity.UserEntity;
+import com.example.ghtkprofilelink.model.dto.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -11,5 +11,5 @@ import javax.validation.constraints.NotBlank;
 @NotBlank
 public class LoginResponse {
     private String jwt;
-    private UserEntity user;
+    private UserDto user;
 }
