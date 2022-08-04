@@ -89,8 +89,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                              "/login/oauth/**",
                              "/api/v1.0/design/get/**",
                              "/api/v1.0/link/list/**",
-                             "/api/v1.0/profile/shortbio",
+                             "/api/v1.0/profile/shortbio/**",
                              "/api/v1.0/social/get/**").permitAll()
+                .antMatchers("/topic/**").permitAll()
                 .antMatchers(HttpMethod.POST, "*/swagger-ui.html/*").permitAll()
                 .antMatchers("/update-password-token", "/api/v1.0/user/username", "/api/v1.0/user/add", "/api/v1.0/charts", "/api/v1.0/link", "/api/v1.0/profile",
                         "/api/v1.0/social").hasAnyAuthority(RoleEnum.USER.name(), RoleEnum.USER_VIP.name(), RoleEnum.ADMIN.name())
@@ -111,6 +112,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         web.ignoring()
                 .antMatchers("/swagger-ui.html")
                 .antMatchers("/test/**")
-                .antMatchers("/login/oauth/**");
+                .antMatchers("/login/oauth/**")
+                .antMatchers("/topic/**");
     }
 }
