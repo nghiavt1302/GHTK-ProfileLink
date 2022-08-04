@@ -1,4 +1,4 @@
-package com.example.ghtkprofilelink.service;
+package com.example.ghtkprofilelink.service.impl;
 
 import com.example.ghtkprofilelink.model.entity.CustomOAuth2User;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;

@@ -1,7 +1,9 @@
 package com.example.ghtkprofilelink.controller;
 
+import com.example.ghtkprofilelink.model.dto.Message;
+import com.example.ghtkprofilelink.model.dto.OutputMessage;
 import com.example.ghtkprofilelink.model.dto.ProfileDto;
-import com.example.ghtkprofilelink.model.response.ListData;
+import com.example.ghtkprofilelink.model.response.Data;
 import com.example.ghtkprofilelink.service.ProfileService;
 
 import io.github.bucket4j.Bandwidth;
@@ -9,11 +11,18 @@ import io.github.bucket4j.Bucket;
 import io.github.bucket4j.Bucket4j;
 import io.github.bucket4j.Refill;
 
+import java.security.Principal;
+import java.text.SimpleDateFormat;
 import java.time.Duration;
+import java.util.Date;
 import javax.servlet.http.HttpSession;
+
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.*;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,7 +34,15 @@ public class ProfileController {
     private final Bucket bucket;
 
     @Autowired
-    ProfileService profileService;
+    private ProfileService profileService;
+
+    @Autowired
+    SimpMessagingTemplate simpMessagingTemplate;
+
+    @Autowired
+    ModelMapper mapper;
+
+
 
     @GetMapping("/{id}")
     public ResponseEntity<?> get(
@@ -62,17 +79,38 @@ public class ProfileController {
                 .build();
     }
 
-    @GetMapping("/shortbio")
-    public ResponseEntity<?> getByShortBio(HttpSession session, @RequestParam String shortBio) {
+    @GetMapping("/shortbio/{shortBio}")
+    public ResponseEntity<?> getByShortBio(HttpSession session, @PathVariable String shortBio) {
         if (bucket.tryConsume(1)) {
-            return ResponseEntity.ok(profileService.getProfileByShortBio(session, shortBio));
+            Data data=profileService.getProfileByShortBio(session, shortBio);
+            ProfileDto profileDto=mapper.map(data.getData(),ProfileDto.class);
+//            OutputMessage out = new OutputMessage(
+//                new SimpleDateFormat("HH:mm").format(new Date()),
+//                    "someone",
+//                    "Someone is viewing your profile"
+//                );
+            String message="Someone is viewing your profile";
+            simpMessagingTemplate.convertAndSend("/queue/notification/"+profileDto.getId().toString(),message);
+
+            return ResponseEntity.ok(data);
         }
 
         return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
     }
 
+
+//    @MessageMapping("/ws/{idUser}")
+//    public void sendSpecific(
+//            @Payload Message msg) throws Exception {
+//        OutputMessage out = new OutputMessage(
+//                msg.getFrom(),
+//                msg.getText(),
+//                new SimpleDateFormat("HH:mm").format(new Date()));
+//        simpMessagingTemplate.convertAndSendToUser(msg.getTo(),"/queue/notification/"+msg.getTo(),out);
+//    }
+
     @GetMapping("/top")
-    public ResponseEntity<?> getTopProfile(@RequestParam("page") int page, @RequestParam("page_size") int pageSize) {
+    public ResponseEntity<?> getTopProfile(@RequestParam("page") int page, @RequestParam("page-size") int pageSize) {
         return new ResponseEntity<>(profileService.getTopProfile(page, pageSize),HttpStatus.OK);
     }
 

@@ -1,5 +1,6 @@
-package com.example.ghtkprofilelink.service;
+package com.example.ghtkprofilelink.service.impl;
 
+import com.example.ghtkprofilelink.service.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -13,10 +14,15 @@ import java.util.Map;
 
 @Service
 public class MailServiceImpl implements MailService {
-    @Autowired
-    private JavaMailSender mailSender;
-    @Autowired
-    private SpringTemplateEngine templateEngine;
+
+    private final JavaMailSender mailSender;
+
+    private final SpringTemplateEngine templateEngine;
+
+    public MailServiceImpl(JavaMailSender mailSender, SpringTemplateEngine templateEngine) {
+        this.mailSender = mailSender;
+        this.templateEngine = templateEngine;
+    }
 
     @Override
     public void sendMail(Map<String, Object> props, String mail, String template, String subject) throws MessagingException {

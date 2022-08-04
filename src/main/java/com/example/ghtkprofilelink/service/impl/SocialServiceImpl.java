@@ -1,10 +1,11 @@
-package com.example.ghtkprofilelink.service;
+package com.example.ghtkprofilelink.service.impl;
 
 
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.persistence.EntityNotFoundException;
 
+import com.example.ghtkprofilelink.service.SocialService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -26,14 +27,17 @@ import com.google.common.base.Optional;
 @Service
 public class SocialServiceImpl implements SocialService {
 
-    @Autowired
-    private SocialRepository socialRepository;
+    private final SocialRepository socialRepository;
 
-    @Autowired
-    private ModelMapper mapper;
+    private final ModelMapper mapper;
 
-    @Autowired
-    private ProfileRepository profileRepository;
+    private final ProfileRepository profileRepository;
+
+    public SocialServiceImpl(SocialRepository socialRepository, ModelMapper mapper, ProfileRepository profileRepository) {
+        this.socialRepository = socialRepository;
+        this.mapper = mapper;
+        this.profileRepository = profileRepository;
+    }
 
     @Override
     public ListData getAll(int page, int pageSize) {

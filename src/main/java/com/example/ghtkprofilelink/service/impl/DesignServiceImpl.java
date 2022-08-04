@@ -1,4 +1,4 @@
-package com.example.ghtkprofilelink.service;
+package com.example.ghtkprofilelink.service.impl;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
@@ -11,6 +11,7 @@ import com.example.ghtkprofilelink.model.response.Data;
 import com.example.ghtkprofilelink.model.response.ListData;
 import com.example.ghtkprofilelink.model.response.Pagination;
 import com.example.ghtkprofilelink.repository.DesignRepository;
+import com.example.ghtkprofilelink.service.DesignService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,12 +27,18 @@ import java.util.stream.Collectors;
 
 @Service
 public class DesignServiceImpl implements DesignService {
-    @Autowired
-    DesignRepository designRepository;
-    @Autowired
-    Cloudinary cloudinary;
-    @Autowired
-    ModelMapper modelMapper;
+
+    private final DesignRepository designRepository;
+
+    private final Cloudinary cloudinary;
+
+    private final ModelMapper modelMapper;
+
+    public DesignServiceImpl(DesignRepository designRepository, Cloudinary cloudinary, ModelMapper modelMapper) {
+        this.designRepository = designRepository;
+        this.cloudinary = cloudinary;
+        this.modelMapper = modelMapper;
+    }
 
     @Override
     public Data getById(Long id) {

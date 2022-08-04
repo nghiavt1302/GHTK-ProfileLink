@@ -1,7 +1,8 @@
-package com.example.ghtkprofilelink.service;
+package com.example.ghtkprofilelink.service.impl;
 
 import com.cloudinary.utils.StringUtils;
 import com.example.ghtkprofilelink.model.dto.GeoIP;
+import com.example.ghtkprofilelink.service.GeoIPLocationService;
 import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.exception.GeoIp2Exception;
 import com.maxmind.geoip2.model.CityResponse;

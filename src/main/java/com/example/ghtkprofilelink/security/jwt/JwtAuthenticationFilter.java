@@ -1,6 +1,6 @@
 package com.example.ghtkprofilelink.security.jwt;
 
-import com.example.ghtkprofilelink.service.UserServiceImpl;
+import com.example.ghtkprofilelink.service.impl.UserServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -54,7 +54,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
             filterChain.doFilter(request, response);
-            return;
         }
     }
 }

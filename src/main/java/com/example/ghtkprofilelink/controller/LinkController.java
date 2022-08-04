@@ -13,8 +13,12 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("api/v1.0/link")
 public class LinkController {
-    @Autowired
-    LinkService linkService;
+
+    private final LinkService linkService;
+
+    public LinkController(LinkService linkService) {
+        this.linkService = linkService;
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> get(
@@ -26,7 +30,7 @@ public class LinkController {
     @GetMapping("/list/{profileId}")
     public ResponseEntity<?> getByProfileId(
             @RequestParam("page") int page,
-            @RequestParam("page_size") int pageSize,
+            @RequestParam("page-size") int pageSize,
             @PathVariable Long profileId
     ){
         return new ResponseEntity<>(linkService.getByProfileId(PageRequest.of(page,pageSize),profileId),HttpStatus.OK);

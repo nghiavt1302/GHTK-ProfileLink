@@ -1,7 +1,7 @@
 package com.example.ghtkprofilelink.controller;
 
 import com.example.ghtkprofilelink.model.dto.UserDto;
-import com.example.ghtkprofilelink.service.UserServiceImpl;
+import com.example.ghtkprofilelink.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,10 +11,14 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("api/v1.0/user")
 public class UserController {
-    @Autowired
-    private UserServiceImpl userService;
 
-//    @GetMapping()
+    private final UserServiceImpl userService;
+
+    public UserController(UserServiceImpl userService) {
+        this.userService = userService;
+    }
+
+    //    @GetMapping()
 //    public ResponseEntity<?> getAll(@RequestParam int page, @RequestParam int pageSize) {
 //        return  new ResponseEntity<>(userService.getAll(page, pageSize), HttpStatus.valueOf(200));
 //    }
