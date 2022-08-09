@@ -212,6 +212,23 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return new Data(true, "forgot password success", pass);
     }
 
+    @Override
+    public Data isUpdateRole(Long id) {
+        UserEntity userEntity = (UserEntity) getById(id).getData();
+        userEntity.setIsUpdateRole(true);
+        userRepository.save(userEntity);
+        return new Data(true, "is update role success", userEntity);
+    }
+
+    @Override
+    public Data updateRole(Long id) {
+        UserEntity userEntity = (UserEntity) getById(id).getData();
+        userEntity.setRole(RoleEnum.USER_VIP);
+        userEntity.setIsUpdateRole(false);
+        userRepository.save(userEntity);
+        return new Data(true, "update role success", userEntity);
+    }
+
     // Convert FB username (Vu Trong Nghia -> vutrongnghia)
     public String convertUsername(String name){
         int index=name.indexOf("@");

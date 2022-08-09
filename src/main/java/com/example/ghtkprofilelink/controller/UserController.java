@@ -52,4 +52,14 @@ public class UserController {
     public ResponseEntity<?> deleteById(@PathVariable Long id) {
         return new ResponseEntity<>(userService.deleteById(id), HttpStatus.valueOf(200));
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> isUpdateRole(@PathVariable Long id) {
+        return new ResponseEntity<>(userService.isUpdateRole(id), HttpStatus.valueOf(200));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> updateRole(@PathVariable Long id) {
+        return new ResponseEntity<>(userService.updateRole(id), HttpStatus.valueOf(200));
+    }
 }

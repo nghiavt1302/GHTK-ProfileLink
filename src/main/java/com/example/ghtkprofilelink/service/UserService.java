@@ -8,6 +8,7 @@ import com.example.ghtkprofilelink.model.response.Data;
 
 import javax.mail.MessagingException;
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 public interface UserService {
 //    ListData getAll(int page, int pageSize);
@@ -33,6 +34,10 @@ public interface UserService {
     Data updatePassword(String code, String password);
 
     Data forgotPassword(String mail) throws MessagingException;
+
+    Data isUpdateRole(Long id);
+
+    Data updateRole(Long id);
 
     UserEntity processOAuthPostLogin(UserEntity userEntity, ProviderEnum provider);
 }
