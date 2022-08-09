@@ -1,30 +1,21 @@
 package com.example.ghtkprofilelink.controller;
 
-import com.example.ghtkprofilelink.model.dto.Message;
-import com.example.ghtkprofilelink.model.dto.OutputMessage;
 import com.example.ghtkprofilelink.model.dto.ProfileDto;
 import com.example.ghtkprofilelink.model.response.Data;
 import com.example.ghtkprofilelink.service.ProfileService;
-
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
 import io.github.bucket4j.Bucket4j;
 import io.github.bucket4j.Refill;
-
-import java.security.Principal;
-import java.text.SimpleDateFormat;
-import java.time.Duration;
-import java.util.Date;
-import javax.servlet.http.HttpSession;
-
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.*;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpSession;
+import java.time.Duration;
 
 @CrossOrigin
 @RestController
@@ -38,10 +29,6 @@ public class ProfileController {
 
     @Autowired
     SimpMessagingTemplate simpMessagingTemplate;
-
-    @Autowired
-    ModelMapper mapper;
-
 
 
     @GetMapping("/{id}")
@@ -83,7 +70,7 @@ public class ProfileController {
     public ResponseEntity<?> getByShortBio(HttpSession session, @PathVariable String shortBio) {
         if (bucket.tryConsume(1)) {
             Data data=profileService.getProfileByShortBio(session, shortBio);
-            ProfileDto profileDto=mapper.map(data.getData(),ProfileDto.class);
+            ProfileDto profileDto=(ProfileDto)data.getData();
 //            OutputMessage out = new OutputMessage(
 //                new SimpleDateFormat("HH:mm").format(new Date()),
 //                    "someone",

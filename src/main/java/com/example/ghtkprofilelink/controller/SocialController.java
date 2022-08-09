@@ -34,7 +34,7 @@ public class SocialController {
     public ResponseEntity<Data> add(@RequestBody SocialDto socialDto) {
         return ResponseEntity.ok(socialService.add(socialDto));
     }
-    @PutMapping()
+    @PutMapping("/{id}")
     public ResponseEntity<Data> update(@RequestBody SocialDto socialDto, @PathVariable Long id) {
         return ResponseEntity.ok(socialService.update(socialDto, id));
     }
