@@ -19,6 +19,8 @@ public interface ProfileService {
 
     Data getProfileByShortBio(HttpSession session,String shortBio);
 
+    Data getprofileByShortBioSpam(String shortBio);
+
     ListData getTopProfile(int page, int pageSize);
 
 }

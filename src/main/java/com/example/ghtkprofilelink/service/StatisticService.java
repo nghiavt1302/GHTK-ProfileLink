@@ -17,5 +17,5 @@ public interface StatisticService {
     Data delete(Long id);
 
     // ListData getByProfileId(Pageable pageable,Integer profileId);
-    ListData getTopProfileToMonth(int page, int pageSize);
+    ListData getTopProfileToMonth(int page, int pageSize, int month, int year);
 }
