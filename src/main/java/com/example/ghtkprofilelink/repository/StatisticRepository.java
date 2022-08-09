@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import com.example.ghtkprofilelink.model.entity.StatisticEntity;
 
@@ -21,6 +22,6 @@ public interface StatisticRepository extends JpaRepository<StatisticEntity, Long
 
     // Page<ChartsEntity> findByProfileId(Pageable pageable, @Param("profileId")
     // Integer profileId);
-    @Query("SELECT new com.example.ghtkprofilelink.model.dto.StatisticDto(s.id,s.clickCount,s.profileId,s.date,s.country,p.avatarLink,p.fullname,p.shortBio) FROM StatisticEntity s, ProfileEntity p where p.id=s.profileId and month(date) = month(now()) - 1 and year(date) = year(now()) ORDER BY p.clickCount DESC")
-    Page<StatisticDto> getTopProfileToMonth(Pageable pageable);
+    @Query("SELECT new com.example.ghtkprofilelink.model.dto.StatisticDto(s.id,s.clickCount,s.profileId,s.date,s.country,p.avatarLink,p.fullname,p.shortBio) FROM StatisticEntity s, ProfileEntity p where p.id=s.profileId and month(date) = :month and year(date) = :year ORDER BY p.clickCount DESC")
+    Page<StatisticDto> getTopProfileToMonth(Pageable pageable, @Param("month") Integer month, @Param("year") Integer year);
 }
