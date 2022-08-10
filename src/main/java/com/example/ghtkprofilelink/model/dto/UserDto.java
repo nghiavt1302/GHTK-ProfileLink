@@ -17,4 +17,6 @@ public class UserDto {
     private RoleEnum role;
     @JsonProperty("is_profile")
     private Boolean isProfile;
+    @JsonProperty("is_update_role")
+    private Boolean isUpgradeRole;
 }

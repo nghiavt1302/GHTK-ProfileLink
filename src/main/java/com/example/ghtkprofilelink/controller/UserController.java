@@ -3,6 +3,7 @@ package com.example.ghtkprofilelink.controller;
 import com.example.ghtkprofilelink.model.dto.UserDto;
 import com.example.ghtkprofilelink.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -53,13 +54,22 @@ public class UserController {
         return new ResponseEntity<>(userService.deleteById(id), HttpStatus.valueOf(200));
     }
 
-    @GetMapping("isUpdateRole/{id}")
+    @PostMapping("role-update-request/{id}")
     public ResponseEntity<?> isUpdateRole(@PathVariable Long id) {
-        return new ResponseEntity<>(userService.isUpdateRole(id), HttpStatus.valueOf(200));
+        return new ResponseEntity<>(userService.roleUpdateRequest(id), HttpStatus.valueOf(200));
     }
 
-    @PostMapping("updateRole")
-    public ResponseEntity<?> updateRole(@RequestBody UserDto userDto) {
-        return new ResponseEntity<>(userService.updateRole(userDto), HttpStatus.valueOf(200));
+    @GetMapping("is-upgrade-role")
+    public ResponseEntity<?> getListUserRequestedUpdateRole(
+            @RequestParam("is-upgrade-role") Boolean isUpgradeRole,
+            @RequestParam("page") Integer page,
+            @RequestParam("page-size") Integer pageSize){
+        return new  ResponseEntity<>(userService.getListUserRequestedUpgradeRole(isUpgradeRole, PageRequest.of(page,pageSize)),HttpStatus.OK);
+    }
+
+    @PutMapping("/upgrade-role/{id}")
+    public ResponseEntity<?> upgradeRole(@RequestBody UserDto userDto,@PathVariable Long id) {
+        userDto.setIsUpgradeRole(false);
+        return new ResponseEntity<>(userService.update(userDto,id), HttpStatus.valueOf(200));
     }
 }

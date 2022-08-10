@@ -5,6 +5,8 @@ import com.example.ghtkprofilelink.model.dto.UserDto;
 import com.example.ghtkprofilelink.model.dto.UserRegister;
 import com.example.ghtkprofilelink.model.entity.UserEntity;
 import com.example.ghtkprofilelink.model.response.Data;
+import com.example.ghtkprofilelink.model.response.ListData;
+import org.springframework.data.domain.Pageable;
 
 import javax.mail.MessagingException;
 import java.io.UnsupportedEncodingException;
@@ -35,9 +37,9 @@ public interface UserService {
 
     Data forgotPassword(String mail) throws MessagingException;
 
-    Data isUpdateRole(Long id);
+    Data roleUpdateRequest(Long id);
 
-    Data updateRole(UserDto userDto);
+    ListData getListUserRequestedUpgradeRole(Boolean isUpgradeRole, Pageable pageable);
 
     UserEntity processOAuthPostLogin(UserEntity userEntity, ProviderEnum provider);
 }
