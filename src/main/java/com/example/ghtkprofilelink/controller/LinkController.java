@@ -53,4 +53,9 @@ public class LinkController {
     ) {
         return new ResponseEntity<>(linkService.delete(id), HttpStatus.OK);
     }
+
+    @PostMapping("/upload")
+    public ResponseEntity<?> uploadImage(@RequestBody MultipartFile file){
+        return new ResponseEntity<>(null,HttpStatus.OK);
+    }
 }

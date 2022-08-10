@@ -43,6 +43,9 @@ public class UserEntity {
     @Column(name = "update_password_token", length = 64)
     private String updatePasswordToken;
 
+    @Column(name = "is_upgrade_role")
+    private Boolean isUpgradeRole;
+
     @Enumerated(EnumType.STRING)
     private ProviderEnum provider;
 

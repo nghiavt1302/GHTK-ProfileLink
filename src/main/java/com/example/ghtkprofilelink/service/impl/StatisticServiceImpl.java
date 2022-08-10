@@ -32,15 +32,15 @@ public class StatisticServiceImpl implements StatisticService {
     @Override
     public Data getById(Long id) {
         // TODO Auto-generated method stub
-        StatisticEntity charts = statisticRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
-        return new Data(true, "success", modelMapper.map(charts, StatisticDto.class));
+        StatisticEntity statistic = statisticRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
+        return new Data(true, "success", modelMapper.map(statistic, StatisticDto.class));
     }
 
     @Override
     public Data add(StatisticDto statisticDto) {
         // TODO Auto-generated method stub
-        StatisticEntity charts = modelMapper.map(statisticDto, StatisticEntity.class);
-        return new Data(true, "success", modelMapper.map(statisticRepository.save(charts), StatisticDto.class));
+        StatisticEntity statistic = modelMapper.map(statisticDto, StatisticEntity.class);
+        return new Data(true, "success", modelMapper.map(statisticRepository.save(statistic), StatisticDto.class));
     }
 
     @Override
@@ -48,50 +48,47 @@ public class StatisticServiceImpl implements StatisticService {
         // TODO Auto-generated method stub
         if (!statisticRepository.existsById(statisticDto.getId()))
             throw new EntityNotFoundException();
-        StatisticEntity chartsRepo = statisticRepository.getById(statisticDto.getId());
-        StatisticEntity charts = modelMapper.map(statisticDto, StatisticEntity.class);
-        charts.setId(chartsRepo.getId());
-        return new Data(true, "success", modelMapper.map(statisticRepository.save(charts), StatisticDto.class));
+        StatisticEntity statisticRepo = statisticRepository.getById(statisticDto.getId());
+        StatisticEntity statistic = modelMapper.map(statisticDto, StatisticEntity.class);
+        statistic.setId(statisticRepo.getId());
+        return new Data(true, "success", modelMapper.map(statisticRepository.save(statistic), StatisticDto.class));
     }
 
     @Override
     public Data delete(Long id) {
-        // TODO Auto-generated method stub
-        StatisticEntity charts = statisticRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
-        charts.setStatus(StatusEnum.INACTIVE);
-        statisticRepository.save(charts);
-        return new Data(true, "success", modelMapper.map(charts, StatisticDto.class));
+        StatisticEntity statistic = statisticRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
+        statisticRepository.deleteById(id);
+        return new Data(true, "success", modelMapper.map(statistic, StatisticDto.class));
     }
 
     @Override
     public ListData getAll(int page, int pageSize) {
         // TODO Auto-generated method stub
-        Page<StatisticEntity> chartsEntities = statisticRepository.findAll(PageRequest.of(page, pageSize));
-        return new ListData(true, "success", chartsEntities.getContent(),
-                new Pagination(chartsEntities.getNumber(), chartsEntities.getSize(), chartsEntities.getTotalPages(),
-                        (int) chartsEntities.getTotalElements()));
+        Page<StatisticEntity> statisticEntities = statisticRepository.findAll(PageRequest.of(page, pageSize));
+        return new ListData(true, "success", statisticEntities.getContent(),
+                new Pagination(statisticEntities.getNumber(), statisticEntities.getSize(), statisticEntities.getTotalPages(),
+                        (int) statisticEntities.getTotalElements()));
     }
 
     @Override
-    public ListData getTopProfileToMonth(int page, int pageSize) {
-        // TODO Auto-generated method stub
-        Page<StatisticDto> chartsEntities = statisticRepository.getTopProfileToMonth(PageRequest.of(page, pageSize));
-        return new ListData(true, "success", chartsEntities.getContent(),
-                new Pagination(chartsEntities.getNumber(), chartsEntities.getSize(), chartsEntities.getTotalPages(),
-                        (int) chartsEntities.getTotalElements()));
+    public ListData getTopProfileToMonth(int page, int pageSize, int month, int year) {
+        Page<StatisticDto> statisticEntities = statisticRepository.getTopProfileToMonth(PageRequest.of(page, pageSize),month,year);
+        return new ListData(true, "success", statisticEntities.getContent(),
+                new Pagination(statisticEntities.getNumber(), statisticEntities.getSize(), statisticEntities.getTotalPages(),
+                        (int) statisticEntities.getTotalElements()));
     }
 
     // @Override
     // public ListData getByProfileId(Pageable pageable,Integer profileId) {
     // // TODO Auto-generated method stub
-    // Page<ChartsEntity> pageDesign = chartsRepository.findByProfileId(pageable,
+    // Page<statisticEntity> pageDesign = statisticRepository.findByProfileId(pageable,
     // profileId);
     // Pagination pagination = new Pagination(pageDesign.getNumber(),
     // pageDesign.getSize(), pageDesign.getTotalPages(), (int)
     // pageDesign.getTotalElements());
-    // List<ChartsDto> listChartsDto = pageDesign.stream().map(d ->
-    // modelMapper.map(d, ChartsDto.class)).collect(Collectors.toList());
-    // return new ListData(true, "success", listChartsDto, pagination);
+    // List<statisticDto> listStatisticDto = pageDesign.stream().map(d ->
+    // modelMapper.map(d, statisticDto.class)).collect(Collectors.toList());
+    // return new ListData(true, "success", listStatisticDto, pagination);
     // }
 
 }

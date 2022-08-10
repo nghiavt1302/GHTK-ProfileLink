@@ -6,12 +6,15 @@ import com.example.ghtkprofilelink.model.dto.UserDto;
 import com.example.ghtkprofilelink.model.dto.UserRegister;
 import com.example.ghtkprofilelink.model.entity.UserEntity;
 import com.example.ghtkprofilelink.model.response.Data;
+import com.example.ghtkprofilelink.model.response.ListData;
+import com.example.ghtkprofilelink.model.response.Pagination;
 import com.example.ghtkprofilelink.repository.UserRepository;
 import com.example.ghtkprofilelink.security.CustomUserDetails;
 import com.example.ghtkprofilelink.service.UserService;
 import net.bytebuddy.utility.RandomString;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -25,9 +28,11 @@ import javax.transaction.Transactional;
 import java.io.UnsupportedEncodingException;
 import java.text.Normalizer;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService, UserDetailsService {
@@ -76,15 +81,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         //        * Mac dinh de Role la USER
         user.setRole(RoleEnum.USER);
+        user.setIsUpgradeRole(false);
         user.setProvider(ProviderEnum.DEFAULT);
         user.setIsProfile(false);
         return new Data(true, "success", mapper.map(userRepository.save(user), UserDto.class));
     }
 
     @Override
-    public Data update(UserDto userDto,Long id) {
-        UserEntity userEntity = userRepository.findByUsername(userDto.getUsername()).orElseThrow(()->new EntityNotFoundException());
+    public Data update(UserDto userDto, Long id) {
+        UserEntity userEntity = userRepository.findByUsername(userDto.getUsername()).orElseThrow(() -> new EntityNotFoundException());
         userEntity.setRole(userDto.getRole());
+        userEntity.setIsUpgradeRole(userDto.getIsUpgradeRole());
         userEntity.setIsProfile(userDto.getIsProfile());
 
         return new Data(true, "success", mapper.map(userRepository.save(userEntity), UserDto.class));
@@ -147,7 +154,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         props.put("url", siteUrl.append(user.getVerificationCode()).toString());
 
         mailService.sendMail(props, user.getMail(), "sendMail", "Xác thực tài khoản");
-        return new Data(true, "send mail success", mapper.map(userRepository.save(user),UserDto.class));
+        return new Data(true, "send mail success", mapper.map(userRepository.save(user), UserDto.class));
     }
 
     @Override
@@ -212,36 +219,55 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return new Data(true, "forgot password success", pass);
     }
 
+    @Override
+    public Data roleUpdateRequest(Long id) {
+        UserEntity userEntity = userRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        userEntity.setIsUpgradeRole(true);
+        userRepository.save(userEntity);
+        return new Data(true, "is update role success", userEntity);
+    }
+
+    @Override
+    public ListData getListUserRequestedUpgradeRole(Boolean isUpgradeRole, Pageable pageable){
+        Page<UserEntity> pageUser=userRepository.findByIsUpgradeRole(isUpgradeRole, pageable);
+
+        Pagination pagination = new Pagination(pageUser.getNumber(), pageUser.getSize(), pageUser.getTotalPages(), (int) pageUser.getTotalElements());
+
+        List<UserDto> listUser = pageUser.stream().map(d -> mapper.map(d, UserDto.class)).collect(Collectors.toList());
+
+        return new ListData(true, "success", listUser, pagination);
+    }
+
     // Convert FB username (Vu Trong Nghia -> vutrongnghia)
-    public String convertUsername(String name){
-        int index=name.indexOf("@");
+    public String convertUsername(String name) {
+        int index = name.indexOf("@");
         String username;
-        if(index>0){
-            username=name.substring(0,index);
-        } else username=name;
+        if (index > 0) {
+            username = name.substring(0, index);
+        } else username = name;
         String temp = Normalizer.normalize(username, Normalizer.Form.NFD);
         Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
-        return pattern.matcher(temp).replaceAll("").toLowerCase().replaceAll(" ","");
+        return pattern.matcher(temp).replaceAll("").toLowerCase().replaceAll(" ", "");
     }
 
     // Them so tu 0, 1, 2, ... vao sau username neu bi trung
-    public String duplicateUsernameHandle(String nameConverted){
+    public String duplicateUsernameHandle(String nameConverted) {
         String addInt = nameConverted;
         int i = 0;
         do {
             UserEntity existUser = userRepository.getUserByUsername(addInt);
-            if (existUser == null){
+            if (existUser == null) {
                 return addInt;
-            }else {
+            } else {
                 addInt = nameConverted.concat(String.valueOf(i));
                 i++;
             }
-        }while (true);
+        } while (true);
     }
 
     // Them user vao database khi login bang Facebook
     @Override
-    public UserEntity processOAuthPostLogin(UserEntity userEntity,ProviderEnum provider) {
+    public UserEntity processOAuthPostLogin(UserEntity userEntity, ProviderEnum provider) {
         UserEntity existEmail = userRepository.getUserByEmail(userEntity.getMail());
         if (existEmail == null) {
             String nameConverted = convertUsername(userEntity.getUsername());
@@ -255,6 +281,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 newUser.setRole(RoleEnum.USER); // * Mac dinh de Role la USER
                 newUser.setEnabled(true);
                 newUser.setIsProfile(false);
+                newUser.setIsUpgradeRole(false);
+
                 return userRepository.save(newUser);
             } else {
                 String nameFix = duplicateUsernameHandle(nameConverted);
@@ -266,6 +294,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 newUser.setRole(RoleEnum.USER); // * Mac dinh de Role la USER
                 newUser.setEnabled(true);
                 newUser.setIsProfile(false);
+                newUser.setIsUpgradeRole(false);
                 return userRepository.save(newUser);
             }
 
