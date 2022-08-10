@@ -115,8 +115,6 @@ public class ProfileServiceImpl implements ProfileService {
         int monthRealTime = cal.get(Calendar.MONTH) + 1;
         Date date = charts.getDate();
         int monthDb = date.getMonth() + 1;
-        Long now = new Date().getTime();
-        Long lastTime = session.getLastAccessedTime();
         if (monthRealTime >= monthDb + 1) {
             counter += 1;
             profile.setClickCount(counter);
