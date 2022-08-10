@@ -56,10 +56,8 @@ public class StatisticServiceImpl implements StatisticService {
 
     @Override
     public Data delete(Long id) {
-        // TODO Auto-generated method stub
         StatisticEntity statistic = statisticRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
-        statistic.setStatus(StatusEnum.INACTIVE);
-        statisticRepository.save(statistic);
+        statisticRepository.deleteById(id);
         return new Data(true, "success", modelMapper.map(statistic, StatisticDto.class));
     }
 
@@ -73,8 +71,7 @@ public class StatisticServiceImpl implements StatisticService {
     }
 
     @Override
-    public ListData getTopProfileToMonth(int page, int pageSize) {
-        // TODO Auto-generated method stub
+    public ListData getTopProfileToMonth(int page, int pageSize, int month, int year) {
         Page<StatisticDto> statisticEntities = statisticRepository.getTopProfileToMonth(PageRequest.of(page, pageSize));
         return new ListData(true, "success", statisticEntities.getContent(),
                 new Pagination(statisticEntities.getNumber(), statisticEntities.getSize(), statisticEntities.getTotalPages(),

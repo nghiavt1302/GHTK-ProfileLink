@@ -39,7 +39,8 @@ public class ProfileServiceImpl implements ProfileService {
 
     private final ModelMapper mapper;
 
-    public ProfileServiceImpl(ProfileRepository profileRepository, StatisticRepository statisticRepository, Cloudinary cloudinary, ModelMapper mapper) {
+    public ProfileServiceImpl(ProfileRepository profileRepository, StatisticRepository statisticRepository,
+            Cloudinary cloudinary, ModelMapper mapper) {
         this.profileRepository = profileRepository;
         this.statisticRepository = statisticRepository;
         this.cloudinary = cloudinary;
@@ -68,11 +69,10 @@ public class ProfileServiceImpl implements ProfileService {
         } else
             profile.setAvatarLink(
                     "https://res.cloudinary.com/anhtuanbui/image/upload/v1657248868/knybg0tx6rj48d62nv4a.png");
-        ProfileEntity profileEntity=profileRepository.save(profile);
+        ProfileEntity profileEntity = profileRepository.save(profile);
         Integer profileId = profileEntity.getId().intValue();
         StatisticEntity chart = new StatisticEntity();
         chart.setClickCount(1L);
-        chart.setCountry(null);
         chart.setDate(new java.sql.Date(new Date().getTime()));
         chart.setProfileId(profileId.intValue());
         statisticRepository.save(chart);
@@ -115,28 +115,19 @@ public class ProfileServiceImpl implements ProfileService {
         int monthRealTime = cal.get(Calendar.MONTH) + 1;
         Date date = charts.getDate();
         int monthDb = date.getMonth() + 1;
-        Long now = new Date().getTime();
-        Long lastTime = session.getLastAccessedTime();
         if (monthRealTime >= monthDb + 1) {
             counter += 1;
+            profile.setClickCount(counter);
             StatisticEntity chart = new StatisticEntity();
             chart.setClickCount(1L);
-            chart.setCountry(charts.getCountry());
             chart.setDate(new java.sql.Date(new Date().getTime()));
             chart.setProfileId(profileId.intValue());
             statisticRepository.save(chart);
         } else {
-            if (counter == null) {
-                profile.setClickCount(1);
-                charts.setClickCount(1L);
-            } else {
-                if (now >= lastTime + 6000) {
-                    counter += 1;
-                    countToMonth += 1L;
-                    profile.setClickCount(counter);
-                    charts.setClickCount(countToMonth);
-                }
-            }
+            counter += 1;
+            countToMonth += 1L;
+            profile.setClickCount(counter);
+            charts.setClickCount(countToMonth);
         }
         profileRepository.save(profile);
         return new Data(true, "success", mapper.map(profile, ProfileDto.class));
@@ -145,13 +136,20 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public ListData getTopProfile(int page, int pageSize) {
         // TODO Auto-generated method stub
+        ///abstract
         Page<ProfileEntity> profileEntities = profileRepository.getTopProfile(PageRequest.of(page, pageSize));
-        List<ProfileDto> profileDtos = profileEntities.stream().map(l -> mapper.map(l, ProfileDto.class)).collect(Collectors.toList());
+        List<ProfileDto> profileDtos = profileEntities.stream().map(l -> mapper.map(l, ProfileDto.class))
+                .collect(Collectors.toList());
         return new ListData(true, "success", profileDtos,
                 new Pagination(profileEntities.getNumber(), profileEntities.getSize(), profileEntities.getTotalPages(),
                         (int) profileEntities.getTotalElements()));
     }
 
-    
+    @Override
+    public Data getprofileByShortBioSpam(String shortBio) {
+        // TODO Auto-generated method stub
+        ProfileEntity profile = profileRepository.getProfileByShortBio(shortBio);
+        return new Data(true, "success", mapper.map(profile, ProfileDto.class));
+    }
 
 }

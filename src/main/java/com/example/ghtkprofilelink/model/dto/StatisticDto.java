@@ -22,7 +22,6 @@ public class StatisticDto {
     private Integer profileId;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date date;
-    private String country;
     @JsonProperty("avatar_link")
     private String avatarLink;
     private String fullname;
