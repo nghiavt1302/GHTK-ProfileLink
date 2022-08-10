@@ -35,15 +35,12 @@ public class StatisticEntity {
     private Integer profileId;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date date;
-    private String country;
-    private StatusEnum status;
 
     public StatisticEntity setValueByDto(StatisticDto statisticDto) {
         this.id = statisticDto.getId();
         this.clickCount = statisticDto.getClickCount();
         this.profileId = statisticDto.getProfileId();
         this.date = statisticDto.getDate();
-        this.country = statisticDto.getCountry();
 
         return this;
     }

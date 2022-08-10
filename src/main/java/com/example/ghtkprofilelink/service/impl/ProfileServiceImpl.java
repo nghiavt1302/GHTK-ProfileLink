@@ -73,7 +73,6 @@ public class ProfileServiceImpl implements ProfileService {
         Integer profileId = profileEntity.getId().intValue();
         StatisticEntity chart = new StatisticEntity();
         chart.setClickCount(1L);
-        chart.setCountry(null);
         chart.setDate(new java.sql.Date(new Date().getTime()));
         chart.setProfileId(profileId.intValue());
         statisticRepository.save(chart);
@@ -116,14 +115,11 @@ public class ProfileServiceImpl implements ProfileService {
         int monthRealTime = cal.get(Calendar.MONTH) + 1;
         Date date = charts.getDate();
         int monthDb = date.getMonth() + 1;
-        Long now = new Date().getTime();
-        Long lastTime = session.getLastAccessedTime();
         if (monthRealTime >= monthDb + 1) {
             counter += 1;
             profile.setClickCount(counter);
             StatisticEntity chart = new StatisticEntity();
             chart.setClickCount(1L);
-            chart.setCountry(charts.getCountry());
             chart.setDate(new java.sql.Date(new Date().getTime()));
             chart.setProfileId(profileId.intValue());
             statisticRepository.save(chart);
@@ -140,6 +136,7 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public ListData getTopProfile(int page, int pageSize) {
         // TODO Auto-generated method stub
+        ///abstract
         Page<ProfileEntity> profileEntities = profileRepository.getTopProfile(PageRequest.of(page, pageSize));
         List<ProfileDto> profileDtos = profileEntities.stream().map(l -> mapper.map(l, ProfileDto.class))
                 .collect(Collectors.toList());
