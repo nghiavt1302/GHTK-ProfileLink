@@ -37,7 +37,7 @@ public interface UserService {
 
     Data isUpdateRole(Long id);
 
-    Data updateRole(Long id);
+    Data updateRole(UserDto userDto);
 
     UserEntity processOAuthPostLogin(UserEntity userEntity, ProviderEnum provider);
 }

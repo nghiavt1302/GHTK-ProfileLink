@@ -82,8 +82,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public Data update(UserDto userDto,Long id) {
-        UserEntity userEntity = userRepository.findByUsername(userDto.getUsername()).orElseThrow(()->new EntityNotFoundException());
+    public Data update(UserDto userDto, Long id) {
+        UserEntity userEntity = userRepository.findByUsername(userDto.getUsername()).orElseThrow(() -> new EntityNotFoundException());
         userEntity.setRole(userDto.getRole());
         userEntity.setIsProfile(userDto.getIsProfile());
 
@@ -147,7 +147,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         props.put("url", siteUrl.append(user.getVerificationCode()).toString());
 
         mailService.sendMail(props, user.getMail(), "sendMail", "Xác thực tài khoản");
-        return new Data(true, "send mail success", mapper.map(userRepository.save(user),UserDto.class));
+        return new Data(true, "send mail success", mapper.map(userRepository.save(user), UserDto.class));
     }
 
     @Override
@@ -214,51 +214,52 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public Data isUpdateRole(Long id) {
-        UserEntity userEntity = (UserEntity) getById(id).getData();
+        UserEntity userEntity = userRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         userEntity.setIsUpdateRole(true);
         userRepository.save(userEntity);
         return new Data(true, "is update role success", userEntity);
     }
 
     @Override
-    public Data updateRole(Long id) {
-        UserEntity userEntity = (UserEntity) getById(id).getData();
-        userEntity.setRole(RoleEnum.USER_VIP);
+    public Data updateRole(UserDto userDto) {
+        UserEntity userEntity = userRepository.findById(userDto.getId()).orElseThrow(EntityNotFoundException::new);
+        if (!userEntity.getIsUpdateRole()) new Data(true, "is update role false", null);
+        userEntity.setRole(userDto.getRole());
         userEntity.setIsUpdateRole(false);
         userRepository.save(userEntity);
         return new Data(true, "update role success", userEntity);
     }
 
     // Convert FB username (Vu Trong Nghia -> vutrongnghia)
-    public String convertUsername(String name){
-        int index=name.indexOf("@");
+    public String convertUsername(String name) {
+        int index = name.indexOf("@");
         String username;
-        if(index>0){
-            username=name.substring(0,index);
-        } else username=name;
+        if (index > 0) {
+            username = name.substring(0, index);
+        } else username = name;
         String temp = Normalizer.normalize(username, Normalizer.Form.NFD);
         Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
-        return pattern.matcher(temp).replaceAll("").toLowerCase().replaceAll(" ","");
+        return pattern.matcher(temp).replaceAll("").toLowerCase().replaceAll(" ", "");
     }
 
     // Them so tu 0, 1, 2, ... vao sau username neu bi trung
-    public String duplicateUsernameHandle(String nameConverted){
+    public String duplicateUsernameHandle(String nameConverted) {
         String addInt = nameConverted;
         int i = 0;
         do {
             UserEntity existUser = userRepository.getUserByUsername(addInt);
-            if (existUser == null){
+            if (existUser == null) {
                 return addInt;
-            }else {
+            } else {
                 addInt = nameConverted.concat(String.valueOf(i));
                 i++;
             }
-        }while (true);
+        } while (true);
     }
 
     // Them user vao database khi login bang Facebook
     @Override
-    public UserEntity processOAuthPostLogin(UserEntity userEntity,ProviderEnum provider) {
+    public UserEntity processOAuthPostLogin(UserEntity userEntity, ProviderEnum provider) {
         UserEntity existEmail = userRepository.getUserByEmail(userEntity.getMail());
         if (existEmail == null) {
             String nameConverted = convertUsername(userEntity.getUsername());
