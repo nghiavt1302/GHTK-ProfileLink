@@ -3,6 +3,7 @@ package com.example.ghtkprofilelink.controller;
 import com.example.ghtkprofilelink.model.dto.UserDto;
 import com.example.ghtkprofilelink.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -61,5 +62,10 @@ public class UserController {
     @PostMapping("updateRole")
     public ResponseEntity<?> updateRole(@RequestBody UserDto userDto) {
         return new ResponseEntity<>(userService.updateRole(userDto), HttpStatus.valueOf(200));
+    }
+
+    @GetMapping("getAllIsUpdateRole")
+    public ResponseEntity<?> getAll(@RequestParam Boolean isUpdateRole, @RequestParam int page, @RequestParam int pageSize) {
+        return  new ResponseEntity<>(userService.getAllIsUpdateRole(isUpdateRole, PageRequest.of(page,pageSize)), HttpStatus.valueOf(200));
     }
 }

@@ -5,8 +5,10 @@ import com.example.ghtkprofilelink.model.dto.UserDto;
 import com.example.ghtkprofilelink.model.dto.UserRegister;
 import com.example.ghtkprofilelink.model.entity.UserEntity;
 import com.example.ghtkprofilelink.model.response.Data;
+import com.example.ghtkprofilelink.model.response.ListData;
 
 import javax.mail.MessagingException;
+import org.springframework.data.domain.Pageable;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
@@ -19,7 +21,7 @@ public interface UserService {
 
     Data add(UserDto userDto);
 
-    Data update(UserDto userDto,Long id);
+    Data update(UserDto userDto, Long id);
 
     Data deleteById(Long id);
 
@@ -38,6 +40,9 @@ public interface UserService {
     Data isUpdateRole(Long id);
 
     Data updateRole(UserDto userDto);
+
+    ListData getAllIsUpdateRole(Boolean isUpdateRole, Pageable pageable);
+
 
     UserEntity processOAuthPostLogin(UserEntity userEntity, ProviderEnum provider);
 }

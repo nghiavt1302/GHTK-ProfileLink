@@ -2,16 +2,20 @@ package com.example.ghtkprofilelink.service.impl;
 
 import com.example.ghtkprofilelink.constants.ProviderEnum;
 import com.example.ghtkprofilelink.constants.RoleEnum;
+import com.example.ghtkprofilelink.model.dto.LinkDto;
 import com.example.ghtkprofilelink.model.dto.UserDto;
 import com.example.ghtkprofilelink.model.dto.UserRegister;
 import com.example.ghtkprofilelink.model.entity.UserEntity;
 import com.example.ghtkprofilelink.model.response.Data;
+import com.example.ghtkprofilelink.model.response.ListData;
+import com.example.ghtkprofilelink.model.response.Pagination;
 import com.example.ghtkprofilelink.repository.UserRepository;
 import com.example.ghtkprofilelink.security.CustomUserDetails;
 import com.example.ghtkprofilelink.service.UserService;
 import net.bytebuddy.utility.RandomString;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,12 +26,15 @@ import javax.mail.MessagingException;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
+import org.springframework.data.domain.Pageable;
 import java.io.UnsupportedEncodingException;
 import java.text.Normalizer;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService, UserDetailsService {
@@ -228,6 +235,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         userEntity.setIsUpdateRole(false);
         userRepository.save(userEntity);
         return new Data(true, "update role success", userEntity);
+    }
+
+    @Override
+    public ListData getAllIsUpdateRole(Boolean isUpdateRole, Pageable pageable) {
+        Page<UserEntity> userEntityPage = userRepository.findByIsUpdateRole(isUpdateRole, pageable);
+        Pagination pagination = new Pagination(userEntityPage.getNumber(), userEntityPage.getSize(), userEntityPage.getTotalPages(), (int) userEntityPage.getTotalElements());
+        List<UserDto> userDtos = userEntityPage.stream().map(l -> mapper.map(l, UserDto.class)).collect(Collectors.toList());
+        return new ListData(true, "success", userDtos, pagination);
     }
 
     // Convert FB username (Vu Trong Nghia -> vutrongnghia)
