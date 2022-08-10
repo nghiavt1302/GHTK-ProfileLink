@@ -58,7 +58,6 @@ public class StatisticServiceImpl implements StatisticService {
     public Data delete(Long id) {
         // TODO Auto-generated method stub
         StatisticEntity charts = statisticRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
-        charts.setStatus(StatusEnum.INACTIVE);
         statisticRepository.save(charts);
         return new Data(true, "success", modelMapper.map(charts, StatisticDto.class));
     }
