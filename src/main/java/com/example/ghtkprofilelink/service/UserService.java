@@ -21,7 +21,7 @@ public interface UserService {
 
     Data add(UserDto userDto);
 
-    Data update(UserDto userDto,Long id);
+    Data update(UserDto userDto, Long id);
 
     Data deleteById(Long id);
 
@@ -40,6 +40,12 @@ public interface UserService {
     Data roleUpdateRequest(Long id);
 
     ListData getListUserRequestedUpgradeRole(Boolean isUpgradeRole, Pageable pageable);
+
+    ListData upgradeListUserByRole(List<UserDto> userDtos);
+
+    Data upgradeUserByRole(UserDto userDto);
+
+    ListData getUsersByUserName(String username, Pageable pageable);
 
     UserEntity processOAuthPostLogin(UserEntity userEntity, ProviderEnum provider);
 }

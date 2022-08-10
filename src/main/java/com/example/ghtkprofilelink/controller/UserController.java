@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @CrossOrigin
 @RestController
 @RequestMapping("api/v1.0/user")
@@ -21,7 +23,7 @@ public class UserController {
 
     public UserController(UserServiceImpl userService, SimpMessagingTemplate simpMessagingTemplate) {
         this.userService = userService;
-        this.simpMessagingTemplate=simpMessagingTemplate;
+        this.simpMessagingTemplate = simpMessagingTemplate;
     }
 
     //    @GetMapping()
@@ -36,7 +38,7 @@ public class UserController {
 
     @GetMapping("/username")
     public ResponseEntity<?> getByUsername(@RequestParam String username) {
-        return new ResponseEntity<>(userService.getByUsername(username) ,HttpStatus.valueOf(200));
+        return new ResponseEntity<>(userService.getByUsername(username), HttpStatus.valueOf(200));
     }
 
     @PostMapping("add")
@@ -45,8 +47,8 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@RequestBody UserDto userDto,@PathVariable Long id) {
-        return new ResponseEntity<>(userService.update(userDto,id), HttpStatus.valueOf(200));
+    public ResponseEntity<?> update(@RequestBody UserDto userDto, @PathVariable Long id) {
+        return new ResponseEntity<>(userService.update(userDto, id), HttpStatus.valueOf(200));
     }
 
     @DeleteMapping("")
@@ -68,20 +70,33 @@ public class UserController {
     public ResponseEntity<?> getListUserRequestedUpdateRole(
             @RequestParam("is-upgrade-role") Boolean isUpgradeRole,
             @RequestParam("page") Integer page,
-            @RequestParam("page-size") Integer pageSize){
-        return new  ResponseEntity<>(userService.getListUserRequestedUpgradeRole(isUpgradeRole, PageRequest.of(page,pageSize)),HttpStatus.OK);
+            @RequestParam("page-size") Integer pageSize) {
+        return new ResponseEntity<>(userService.getListUserRequestedUpgradeRole(isUpgradeRole, PageRequest.of(page, pageSize)), HttpStatus.OK);
     }
 
     @PutMapping("/upgrade-role/{id}")
-    public ResponseEntity<?> upgradeRole(@RequestBody UserDto userDto,@PathVariable Long id) {
+    public ResponseEntity<?> upgradeRole(@RequestBody UserDto userDto, @PathVariable Long id) {
         userDto.setIsUpgradeRole(false);
-        UserDto user =(UserDto) userService.update(userDto,id).getData();
-        String message="You have been upgraded to a ";
-        if(user.getRole() == RoleEnum.USER_VIP){
-            message=message +"VIP USER";
-        } else if(user.getRole() == RoleEnum.ADMIN) message=message +"ADMIN";
+        UserDto user = (UserDto) userService.update(userDto, id).getData();
+        String message = "You have been upgraded to a ";
+        if (user.getRole() == RoleEnum.USER_VIP) {
+            message = message + "VIP USER";
+        } else if (user.getRole() == RoleEnum.ADMIN) message = message + "ADMIN";
 
-        simpMessagingTemplate.convertAndSend("/queue/notification/"+id,message);
-        return new ResponseEntity<>(new Data(true,"success",user), HttpStatus.OK);
+        simpMessagingTemplate.convertAndSend("/queue/notification/" + id, message);
+        return new ResponseEntity<>(new Data(true, "success", user), HttpStatus.OK);
+    }
+
+    @PutMapping("/upgrade-users-by-role")
+    public ResponseEntity<?> upgradeListUserByRole(@RequestBody List<UserDto> userDtos) {
+        return new ResponseEntity<>(userService.upgradeListUserByRole(userDtos), HttpStatus.OK);
+    }
+
+    @GetMapping("users-by-username")
+    public ResponseEntity<?> getUsersByUserName(
+            @RequestParam("userName") String userName,
+            @RequestParam("page") Integer page,
+            @RequestParam("page-size") Integer pageSize) {
+        return new ResponseEntity<>(userService.getUsersByUserName(userName, PageRequest.of(page, pageSize)), HttpStatus.OK);
     }
 }

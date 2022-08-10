@@ -14,6 +14,7 @@ import com.example.ghtkprofilelink.service.UserService;
 import net.bytebuddy.utility.RandomString;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -228,13 +229,38 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public ListData getListUserRequestedUpgradeRole(Boolean isUpgradeRole, Pageable pageable){
-        Page<UserEntity> pageUser=userRepository.findByIsUpgradeRole(isUpgradeRole, pageable);
+    public ListData getListUserRequestedUpgradeRole(Boolean isUpgradeRole, Pageable pageable) {
+        Page<UserEntity> pageUser = userRepository.findByIsUpgradeRole(isUpgradeRole, pageable);
 
         Pagination pagination = new Pagination(pageUser.getNumber(), pageUser.getSize(), pageUser.getTotalPages(), (int) pageUser.getTotalElements());
 
         List<UserDto> listUser = pageUser.stream().map(d -> mapper.map(d, UserDto.class)).collect(Collectors.toList());
 
+        return new ListData(true, "success", listUser, pagination);
+    }
+
+    @Override
+    public ListData upgradeListUserByRole(List<UserDto> userDtos) {
+        userDtos.stream().forEach(userDto -> upgradeUserByRole(userDto));
+        Page<UserDto> pageUser = new PageImpl<>(userDtos);
+        return new ListData(true, "success", userDtos, new Pagination(pageUser.getNumber(), pageUser.getSize(), pageUser.getTotalPages(), (int) pageUser.getTotalElements()));
+    }
+
+    @Override
+    public Data upgradeUserByRole(UserDto userDto) {
+        UserEntity userEntity = userRepository.findById(userDto.getId()).orElseThrow(EntityNotFoundException::new);
+        if (!userEntity.getIsUpgradeRole()) return new Data(true, "is update role false", null);
+        userEntity.setRole(userDto.getRole());
+        userEntity.setIsUpgradeRole(false);
+        userRepository.save(userEntity);
+        return new Data(true, "update role success", userEntity);
+    }
+
+    @Override
+    public ListData getUsersByUserName(String username, Pageable pageable) {
+        Page<UserEntity> pageUser = userRepository.findByUsernameContaining(username, pageable);
+        Pagination pagination = new Pagination(pageUser.getNumber(), pageUser.getSize(), pageUser.getTotalPages(), (int) pageUser.getTotalElements());
+        List<UserDto> listUser = pageUser.stream().map(d -> mapper.map(d, UserDto.class)).collect(Collectors.toList());
         return new ListData(true, "success", listUser, pagination);
     }
 
