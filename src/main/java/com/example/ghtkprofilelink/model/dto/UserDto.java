@@ -2,11 +2,14 @@ package com.example.ghtkprofilelink.model.dto;
 
 import com.example.ghtkprofilelink.constants.RoleEnum;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
+import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserDto {
     private Long id;
     @NotBlank
