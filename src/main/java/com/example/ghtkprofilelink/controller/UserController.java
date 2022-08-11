@@ -61,17 +61,23 @@ public class UserController {
         return new ResponseEntity<>(userService.deleteById(id), HttpStatus.valueOf(200));
     }
 
-    @PostMapping("role-update-request/{id}")
-    public ResponseEntity<?> isUpdateRole(@PathVariable Long id) {
-        return new ResponseEntity<>(userService.roleUpdateRequest(id), HttpStatus.valueOf(200));
+    @PutMapping("/role-upgrade-request/{id}")
+    public ResponseEntity<?> isUpdateRole(@PathVariable Long id,@RequestParam("is-upgrade-role") Boolean isUpgradeRole) {
+        return new ResponseEntity<>(userService.roleUpgradeRequest(id,isUpgradeRole), HttpStatus.valueOf(200));
     }
 
-    @GetMapping("is-upgrade-role")
+    @PutMapping("/role-upgrade-request/list")
+    public ResponseEntity<?> isUpdateRoleList(@RequestParam("is-upgrade-role") Boolean isUpgradeRole,@RequestBody List<UserDto> listUser) {
+        return new ResponseEntity<>(userService.roleUpgradeRequestList(listUser,isUpgradeRole), HttpStatus.valueOf(200));
+    }
+
+    @GetMapping("/is-upgrade-role")
     public ResponseEntity<?> getListUserRequestedUpdateRole(
             @RequestParam("is-upgrade-role") Boolean isUpgradeRole,
+            @RequestParam("username") String username,
             @RequestParam("page") Integer page,
             @RequestParam("page-size") Integer pageSize) {
-        return new ResponseEntity<>(userService.getListUserRequestedUpgradeRole(isUpgradeRole, PageRequest.of(page, pageSize)), HttpStatus.OK);
+        return new ResponseEntity<>(userService.getListUserRequestedUpgradeRole(isUpgradeRole, username, PageRequest.of(page, pageSize)), HttpStatus.OK);
     }
 
     @PutMapping("/upgrade-role/{id}")
@@ -87,16 +93,16 @@ public class UserController {
         return new ResponseEntity<>(new Data(true, "success", user), HttpStatus.OK);
     }
 
-    @PutMapping("/upgrade-users-by-role")
+    @PutMapping("/upgrade-role/list")
     public ResponseEntity<?> upgradeListUserByRole(@RequestBody List<UserDto> userDtos) {
         return new ResponseEntity<>(userService.upgradeListUserByRole(userDtos), HttpStatus.OK);
     }
 
-    @GetMapping("users-by-username")
-    public ResponseEntity<?> getUsersByUserName(
-            @RequestParam("userName") String userName,
+    @GetMapping("/find-by-username")
+    public ResponseEntity<?> findByUserName(
+            @RequestParam("username") String userName,
             @RequestParam("page") Integer page,
             @RequestParam("page-size") Integer pageSize) {
-        return new ResponseEntity<>(userService.getUsersByUserName(userName, PageRequest.of(page, pageSize)), HttpStatus.OK);
+        return new ResponseEntity<>(userService.findByUsername(userName, PageRequest.of(page, pageSize)), HttpStatus.OK);
     }
 }

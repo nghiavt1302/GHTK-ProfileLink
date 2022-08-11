@@ -37,15 +37,17 @@ public interface UserService {
 
     Data forgotPassword(String mail) throws MessagingException;
 
-    Data roleUpdateRequest(Long id);
+    Data roleUpgradeRequest(Long id,Boolean isUpgradeRole);
 
-    ListData getListUserRequestedUpgradeRole(Boolean isUpgradeRole, Pageable pageable);
+    Data roleUpgradeRequestList(List<UserDto> listUser,Boolean isUpgradeRole);
 
-    ListData upgradeListUserByRole(List<UserDto> userDtos);
+    ListData getListUserRequestedUpgradeRole(Boolean isUpgradeRole, String username, Pageable pageable);
+
+    Data upgradeListUserByRole(List<UserDto> userDtos);
 
     Data upgradeUserByRole(UserDto userDto);
 
-    ListData getUsersByUserName(String username, Pageable pageable);
+    ListData findByUsername(String username, Pageable pageable);
 
     UserEntity processOAuthPostLogin(UserEntity userEntity, ProviderEnum provider);
 }

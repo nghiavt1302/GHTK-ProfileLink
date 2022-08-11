@@ -30,7 +30,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     Optional<UserEntity> findByUpdatePasswordToken(String token);
 
-    Page<UserEntity> findByIsUpgradeRole(Boolean isUpgradeRole, Pageable pageable);
+    Page<UserEntity> findByIsUpgradeRoleAndUsernameContaining(Boolean isUpgradeRole,String username, Pageable pageable);
 
     Page<UserEntity> findByUsernameContaining(String username, Pageable pageable);
 }
