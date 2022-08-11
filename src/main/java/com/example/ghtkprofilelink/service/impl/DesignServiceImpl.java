@@ -42,7 +42,7 @@ public class DesignServiceImpl implements DesignService {
 
     @Override
     public Data getById(Long id) {
-        DesignEntity design = designRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
+        DesignEntity design = designRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         return new Data(true, "success", modelMapper.map(design, DesignDto.class));
     }
 
@@ -55,16 +55,26 @@ public class DesignServiceImpl implements DesignService {
     }
 
     @Override
-    public Data add(DesignDto designDto, MultipartFile file) {
+    public Data add(DesignDto designDto, MultipartFile avatar,MultipartFile backgroundImage) {
         DesignEntity designEntity = modelMapper.map(designDto, DesignEntity.class);
         designEntity.setStatus(StatusEnum.ACTIVE);
 
         if (!designEntity.getBackgroundColor().equals("")) {
             designEntity.setBackgroundType(BackgroundTypeEnum.COLOR);
         }
-        if (file!=null) {
+
+        if (avatar!=null) {
             try {
-                Map x = this.cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
+                Map x = this.cloudinary.uploader().upload(avatar.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
+                designEntity.setPicture(x.get("url").toString());
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+        }
+
+        if (backgroundImage!=null) {
+            try {
+                Map x = this.cloudinary.uploader().upload(backgroundImage.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
                 designEntity.setBackgroundImage(x.get("url").toString());
                 designEntity.setBackgroundType(BackgroundTypeEnum.IMAGE);
             } catch (Exception e) {
@@ -77,16 +87,26 @@ public class DesignServiceImpl implements DesignService {
     }
 
     @Override
-    public Data update(DesignDto designDto, MultipartFile file, Long id) {
-        DesignEntity designEntity = designRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
+    public Data update(DesignDto designDto, MultipartFile avatar,MultipartFile backgroundImage, Long id) {
+        DesignEntity designEntity = designRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         designEntity = designEntity.setValueByDto(designDto);
         designEntity.setId(id);
         if (designEntity.getBackgroundColor().equals("")) {
             designEntity.setBackgroundType(BackgroundTypeEnum.COLOR);
         }
-        if (file!=null) {
+
+        if (avatar!=null) {
             try {
-                Map x = this.cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
+                Map x = this.cloudinary.uploader().upload(avatar.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
+                designEntity.setPicture(x.get("url").toString());
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+        }
+
+        if (backgroundImage!=null) {
+            try {
+                Map x = this.cloudinary.uploader().upload(backgroundImage.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
                 designEntity.setBackgroundImage(x.get("url").toString());
                 designEntity.setBackgroundType(BackgroundTypeEnum.IMAGE);
             } catch (Exception e) {
@@ -98,7 +118,7 @@ public class DesignServiceImpl implements DesignService {
 
     @Override
     public Data delete(Long id) {
-        DesignEntity designEntity = designRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
+        DesignEntity designEntity = designRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         designEntity.setStatus(StatusEnum.INACTIVE);
         designRepository.save(designEntity);
 
