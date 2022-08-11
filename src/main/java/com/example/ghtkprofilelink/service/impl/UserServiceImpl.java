@@ -14,7 +14,6 @@ import com.example.ghtkprofilelink.service.UserService;
 import net.bytebuddy.utility.RandomString;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -143,6 +142,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         user.setEnabled(false);
         user.setIsProfile(false);
         user.setRole(RoleEnum.USER);// * Mac dinh de Role la USER
+        user.setProvider(ProviderEnum.DEFAULT);
         user.setVerificationCode(RandomString.make(64));
 
 
