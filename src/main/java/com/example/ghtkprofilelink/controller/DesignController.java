@@ -40,16 +40,18 @@ public class DesignController {
     @PostMapping("")
     public ResponseEntity<?> add(
             @ModelAttribute DesignDto designDto,
-            @RequestParam(required = false) MultipartFile file) {
-        return new ResponseEntity<>(designService.add(designDto, file), HttpStatus.CREATED);
+            @RequestParam(name="avatar",required = false) MultipartFile avatar,
+            @RequestParam(name="background-image",required = false) MultipartFile backgroundImage) {
+        return new ResponseEntity<>(designService.add(designDto,avatar, backgroundImage), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> update(
             @ModelAttribute DesignDto designDto,
-            @RequestParam(required = false) MultipartFile file,
+            @RequestParam(name="avatar",required = false) MultipartFile avatar,
+            @RequestParam(name="background-image",required = false) MultipartFile backgroundImage,
             @PathVariable Long id) {
-        return new ResponseEntity<>(designService.update(designDto, file, id), HttpStatus.CREATED);
+        return new ResponseEntity<>(designService.update(designDto, avatar, backgroundImage, id), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")

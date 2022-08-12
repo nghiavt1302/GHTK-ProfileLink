@@ -5,9 +5,12 @@ import com.example.ghtkprofilelink.model.dto.UserDto;
 import com.example.ghtkprofilelink.model.dto.UserRegister;
 import com.example.ghtkprofilelink.model.entity.UserEntity;
 import com.example.ghtkprofilelink.model.response.Data;
+import com.example.ghtkprofilelink.model.response.ListData;
+import org.springframework.data.domain.Pageable;
 
 import javax.mail.MessagingException;
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 public interface UserService {
 //    ListData getAll(int page, int pageSize);
@@ -18,7 +21,7 @@ public interface UserService {
 
     Data add(UserDto userDto);
 
-    Data update(UserDto userDto,Long id);
+    Data update(UserDto userDto, Long id);
 
     Data deleteById(Long id);
 
@@ -33,6 +36,18 @@ public interface UserService {
     Data updatePassword(String code, String password);
 
     Data forgotPassword(String mail) throws MessagingException;
+
+    Data roleUpgradeRequest(Long id,Boolean isUpgradeRole);
+
+    Data roleUpgradeRequestList(List<UserDto> listUser,Boolean isUpgradeRole);
+
+    ListData getListUserRequestedUpgradeRole(Boolean isUpgradeRole, String username, Pageable pageable);
+
+    Data upgradeListUserByRole(List<UserDto> userDtos);
+
+    Data upgradeUserByRole(UserDto userDto);
+
+    ListData findByUsername(String username, Pageable pageable);
 
     UserEntity processOAuthPostLogin(UserEntity userEntity, ProviderEnum provider);
 }

@@ -38,10 +38,14 @@ public class UserEntity {
     @JsonProperty("is_profile")
     private Boolean isProfile;
 
+    @Column(unique = true)
     private String mail;
 
     @Column(name = "update_password_token", length = 64)
     private String updatePasswordToken;
+
+    @Column(name = "is_upgrade_role", columnDefinition = "boolean default false")
+    private Boolean isUpgradeRole = false;
 
     @Enumerated(EnumType.STRING)
     private ProviderEnum provider;
