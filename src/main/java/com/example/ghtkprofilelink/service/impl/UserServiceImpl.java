@@ -218,7 +218,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public Data roleUpgradeRequest(Long id,Boolean isUpgradeRole) {
+    public Data roleUpgradeRequest(Long id, Boolean isUpgradeRole) {
         UserEntity userEntity = userRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         userEntity.setIsUpgradeRole(isUpgradeRole);
         userRepository.save(userEntity);
@@ -228,18 +228,18 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public Data roleUpgradeRequestList(List<UserDto> listUser, Boolean isUpgradeRole) {
         List<UserDto> listUserDto = new ArrayList<>();
-        listUser.forEach(user->{
+        listUser.forEach(user -> {
             UserEntity userEntity = userRepository.findById(user.getId()).orElseThrow(EntityNotFoundException::new);
             userEntity.setIsUpgradeRole(isUpgradeRole);
-            listUserDto.add(mapper.map(userRepository.save(userEntity),UserDto.class));
+            listUserDto.add(mapper.map(userRepository.save(userEntity), UserDto.class));
         });
 
         return new Data(true, "is update role success", listUserDto);
     }
 
     @Override
-    public ListData getListUserRequestedUpgradeRole(Boolean isUpgradeRole,String username, Pageable pageable) {
-        Page<UserEntity> pageUser = userRepository.findByIsUpgradeRoleAndUsernameContaining(isUpgradeRole,username, pageable);
+    public ListData getListUserRequestedUpgradeRole(Boolean isUpgradeRole, String username, Pageable pageable) {
+        Page<UserEntity> pageUser = userRepository.findByIsUpgradeRoleAndUsernameContaining(isUpgradeRole, username, pageable);
 
         Pagination pagination = new Pagination(pageUser.getNumber(), pageUser.getSize(), pageUser.getTotalPages(), (int) pageUser.getTotalElements());
 
@@ -250,8 +250,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public Data upgradeListUserByRole(List<UserDto> userDtos) {
-        List<UserDto> listUserDto=new ArrayList<>();
-        userDtos.forEach(userDto -> listUserDto.add((UserDto)upgradeUserByRole(userDto).getData()));
+        List<UserDto> listUserDto = new ArrayList<>();
+        userDtos.forEach(userDto -> listUserDto.add((UserDto) upgradeUserByRole(userDto).getData()));
         return new Data(true, "success", listUserDto);
     }
 
@@ -262,7 +262,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         userEntity.setRole(userDto.getRole());
         userEntity.setIsUpgradeRole(false);
 
-        return new Data(true, "update role success",mapper.map(userRepository.save(userEntity),UserDto.class));
+        return new Data(true, "update role success", mapper.map(userRepository.save(userEntity), UserDto.class));
     }
 
     @Override
@@ -305,33 +305,24 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public UserEntity processOAuthPostLogin(UserEntity userEntity, ProviderEnum provider) {
         UserEntity existEmail = userRepository.getUserByEmail(userEntity.getMail());
         if (existEmail == null) {
+            UserEntity newUser = new UserEntity();
+            newUser.setMail(userEntity.getMail());
+            newUser.setProvider(ProviderEnum.FACEBOOK);
+//                newUser.setStatus(StatusEnum.ACTIVE);
+            newUser.setRole(RoleEnum.USER); // * Mac dinh de Role la USER
+            newUser.setEnabled(true);
+            newUser.setIsProfile(false);
+            newUser.setIsUpgradeRole(false);
+
             String nameConverted = convertUsername(userEntity.getUsername());
             UserEntity existUsername = userRepository.getUserByUsername(nameConverted);
             if (existUsername == null) {
-                UserEntity newUser = new UserEntity();
                 newUser.setUsername(nameConverted);
-                newUser.setMail(userEntity.getMail());
-                newUser.setProvider(ProviderEnum.FACEBOOK);
-//                newUser.setStatus(StatusEnum.ACTIVE);
-                newUser.setRole(RoleEnum.USER); // * Mac dinh de Role la USER
-                newUser.setEnabled(true);
-                newUser.setIsProfile(false);
-                newUser.setIsUpgradeRole(false);
-
-                return userRepository.save(newUser);
             } else {
                 String nameFix = duplicateUsernameHandle(nameConverted);
-                UserEntity newUser = new UserEntity();
                 newUser.setUsername(nameFix);
-                newUser.setMail(userEntity.getMail());
-                newUser.setProvider(provider);
-//                newUser.setStatus(StatusEnum.ACTIVE);
-                newUser.setRole(RoleEnum.USER); // * Mac dinh de Role la USER
-                newUser.setEnabled(true);
-                newUser.setIsProfile(false);
-                newUser.setIsUpgradeRole(false);
-                return userRepository.save(newUser);
             }
+            return userRepository.save(newUser);
 
         } else return existEmail;
     }
