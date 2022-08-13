@@ -39,7 +39,7 @@ public class ProfileController {
 
     @PostMapping("")
     public ResponseEntity<?> add(@ModelAttribute ProfileDto profileDto,
-            @RequestParam(required = false) MultipartFile file) {
+                                 @RequestParam(required = false) MultipartFile file) {
         return new ResponseEntity<>(profileService.add(profileDto, file), HttpStatus.CREATED);
     }
 
@@ -69,15 +69,15 @@ public class ProfileController {
     @GetMapping("/shortbio/{shortBio}")
     public ResponseEntity<?> getByShortBio(HttpSession session, @PathVariable String shortBio) {
         if (bucket.tryConsume(1)) {
-            Data data=profileService.getProfileByShortBio(session, shortBio);
-            ProfileDto profileDto=(ProfileDto)data.getData();
+            Data data = profileService.getProfileByShortBio(session, shortBio);
+            ProfileDto profileDto = (ProfileDto) data.getData();
 //            OutputMessage out = new OutputMessage(
 //                new SimpleDateFormat("HH:mm").format(new Date()),
 //                    "someone",
 //                    "Someone is viewing your profile"
 //                );
-            String message="Someone is viewing your profile";
-            simpMessagingTemplate.convertAndSend("/queue/notification/"+profileDto.getId().toString(),message);
+            String message = "Someone is viewing your profile";
+            simpMessagingTemplate.convertAndSend("/queue/notification/" + profileDto.getId().toString(), message);
 
             return ResponseEntity.ok(data);
         }
@@ -85,6 +85,10 @@ public class ProfileController {
         return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
     }
 
+    @GetMapping("/findprofile/{shortBio}")
+    public ResponseEntity<?> findProfileByShortBio(@PathVariable String shortBio) {
+        return new ResponseEntity<>(profileService.findProfileByShortBio(shortBio), HttpStatus.OK);
+    }
 
 //    @MessageMapping("/ws/{idUser}")
 //    public void sendSpecific(
@@ -98,7 +102,7 @@ public class ProfileController {
 
     @GetMapping("/top")
     public ResponseEntity<?> getTopProfile(@RequestParam("page") int page, @RequestParam("page-size") int pageSize) {
-        return new ResponseEntity<>(profileService.getTopProfile(page, pageSize),HttpStatus.OK);
+        return new ResponseEntity<>(profileService.getTopProfile(page, pageSize), HttpStatus.OK);
     }
 
 }

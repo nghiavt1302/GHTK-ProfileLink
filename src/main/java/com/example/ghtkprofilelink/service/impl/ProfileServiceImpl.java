@@ -40,7 +40,7 @@ public class ProfileServiceImpl implements ProfileService {
     private final ModelMapper mapper;
 
     public ProfileServiceImpl(ProfileRepository profileRepository, StatisticRepository statisticRepository,
-            Cloudinary cloudinary, ModelMapper mapper) {
+                              Cloudinary cloudinary, ModelMapper mapper) {
         this.profileRepository = profileRepository;
         this.statisticRepository = statisticRepository;
         this.cloudinary = cloudinary;
@@ -143,6 +143,13 @@ public class ProfileServiceImpl implements ProfileService {
         return new ListData(true, "success", profileDtos,
                 new Pagination(profileEntities.getNumber(), profileEntities.getSize(), profileEntities.getTotalPages(),
                         (int) profileEntities.getTotalElements()));
+    }
+
+    @Override
+    public Data findProfileByShortBio(String shortBio) {
+        ProfileEntity profileEntity = profileRepository.getProfileByShortBio(shortBio);
+        if (profileEntity != null) return new Data(true, "success", profileEntity);
+        return new Data(false, "false", null);
     }
 
     @Override
