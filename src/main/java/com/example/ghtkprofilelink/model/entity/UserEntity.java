@@ -38,6 +38,7 @@ public class UserEntity {
     @JsonProperty("is_profile")
     private Boolean isProfile;
 
+    @Column(unique = true)
     private String mail;
 
     @Column(name = "update_password_token", length = 64)
