@@ -18,6 +18,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.ArrayList;
 import  java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
@@ -47,8 +49,8 @@ public class DesignServiceImpl implements DesignService {
     }
 
     @Override
-    public ListData getListDesignByType(Pageable pageable, DesignTypeEnum designType, StatusEnum status) {
-        Page<DesignEntity> pageDesign = designRepository.findByTypeAndStatus(pageable, designType , status);
+    public ListData getListDesignByType(Pageable pageable, DesignTypeEnum designType, StatusEnum status, String name) {
+        Page<DesignEntity> pageDesign = designRepository.findByTypeAndStatusAndNameContaining(pageable, designType , status, name);
         Pagination pagination = new Pagination(pageDesign.getNumber(), pageDesign.getSize(), pageDesign.getTotalPages(), (int) pageDesign.getTotalElements());
         List<DesignDto> listDesignDto = pageDesign.stream().map(d -> modelMapper.map(d, DesignDto.class)).collect(Collectors.toList());
         return new ListData(true, "success", listDesignDto, pagination);
@@ -123,6 +125,15 @@ public class DesignServiceImpl implements DesignService {
         designRepository.save(designEntity);
 
         return new Data(true, "success", modelMapper.map(designEntity, DesignDto.class));
+    }
+
+    @Override
+    public Data deleteListDesign(List<DesignDto> listDesign){
+        List<DesignDto> designs=new ArrayList<>();
+        listDesign.forEach(design->{
+            designs.add((DesignDto) delete(design.getId()).getData());
+        });
+        return new Data(true, "success", designs);
     }
 
     @Override
