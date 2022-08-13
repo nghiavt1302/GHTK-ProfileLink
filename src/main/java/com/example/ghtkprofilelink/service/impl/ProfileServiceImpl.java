@@ -4,24 +4,25 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.example.ghtkprofilelink.constants.StatusEnum;
 import com.example.ghtkprofilelink.model.dto.ProfileDto;
-import com.example.ghtkprofilelink.model.entity.StatisticEntity;
 import com.example.ghtkprofilelink.model.entity.ProfileEntity;
+import com.example.ghtkprofilelink.model.entity.StatisticEntity;
+import com.example.ghtkprofilelink.model.entity.UserEntity;
 import com.example.ghtkprofilelink.model.response.Data;
 import com.example.ghtkprofilelink.model.response.ListData;
 import com.example.ghtkprofilelink.model.response.Pagination;
-import com.example.ghtkprofilelink.repository.StatisticRepository;
 import com.example.ghtkprofilelink.repository.ProfileRepository;
-
+import com.example.ghtkprofilelink.repository.StatisticRepository;
+import com.example.ghtkprofilelink.security.CustomUserDetails;
 import com.example.ghtkprofilelink.service.ProfileService;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpSession;
-
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -104,9 +105,21 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public Data getProfileByShortBio(HttpSession session, String shortBio) {
-        // TODO Auto-generated method stub
-        Calendar cal = Calendar.getInstance();
         ProfileEntity profile = profileRepository.getProfileByShortBio(shortBio);
+
+        Object o = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (o instanceof String)
+            return new Data(true, "success", clickCountProfile(profile));
+
+        UserEntity userEntity = ((CustomUserDetails) o).getUser();
+        if (userEntity.getId() == profile.getId())
+            return new Data(true, "success", mapper.map(profile, ProfileDto.class));
+
+        return new Data(true, "success", clickCountProfile(profile));
+    }
+
+    private ProfileDto clickCountProfile(ProfileEntity profile) {
+        Calendar cal = Calendar.getInstance();
         Integer profileId = profile.getId().intValue();
         Integer counter = profile.getClickCount();
         StatisticEntity charts = statisticRepository.findAllByProfileId(profileId)
@@ -129,8 +142,7 @@ public class ProfileServiceImpl implements ProfileService {
             profile.setClickCount(counter);
             charts.setClickCount(countToMonth);
         }
-        profileRepository.save(profile);
-        return new Data(true, "success", mapper.map(profile, ProfileDto.class));
+        return mapper.map(profileRepository.save(profile), ProfileDto.class);
     }
 
     @Override
