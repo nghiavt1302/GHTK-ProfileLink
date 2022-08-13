@@ -323,7 +323,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 newUser.setUsername(nameFix);
             }
             return userRepository.save(newUser);
-
-        } else return existEmail;
+        }
+        return existEmail;
     }
 }

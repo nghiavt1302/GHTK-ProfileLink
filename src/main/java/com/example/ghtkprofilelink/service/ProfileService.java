@@ -3,10 +3,9 @@ package com.example.ghtkprofilelink.service;
 import com.example.ghtkprofilelink.model.dto.ProfileDto;
 import com.example.ghtkprofilelink.model.response.Data;
 import com.example.ghtkprofilelink.model.response.ListData;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
-
-import org.springframework.web.multipart.MultipartFile;
 
 public interface ProfileService {
     Data getById(Long id);
@@ -23,4 +22,5 @@ public interface ProfileService {
 
     ListData getTopProfile(int page, int pageSize);
 
+    Data findProfileByShortBio(String shortBio);
 }

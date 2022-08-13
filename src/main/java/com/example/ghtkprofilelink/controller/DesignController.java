@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @CrossOrigin
 @RestController
 @RequestMapping("api/v1.0/design")
@@ -24,10 +26,11 @@ public class DesignController {
 
     @GetMapping("")
     public ResponseEntity<?> getListDesignDefault(
+            @RequestParam("name") String name,
             @RequestParam("page") int page,
             @RequestParam("page-size") int pageSize) {
         return new ResponseEntity<>(
-                designService.getListDesignByType(PageRequest.of(page, pageSize), DesignTypeEnum.DEFAULT, StatusEnum.ACTIVE),
+                designService.getListDesignByType(PageRequest.of(page, pageSize), DesignTypeEnum.DEFAULT, StatusEnum.ACTIVE, name),
                 HttpStatus.OK);
     }
 
@@ -58,6 +61,11 @@ public class DesignController {
     public ResponseEntity<?> delete(
             @PathVariable Long id) {
         return new ResponseEntity<>(designService.delete(id), HttpStatus.OK);
+    }
+
+    @PostMapping("/delete/list")
+    public ResponseEntity<?> deleteListDesign(@RequestBody List<DesignDto> listDesign){
+        return new ResponseEntity<>(designService.deleteListDesign(listDesign),HttpStatus.OK);
     }
 
     @GetMapping("/name/{name}")
