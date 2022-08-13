@@ -13,9 +13,9 @@ public interface DesignService {
 
     ListData getListDesignByType(Pageable pageable, DesignTypeEnum typeDesign, StatusEnum status);
 
-    Data add(DesignDto designDto, MultipartFile file);
+    Data add(DesignDto designDto, MultipartFile avatar, MultipartFile backgroundImage);
 
-    Data update(DesignDto designDto, MultipartFile file, Long id);
+    Data update(DesignDto designDto, MultipartFile avatar, MultipartFile backgroundImage, Long id);
 
     Data delete(Long id);
 
