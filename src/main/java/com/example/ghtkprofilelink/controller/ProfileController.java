@@ -60,7 +60,7 @@ public class ProfileController {
 
     // hàm dùng để giới hạn số lượng requests
     public ProfileController() {
-        Bandwidth limit = Bandwidth.classic(5, Refill.greedy(5, Duration.ofMinutes(1)));
+        Bandwidth limit = Bandwidth.classic(5, Refill.greedy(3, Duration.ofMinutes(1)));
         this.bucket = Bucket4j.builder()
                 .addLimit(limit)
                 .build();
