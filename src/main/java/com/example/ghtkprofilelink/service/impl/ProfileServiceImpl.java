@@ -113,7 +113,7 @@ public class ProfileServiceImpl implements ProfileService {
 
         UserEntity userEntity = ((CustomUserDetails) o).getUser();
         if (userEntity.getId() == profile.getId())
-            return new Data(true, "success", mapper.map(profile, ProfileDto.class));
+            return new Data(true, "success your profile", mapper.map(profile, ProfileDto.class));
 
         return new Data(true, "success", clickCountProfile(profile));
     }
