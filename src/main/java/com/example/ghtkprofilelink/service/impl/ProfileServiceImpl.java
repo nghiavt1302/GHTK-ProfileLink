@@ -58,7 +58,7 @@ public class ProfileServiceImpl implements ProfileService {
     public Data add(ProfileDto profileDto, MultipartFile file) {
         ProfileEntity profile = mapper.map(profileDto, ProfileEntity.class);
         profile.setStatus(StatusEnum.ACTIVE);
-
+        profile.setShortBio(duplicateShortBioHandle(profileDto.getShortBio()));
         if (file != null) {
             try {
                 Map x = this.cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
@@ -78,6 +78,20 @@ public class ProfileServiceImpl implements ProfileService {
         chart.setProfileId(profileId.intValue());
         statisticRepository.save(chart);
         return new Data(true, "success", mapper.map(profileEntity, ProfileDto.class));
+    }
+
+    public String duplicateShortBioHandle(String shortBioConverted) {
+        String addInt = shortBioConverted;
+        int i = 0;
+        do {
+            ProfileEntity existProfile = profileRepository.getProfileByShortBio(addInt);
+            if (existProfile == null) {
+                return addInt;
+            } else {
+                addInt = shortBioConverted.concat(String.valueOf(i));
+                i++;
+            }
+        } while (true);
     }
 
     @Override
@@ -112,7 +126,7 @@ public class ProfileServiceImpl implements ProfileService {
             return new Data(true, "success", clickCountProfile(profile));
 
         UserEntity userEntity = ((CustomUserDetails) o).getUser();
-        if (userEntity.getId() == profile.getId())
+        if (userEntity.getId().equals(profile.getId()))
             return new Data(true, "success your profile", mapper.map(profile, ProfileDto.class));
 
         return new Data(true, "success", clickCountProfile(profile));
