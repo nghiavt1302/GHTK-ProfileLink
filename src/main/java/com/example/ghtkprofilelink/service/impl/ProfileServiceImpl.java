@@ -41,7 +41,7 @@ public class ProfileServiceImpl implements ProfileService {
     private final ModelMapper mapper;
 
     public ProfileServiceImpl(ProfileRepository profileRepository, StatisticRepository statisticRepository,
-                              Cloudinary cloudinary, ModelMapper mapper) {
+            Cloudinary cloudinary, ModelMapper mapper) {
         this.profileRepository = profileRepository;
         this.statisticRepository = statisticRepository;
         this.cloudinary = cloudinary;
@@ -125,10 +125,8 @@ public class ProfileServiceImpl implements ProfileService {
         StatisticEntity charts = statisticRepository.findAllByProfileId(profileId)
                 .get(statisticRepository.findAllByProfileId(profileId).size() - 1);
         Long countToMonth = charts.getClickCount();
-        int monthRealTime = cal.get(Calendar.MONTH) + 1;
         Date date = charts.getDate();
-        int monthDb = date.getMonth() + 1;
-        if (monthRealTime >= monthDb + 1) {
+        if (cal.get(Calendar.MONTH) + 1 >= date.getMonth() + 2) {
             counter += 1;
             profile.setClickCount(counter);
             StatisticEntity chart = new StatisticEntity();
@@ -148,7 +146,7 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public ListData getTopProfile(int page, int pageSize) {
         // TODO Auto-generated method stub
-        ///abstract
+        /// abstract
         Page<ProfileEntity> profileEntities = profileRepository.getTopProfile(PageRequest.of(page, pageSize));
         List<ProfileDto> profileDtos = profileEntities.stream().map(l -> mapper.map(l, ProfileDto.class))
                 .collect(Collectors.toList());
@@ -160,7 +158,8 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public Data findProfileByShortBio(String shortBio) {
         ProfileEntity profileEntity = profileRepository.getProfileByShortBio(shortBio);
-        if (profileEntity != null) return new Data(true, "success", profileEntity);
+        if (profileEntity != null)
+            return new Data(true, "success", profileEntity);
         return new Data(false, "false", null);
     }
 
