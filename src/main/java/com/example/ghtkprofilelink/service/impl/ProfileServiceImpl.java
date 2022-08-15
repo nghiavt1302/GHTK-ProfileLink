@@ -176,10 +176,17 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
+    public Data deleteProfileById(Long id) {
+        ProfileEntity profile = profileRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        profile.setStatus(StatusEnum.INACTIVE);
+        return new Data(true, "success", mapper.map(profile, ProfileDto.class));
+    }
+
+    @Override
     public Data getprofileByShortBioSpam(String shortBio) {
         // TODO Auto-generated method stub
-        Optional<ProfileEntity> profile = profileRepository.getProfileByShortBioAndStatus(shortBio, StatusEnum.ACTIVE);
-        return new Data(true, "success", mapper.map(profile.get(), ProfileDto.class));
+        ProfileEntity profile = profileRepository.getProfileByShortBioAndStatus(shortBio, StatusEnum.ACTIVE).orElseThrow(EntityNotFoundException::new);
+        return new Data(true, "success", mapper.map(profile, ProfileDto.class));
     }
 
 }

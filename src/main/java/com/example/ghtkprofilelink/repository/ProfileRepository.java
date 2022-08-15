@@ -17,7 +17,7 @@ public interface ProfileRepository extends JpaRepository<ProfileEntity, Long> {
 
     ProfileEntity getProfileByShortBio(String shortBio);
 
-    @Query("SELECT p FROM ProfileEntity p ORDER BY p.clickCount DESC")
+    @Query("SELECT p FROM ProfileEntity p where p.status = 1 ORDER BY p.clickCount DESC")
     Page<ProfileEntity> getTopProfile(Pageable pageable);
 
 }
