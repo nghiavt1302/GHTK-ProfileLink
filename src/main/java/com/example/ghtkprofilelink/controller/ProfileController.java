@@ -76,8 +76,10 @@ public class ProfileController {
 //                    "someone",
 //                    "Someone is viewing your profile"
 //                );
-            String message = "Someone is viewing your profile";
-            simpMessagingTemplate.convertAndSend("/queue/notification/" + profileDto.getId().toString(), message);
+            if (data.getMessage().equals("success")) {
+                String message = "Someone is viewing your profile";
+                simpMessagingTemplate.convertAndSend("/queue/notification/" + profileDto.getId().toString(), message);
+            }
 
             return ResponseEntity.ok(data);
         }
