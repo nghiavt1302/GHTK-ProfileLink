@@ -61,7 +61,7 @@ public class LoginController {
 
     @PostMapping("/test/register")
     public ResponseEntity<Data> registerUser(@Valid @RequestBody UserRegister user, HttpServletRequest request) throws MessagingException, UnsupportedEncodingException {
-        return ResponseEntity.ok(userService.register(user, request.getRequestURL().append("/verify?code=")));
+        return ResponseEntity.ok(userService.register(user, new StringBuffer("http://profilelinkangular.s3-website.ap-south-1.amazonaws.com/register-verify/")));
     }
 
     @GetMapping("/test/register/verify")
