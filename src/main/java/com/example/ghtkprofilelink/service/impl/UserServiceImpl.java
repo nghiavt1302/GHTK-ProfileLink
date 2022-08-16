@@ -36,17 +36,20 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     private final UserRepository userRepository;
 
+    private final ProfileServiceImpl profileService;
+
     private final ModelMapper mapper;
 
     private final PasswordEncoder passwordEncoder;
 
     private final MailServiceImpl mailService;
 
-    public UserServiceImpl(UserRepository userRepository, ModelMapper mapper, PasswordEncoder passwordEncoder, MailServiceImpl mailService) {
+    public UserServiceImpl(UserRepository userRepository, ModelMapper mapper, PasswordEncoder passwordEncoder, MailServiceImpl mailService, ProfileServiceImpl profileService) {
         this.userRepository = userRepository;
         this.mapper = mapper;
         this.passwordEncoder = passwordEncoder;
         this.mailService = mailService;
+        this.profileService = profileService;
     }
 
     //    @Override
@@ -100,6 +103,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         UserEntity user = userRepository.getById(id);
 //        user.setStatus(StatusEnum.INACTIVE);
         user.setEnabled(false);
+        profileService.deleteProfileById(id);
         return new Data(true, "success", mapper.map(userRepository.save(user), UserDto.class));
     }
 

@@ -60,7 +60,7 @@ public class ProfileController {
 
     // hàm dùng để giới hạn số lượng requests
     public ProfileController() {
-        Bandwidth limit = Bandwidth.classic(5, Refill.greedy(5, Duration.ofMinutes(1)));
+        Bandwidth limit = Bandwidth.classic(5, Refill.greedy(3, Duration.ofMinutes(1)));
         this.bucket = Bucket4j.builder()
                 .addLimit(limit)
                 .build();
@@ -76,8 +76,10 @@ public class ProfileController {
 //                    "someone",
 //                    "Someone is viewing your profile"
 //                );
-            String message = "Someone is viewing your profile";
-            simpMessagingTemplate.convertAndSend("/queue/notification/" + profileDto.getId().toString(), message);
+            if (!data.getMessage().equals("success your profile")) {
+                String message = data.getMessage();
+                simpMessagingTemplate.convertAndSend("/queue/notification/" + profileDto.getId().toString(), message);
+            }
 
             return ResponseEntity.ok(data);
         }
