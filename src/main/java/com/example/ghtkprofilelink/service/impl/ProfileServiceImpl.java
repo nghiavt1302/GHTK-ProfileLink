@@ -23,10 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpSession;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,7 +38,7 @@ public class ProfileServiceImpl implements ProfileService {
     private final ModelMapper mapper;
 
     public ProfileServiceImpl(ProfileRepository profileRepository, StatisticRepository statisticRepository,
-            Cloudinary cloudinary, ModelMapper mapper) {
+                              Cloudinary cloudinary, ModelMapper mapper) {
         this.profileRepository = profileRepository;
         this.statisticRepository = statisticRepository;
         this.cloudinary = cloudinary;
@@ -50,7 +47,7 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public Data getById(Long id) {
-        ProfileEntity profile = profileRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
+        ProfileEntity profile = profileRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         return new Data(true, "success", mapper.map(profile, ProfileDto.class));
     }
 
@@ -58,7 +55,7 @@ public class ProfileServiceImpl implements ProfileService {
     public Data add(ProfileDto profileDto, MultipartFile file) {
         ProfileEntity profile = mapper.map(profileDto, ProfileEntity.class);
         profile.setStatus(StatusEnum.ACTIVE);
-
+        profile.setShortBio(duplicateShortBioHandle(profileDto.getShortBio()));
         if (file != null) {
             try {
                 Map x = this.cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
@@ -78,6 +75,20 @@ public class ProfileServiceImpl implements ProfileService {
         chart.setProfileId(profileId.intValue());
         statisticRepository.save(chart);
         return new Data(true, "success", mapper.map(profileEntity, ProfileDto.class));
+    }
+
+    public String duplicateShortBioHandle(String shortBioConverted) {
+        String addInt = shortBioConverted;
+        int i = 0;
+        do {
+            Optional<ProfileEntity> profile = profileRepository.getProfileByShortBioAndStatus(addInt, StatusEnum.ACTIVE);
+            if (!profile.isPresent()) {
+                return addInt;
+            } else {
+                addInt = shortBioConverted.concat(String.valueOf(i));
+                i++;
+            }
+        } while (true);
     }
 
     @Override
@@ -105,17 +116,18 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public Data getProfileByShortBio(HttpSession session, String shortBio) {
-        ProfileEntity profile = profileRepository.getProfileByShortBio(shortBio);
+        Optional<ProfileEntity> profile = profileRepository.getProfileByShortBioAndStatus(shortBio, StatusEnum.ACTIVE);
+        if (!profile.isPresent()) return new Data(false, "profile doesn't exist", null);
 
         Object o = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (o instanceof String)
-            return new Data(true, "success", clickCountProfile(profile));
+            return new Data(true, "Someone is viewing your profile", clickCountProfile(profile.get()));
 
         UserEntity userEntity = ((CustomUserDetails) o).getUser();
-        if (userEntity.getId() == profile.getId())
-            return new Data(true, "success your profile", mapper.map(profile, ProfileDto.class));
+        if (userEntity.getId().equals(profile.get().getId()))
+            return new Data(true, "success your profile", mapper.map(profile.get(), ProfileDto.class));
 
-        return new Data(true, "success", clickCountProfile(profile));
+        return new Data(true, userEntity.getUsername() + " is viewing your profile", clickCountProfile(profile.get()));
     }
 
     private ProfileDto clickCountProfile(ProfileEntity profile) {
@@ -157,16 +169,23 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public Data findProfileByShortBio(String shortBio) {
-        ProfileEntity profileEntity = profileRepository.getProfileByShortBio(shortBio);
-        if (profileEntity != null)
-            return new Data(true, "success", profileEntity);
+        Optional<ProfileEntity> profile = profileRepository.getProfileByShortBioAndStatus(shortBio, StatusEnum.ACTIVE);
+        if (profile.isPresent())
+            return new Data(true, "success", profile.get());
         return new Data(false, "false", null);
+    }
+
+    @Override
+    public Data deleteProfileById(Long id) {
+        ProfileEntity profile = profileRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        profile.setStatus(StatusEnum.INACTIVE);
+        return new Data(true, "success", mapper.map(profile, ProfileDto.class));
     }
 
     @Override
     public Data getprofileByShortBioSpam(String shortBio) {
         // TODO Auto-generated method stub
-        ProfileEntity profile = profileRepository.getProfileByShortBio(shortBio);
+        ProfileEntity profile = profileRepository.getProfileByShortBioAndStatus(shortBio, StatusEnum.ACTIVE).orElseThrow(EntityNotFoundException::new);
         return new Data(true, "success", mapper.map(profile, ProfileDto.class));
     }
 
