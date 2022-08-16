@@ -23,4 +23,6 @@ public interface ProfileService {
     ListData getTopProfile(int page, int pageSize);
 
     Data findProfileByShortBio(String shortBio);
+
+    Data deleteProfileById(Long id);
 }
