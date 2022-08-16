@@ -57,7 +57,8 @@ public class LoginSocialController {
         UserEntity userEntity = new UserEntity();
         userEntity.setMail(payload.getEmail());
         userEntity.setUsername(payload.getEmail());
-        TokenDto tokenRes = addToken(userService.processOAuthPostLogin(userEntity, ProviderEnum.GOOGLE));
+        userEntity = userService.processOAuthPostLogin(userEntity, ProviderEnum.GOOGLE);
+        TokenDto tokenRes = addToken(userEntity);
         return new ResponseEntity<>(new Data(true, "success", new LoginResponse("Bearer " + tokenRes.getValue(), mapper.map(userEntity, UserDto.class))),HttpStatus.OK);
     }
 
