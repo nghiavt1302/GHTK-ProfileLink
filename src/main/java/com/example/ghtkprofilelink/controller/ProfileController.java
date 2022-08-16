@@ -76,8 +76,8 @@ public class ProfileController {
 //                    "someone",
 //                    "Someone is viewing your profile"
 //                );
-            if (data.getMessage().equals("success")) {
-                String message = "Someone is viewing your profile";
+            if (!data.getMessage().equals("success your profile")) {
+                String message = data.getMessage();
                 simpMessagingTemplate.convertAndSend("/queue/notification/" + profileDto.getId().toString(), message);
             }
 

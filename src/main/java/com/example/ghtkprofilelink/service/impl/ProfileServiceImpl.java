@@ -121,13 +121,13 @@ public class ProfileServiceImpl implements ProfileService {
 
         Object o = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (o instanceof String)
-            return new Data(true, "success", clickCountProfile(profile.get()));
+            return new Data(true, "Someone is viewing your profile", clickCountProfile(profile.get()));
 
         UserEntity userEntity = ((CustomUserDetails) o).getUser();
         if (userEntity.getId().equals(profile.get().getId()))
             return new Data(true, "success your profile", mapper.map(profile.get(), ProfileDto.class));
 
-        return new Data(true, "success", clickCountProfile(profile.get()));
+        return new Data(true, userEntity.getUsername() + " is viewing your profile", clickCountProfile(profile.get()));
     }
 
     private ProfileDto clickCountProfile(ProfileEntity profile) {
