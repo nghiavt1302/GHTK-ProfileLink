@@ -71,7 +71,7 @@ public class LoginController {
 
     @GetMapping("/update-password-token")
     public ResponseEntity<Data> updatePasswordToken(@RequestParam String mail) throws MessagingException {
-        return ResponseEntity.ok(userService.updatePasswordToken(mail, new StringBuffer("http://localhost:4200/update_password_token?code=")));
+        return ResponseEntity.ok(userService.updatePasswordToken(mail, new StringBuffer("http://profilelinkangular.s3-website.ap-south-1.amazonaws.com/update_password_token?code=")));
     }
 
     @PostMapping("/test/update-password-token")
