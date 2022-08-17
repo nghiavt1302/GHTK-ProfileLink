@@ -70,7 +70,7 @@ public class ProfileServiceImpl implements ProfileService {
         ProfileEntity profileEntity = profileRepository.save(profile);
         Integer profileId = profileEntity.getId().intValue();
         StatisticEntity chart = new StatisticEntity();
-        chart.setClickCount(1L);
+        chart.setClickCount(0L);
         chart.setDate(new java.sql.Date(new Date().getTime()));
         chart.setProfileId(profileId.intValue());
         statisticRepository.save(chart);
