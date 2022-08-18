@@ -15,4 +15,5 @@ import  java.util.Optional;
 public interface DesignRepository extends JpaRepository<DesignEntity, Long> {
     Page<DesignEntity> findByTypeAndStatusAndNameContaining(Pageable pageable, @Param("type") DesignTypeEnum designType, @Param("status") StatusEnum status,@Param("name") String name);
     Optional<DesignEntity> findByName(@Param("name") String name);
+    Optional<DesignEntity> findByIdAndStatus(@Param("id") Long id,@Param("status") StatusEnum status);
 }
