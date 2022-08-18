@@ -44,7 +44,7 @@ public class DesignServiceImpl implements DesignService {
 
     @Override
     public Data getById(Long id) {
-        DesignEntity design = designRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        DesignEntity design = designRepository.findByIdAndStatus(id,StatusEnum.ACTIVE).orElseThrow(EntityNotFoundException::new);
         return new Data(true, "success", modelMapper.map(design, DesignDto.class));
     }
 
